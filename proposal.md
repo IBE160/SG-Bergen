@@ -39,6 +39,38 @@ To develop a digital version of "Guess Who" that allows users to play against ea
 4.  As a player, I want to chat with my opponent during the game, so that it feels more social.
 5.  As a player, I want to receive AI-generated questions as a "hint" option, so that I get help and inspiration during the game.
 
+## User Flows
+
+### Flow 1: Starting and Joining a Game
+1.  **Host Player:**
+    *   Opens the application and clicks "Create Game."
+    *   Selects a difficulty level (e.g., 24 characters).
+    *   Receives a unique game code (e.g., "XYZ123").
+    *   Is taken to a waiting screen and shares the code with a friend.
+2.  **Joining Player:**
+    *   Opens the application and clicks "Join Game."
+    *   Enters the game code.
+    *   Both players land in the game room, ready to start.
+
+### Flow 2: Core Gameplay Loop
+1.  **Character Selection:** Both players are prompted to secretly select one character from the board that their opponent will have to guess.
+2.  **Player 1's Turn:**
+    *   Player 1 formulates a yes/no question.
+    *   *Optional:* Player 1 clicks the "AI Hint" button, and the system suggests a question like, "Does your character have a beard?"
+    *   Player 1 asks the question.
+3.  **Player 2's Turn:**
+    *   Player 2 answers "Yes" or "No."
+4.  **Elimination:** Player 1 clicks on the portraits of characters that don't match the answer, causing them to be visually "flipped down" or grayed out.
+5.  **Turn End:** The turn automatically passes to Player 2, and the process repeats.
+
+### Flow 3: Winning the Game
+1.  **Making a Guess:** When a player feels confident, they click the "Make a Guess" button instead of asking a question.
+2.  **Guessing:** The player selects the final character they believe their opponent chose.
+3.  **Outcome:**
+    *   **Correct Guess:** A "You Win!" screen is displayed.
+    *   **Incorrect Guess:** A "You Lose!" screen is displayed, and the opponent wins.
+4.  **Rematch:** Both players are given the option to "Play Again" or return to the main menu.
+
 
 ## Technical Architecture & Plan
 
@@ -46,7 +78,7 @@ To develop a digital version of "Guess Who" that allows users to play against ea
 -   Platform: Responsive Web Application built to be accessible on PC, tablet, and mobile browsers.
 -   Frontend: Next.js (React Framework) with Tailwind CSS for styling.
 -   Backend & Database: Supabase will be used to provide the PostgreSQL database, user authentication, and real-time game state synchronization.
--   AI Integration: AI-generated questions will be powered by a cost-effective, open-source LLM like DeepSeek, accessed via a third-party inference API (e.g., Groq, Together AI).
+-   AI Integration: AI-generated questions will be powered by the google gemini 2.5 pro API.
 
 ### Authentication
 -   The MVP will use a simple, Kahoot-style room code system for creating and joining games. Full user accounts are a planned extension.
