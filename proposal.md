@@ -32,13 +32,6 @@ To develop a digital version of "Guess Who" that allows users to play against ea
 -   Game Rooms: room_code (unique identifier), game_state (JSON object containing player info, active/eliminated characters, current_turn), created_at.
 -   Users (Future Extension): user_id, username, email, password_hash.
 
-## User Stories
-1.  As a player, I want to select 12/24/48 characters from a larger pool, so that the game feels varied.
-2.  As a player, I want to click on character images to eliminate them during the game, so that I can keep better track.
-3.  As a user, I want to upload my own images to create personal character sets, so that the game becomes more fun and relevant.
-4.  As a player, I want to chat with my opponent during the game, so that it feels more social.
-5.  As a player, I want to receive AI-generated questions as a "hint" option, so that I get help and inspiration during the game.
-
 ## User Flows
 
 ### Flow 1: Starting and Joining a Game
