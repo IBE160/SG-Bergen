@@ -29,7 +29,7 @@ field_type: "greenfield"
 workflow_path: "method-greenfield.yaml"
 
 workflow_status:
-  brainstorm-project: "/Users/sandrachristensen/SG-Bergen/docs/brainstorming-session-results-2025-11-08.md"
+  brainstorm-project: "C:\Users\Akbar\OneDrive\Desktop\VS\Ny mappe\SG-Bergen\docs/brainstorming-session-results-lørdag 8. november 2025.md"
   research: "optional"
   product-brief: "optional"
   prd: "required"
