@@ -36,6 +36,8 @@ As a developer,
 I want to initialize a new Next.js project with TypeScript and Tailwind CSS,
 So that I have a modern frontend development environment.
 
+**Traceability:** None (Foundational)
+
 **Acceptance Criteria:**
 
 **Given** a new project directory
@@ -52,6 +54,8 @@ So that I have a modern frontend development environment.
 As a developer,
 I want to establish a standard project structure and set up linting rules,
 So that the codebase is organized and maintains a consistent style.
+
+**Traceability:** None (Foundational)
 
 **Acceptance Criteria:**
 
@@ -70,6 +74,8 @@ As a developer,
 I want to integrate the Supabase client into the Next.js project,
 So that the application can communicate with the Supabase backend.
 
+**Traceability:** None (Foundational)
+
 **Acceptance Criteria:**
 
 **Given** a running Next.js project
@@ -86,6 +92,8 @@ So that the application can communicate with the Supabase backend.
 As a developer,
 I want to set up a basic continuous deployment pipeline,
 So that changes can be automatically deployed to a hosting service.
+
+**Traceability:** None (Foundational)
 
 **Acceptance Criteria:**
 
@@ -111,6 +119,8 @@ As a user,
 I want to create a new game session and receive a unique game code,
 So that I can invite a friend to play.
 
+**Traceability:** FR1.1
+
 **Acceptance Criteria:**
 
 **Given** I am on the home screen
@@ -127,6 +137,8 @@ So that I can invite a friend to play.
 As a user,
 I want to join an existing game session by entering a game code,
 So that I can play with a friend.
+
+**Traceability:** FR1.2
 
 **Acceptance Criteria:**
 
@@ -145,6 +157,8 @@ As a user,
 I want to indicate my readiness to start the game,
 So that the game only begins when both players are prepared.
 
+**Traceability:** FR1.3
+
 **Acceptance Criteria:**
 
 **Given** I am in the game lobby with another player
@@ -160,6 +174,8 @@ So that the game only begins when both players are prepared.
 As a user,
 I want to select the game difficulty (Easy, Medium, Hard) when creating a game,
 So that I can choose the number of characters on the board.
+
+**Traceability:** FR4.1
 
 **Acceptance Criteria:**
 
@@ -184,6 +200,8 @@ As a user,
 I want to secretly select my character from the available grid,
 So that the game can begin.
 
+**Traceability:** FR2.1
+
 **Acceptance Criteria:**
 
 **Given** I am on the character selection screen
@@ -200,6 +218,8 @@ So that the game can begin.
 As a user,
 I want the game to enforce turn-based play,
 So that players alternate actions.
+
+**Traceability:** FR3.1
 
 **Acceptance Criteria:**
 
@@ -218,6 +238,8 @@ As a user,
 I want to ask yes/no questions and receive answers from my opponent,
 So that I can gather information to guess their character.
 
+**Traceability:** FR3.2
+
 **Acceptance Criteria:**
 
 **Given** it is my turn
@@ -235,6 +257,8 @@ As a user,
 I want to visually eliminate characters from my board based on my opponent's answers,
 So that I can narrow down the possibilities.
 
+**Traceability:** FR3.3
+
 **Acceptance Criteria:**
 
 **Given** I have received an answer
@@ -251,6 +275,8 @@ So that I can narrow down the possibilities.
 As a user,
 I want to make a guess about my opponent's secret character and see the game outcome,
 So that I know if I won or lost.
+
+**Traceability:** FR3.4, FR3.6
 
 **Acceptance Criteria:**
 
@@ -276,6 +302,8 @@ As a user,
 I want to see options to "Play Again" or "Return to Main Menu" after a game ends,
 So that I can easily continue playing or navigate elsewhere.
 
+**Traceability:** FR4.2
+
 **Acceptance Criteria:**
 
 **Given** a game has concluded (win/loss screen displayed)
@@ -287,4 +315,3 @@ So that I can easily continue playing or navigate elsewhere.
 **Prerequisites:** Epic 3 completed.
 
 **Technical Notes:** Ensure proper state reset for "Play Again" and navigation for "Return to Main Menu".
-

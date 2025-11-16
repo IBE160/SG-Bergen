@@ -20,12 +20,7 @@
 
 "Digital Guess Who" is a modern web-based adaptation of the classic board game, aiming to provide an engaging and accessible online multiplayer experience for friends and family. It will replicate core logic while enhancing it with features like custom character sets and AI-powered hints, targeting a broad audience from children to nostalgic adults.
 
-{{#if domain_context_summary}}
 
-### Domain Context
-
-{{domain_context_summary}}
-{{/if}}
 
 ---
 
@@ -39,12 +34,7 @@ The success of the "Digital Guess Who" school project will be measured by the fo
 *   **MVP Feature Completeness:** The final deployed application includes a fully functional difficulty setting (Easy, Medium, Hard).
 *   **Extensibility (Post-MVP Goal):** The codebase is structured in a way that allows for future features (like the AI Hint system) to be added with reasonable effort, demonstrating a well-architected design.
 
-{{#if business_metrics}}
 
-### Business Metrics
-
-{{business_metrics}}
-{{/if}}
 
 ---
 
@@ -75,27 +65,11 @@ Following a successful MVP launch and the rollout of growth features, the long-t
 
 ---
 
-{{#if domain_considerations}}
 
-## Domain-Specific Requirements
-
-{{domain_considerations}}
-
-This section shapes all functional and non-functional requirements below.
-{{/if}}
 
 ---
 
-{{#if innovation_patterns}}
 
-## Innovation & Novel Patterns
-
-{{innovation_patterns}}
-
-### Validation Approach
-
-{{validation_approach}}
-{{/if}}
 
 ---
 
@@ -108,52 +82,10 @@ As a web application, "Digital Guess Who" has the following specific requirement
 *   **Browser Compatibility:** The application must maintain a usable and clean layout on the latest versions of Chrome and Firefox on desktop.
 *   **Real-time Synchronization:** Game state changes, such as character eliminations and turn transitions, must be synchronized between players in real-time.
 
-{{#if endpoint_specification}}
 
-### API Specification
-
-{{endpoint_specification}}
-{{/if}}
-
-{{#if authentication_model}}
-
-### Authentication & Authorization
-
-{{authentication_model}}
-{{/if}}
-
-{{#if platform_requirements}}
-
-### Platform Support
-
-{{platform_requirements}}
-{{/if}}
-
-{{#if device_features}}
-
-### Device Capabilities
-
-{{device_features}}
-{{/if}}
-
-{{#if tenant_model}}
-
-### Multi-Tenancy Architecture
-
-{{tenant_model}}
-{{/if}}
-
-{{#if permission_matrix}}
-
-### Permissions & Roles
-
-{{permission_matrix}}
-{{/if}}
 {{/if}}
 
 ---
-
-{{#if ux_principles}}
 
 ## User Experience Principles
 
@@ -171,7 +103,6 @@ Key interactions within "Digital Guess Who" include:
 *   **Character Elimination:** Players visually eliminate characters based on answers.
 *   **Making a Guess:** Players can attempt to guess the opponent's character.
 *   **Post-Game Options:** Users can choose to play again or return to the main menu after a game concludes.
-{{/if}}
 
 ---
 
@@ -235,14 +166,7 @@ Key interactions within "Digital Guess Who" include:
     *   The application shall maintain a usable and clean layout on the latest versions of Chrome and Firefox on desktop.
     *   The UI/UX design shall adhere to basic heuristic design principles to ensure intuitiveness and ease of use.
 
-{{#if integration_requirements}}
-### Integration
-{{integration_requirements}}
-{{/if}}
 
-{{#if no_nfrs}}
-_No specific non-functional requirements identified for this project type._
-{{/if}}
 
 ---
 
@@ -254,38 +178,25 @@ _No specific non-functional requirements identified for this project type._
 
 The functional requirements for the MVP will be organized into the following epics:
 
-*   **Epic 1: Game Session Management**
-    *   *Summary:* Covers all functionality related to creating, joining, and setting up a game.
-    *   *Includes:* FR1.1 (Game Creation), FR1.2 (Game Joining), FR1.3 (Player Readiness), FR4.1 (Difficulty Settings).
-
-*   **Epic 2: Core Gameplay Loop**
-    *   *Summary:* Encompasses all the mechanics of playing the game itself.
-    *   *Includes:* FR2.1 (Secret Character Selection), FR3.1 (Turn-Based Play), FR3.2 (Questioning & Answering), FR3.3 (Character Elimination), FR3.4 (Guessing & Win/Loss Condition).
-
-*   **Epic 3: User Interface & Experience (UI/UX)**
-    *   *Summary:* Focuses on creating the visual and interactive elements of the game.
-    *   *Includes:* Implementing the UI for all functional requirements, ensuring responsiveness and adherence to UX principles.
-
-*   **Epic 4: Post-Game Experience**
-    *   *Summary:* Handles the user flow after a game has concluded.
-    *   *Includes:* FR4.2 (Post-Game Options).
+*   **Epic 1: Project Foundation:** Establishes the foundational infrastructure for the project.
+*   **Epic 2: Game Session Management:** Covers all functionality and UI for creating, joining, and setting up a game.
+    *   *Includes:* FR1.1, FR1.2, FR1.3, FR4.1.
+*   **Epic 3: Core Gameplay Loop:** Encompasses all the mechanics and UI for playing the game itself.
+    *   *Includes:* FR2.1, FR2.2, FR3.1, FR3.2, FR3.3, FR3.4, FR3.5.
+*   **Epic 4: Post-Game Experience:** Handles the user flow and UI after a game has concluded.
+    *   *Includes:* FR4.2.
 
 ---
 
 ## References
 
 - Product Brief: docs/product-brief-ibe160-2025-11-16.md
-  {{/if}}
-  {{#if domain_brief_path}}
-- Domain Brief: {{domain_brief_path}}
-  {{/if}}
-  - Research:
+- Research:
   - proposal.md
   - docs/brainstorming-session-results-2025-10-26.md
   - docs/brainstorming-session-results-2025-11-08.md
   - docs/brainstorming-session-results-lørdag 8. november 2025.md
   - docs/research-technical-lørdag 8. november 2025.md
-  {{/if}}
 
 ---
 
