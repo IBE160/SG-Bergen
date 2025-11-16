@@ -270,7 +270,7 @@ So that I can narrow down the possibilities.
 
 **Technical Notes:** Use CSS transitions for the "flip down" effect. Store eliminated characters in Supabase.
 
-### Story 3.5: Implement Guessing and Win/Loss Condition
+### Story 3.4: Implement Guessing and Win/Loss Condition
 
 As a user,
 I want to make a guess about my opponent's secret character and see the game outcome,
