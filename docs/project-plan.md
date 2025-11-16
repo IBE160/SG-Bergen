@@ -2,11 +2,11 @@
 
 ## Fase 0
 
-- [ ] Brainstorming
-  - [ ] /analyst *brainstorm "Root Cause Analysis and Solution Design for Player Inactivity"
-  - [ ] /analyst *brainstorm "User Flow Deviations & Edge Cases"
-- [ ] Research
-  - [ ] /analyst *research "Which AI library should we use for orchestrating LLM interactions?"
+- [x ] Brainstorming
+  - [ x] /analyst *brainstorm "Root Cause Analysis and Solution Design for Player Inactivity"
+  - x[ ] /analyst *brainstorm "User Flow Deviations & Edge Cases"
+- [x ] Research
+  - [x ] /analyst *research "Which AI library should we use for orchestrating LLM interactions?"
 - [ ] Product Brief
   - [ ] /analyst *product-brief "Read the two brainstorming sessions the research session and the @proposal.md file, and create a product brief for the project."
 

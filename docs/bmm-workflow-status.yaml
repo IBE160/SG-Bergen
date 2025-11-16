@@ -15,7 +15,7 @@ workflow_path: "method-greenfield.yaml"
 
 workflow_status:
   brainstorm-project: required
-  product-brief: optional
+  product-brief: docs/product-brief-ibe160-2025-11-16.md
   prd: required
   validate-prd: optional
   create-design: conditional
