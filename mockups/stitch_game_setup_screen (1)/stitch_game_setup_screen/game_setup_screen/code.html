@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Digital Guess Who - Game Lobby</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4A90E2",
+                        "secondary": "#F5A623",
+                        "background-light": "#F8F9FA",
+                        "background-dark": "#101e23",
+                        "text-light": "#333333",
+                        "text-dark": "#ffffff",
+                        "disabled": "#CCCCCC",
+                    },
+                    fontFamily: {
+                        "display": ["Be Vietnam Pro", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark">
+<div class="relative flex h-auto min-h-screen w-full flex-col font-display dark group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<div class="px-4 md:px-10 lg:px-40 flex flex-1 justify-center py-5">
+<div class="layout-content-container flex flex-col w-full max-w-[960px] flex-1">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-gray-200 dark:border-b-[#223f49] px-4 sm:px-10 py-3">
+<div class="flex items-center gap-4 text-text-light dark:text-text-dark">
+<div class="size-6 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M12.0799 24L4 19.2479L9.95537 8.75216L18.04 13.4961L18.0446 4H29.9554L29.96 13.4961L38.0446 8.75216L44 19.2479L35.92 24L44 28.7521L38.0446 39.2479L29.96 34.5039L29.9554 44H18.0446L18.04 34.5039L9.95537 39.2479L4 28.7521L12.0799 24Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-text-light dark:text-text-dark text-lg font-bold leading-tight tracking-[-0.015em]">Digital Guess Who</h2>
+</div>
+<div class="flex flex-1 justify-end items-center gap-4 sm:gap-8">
+<div class="flex gap-2">
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-gray-100 dark:bg-[#223f49] text-text-light dark:text-text-dark gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5">
+<span class="material-symbols-outlined text-text-light/80 dark:text-text-dark/80" style="font-size: 20px;">notifications</span>
+</button>
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-gray-100 dark:bg-[#223f49] text-text-light dark:text-text-dark gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5">
+<span class="material-symbols-outlined text-text-light/80 dark:text-text-dark/80" style="font-size: 20px;">settings</span>
+</button>
+</div>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="User avatar with a multicolored abstract gradient" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBvzj9sOF1MHtLUaXy43DfDjYdJlO-R6osgMwKcZiahCiwfPGDlyoJMhjepxbw-gVR4P_gos4P-fe0SuAw-FzNERAUyemf-QOMX8fCITQnh1y6U5DBEOcwY2WxEEUJC7L7rQd23ybMvKRMOQCVAD9IcH7UWCf2uVUhEuayRGKEYhjUXArEonzi2yK-1Sn7PXqOvEd5Blv9kWUtjZYVSIXkgWtxUPRLVyqXFnkpeZ9ic8EBCcaAbQp9MXwB0mOgc5ZFQEBW4VW38gkMt");'></div>
+</div>
+</header>
+<main class="flex-1 p-4 sm:p-6">
+<div class="flex flex-wrap justify-between gap-3 mb-6">
+<div class="flex min-w-72 flex-col gap-2">
+<p class="text-text-light dark:text-text-dark text-4xl font-black leading-tight tracking-[-0.033em]">Game Lobby</p>
+<p class="text-gray-500 dark:text-[#90bccb] text-base font-normal leading-normal">Configure your match and get ready to play!</p>
+</div>
+</div>
+<div class="flex flex-col md:flex-row gap-6">
+<div class="flex items-stretch justify-between gap-4 rounded-xl bg-white dark:bg-[#182d34] p-4 shadow-sm flex-1">
+<div class="flex flex-col gap-1 flex-[2_2_0px]">
+<p class="text-text-light dark:text-text-dark text-base font-bold leading-tight flex items-center gap-2">Player 1 (You) <span class="text-xs font-medium text-primary bg-primary/20 px-2 py-0.5 rounded-full">Host</span></p>
+<p class="text-green-500 dark:text-green-400 text-sm font-bold leading-normal">Ready!</p>
+</div>
+<div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg flex-1 max-w-[80px]" data-alt="User avatar with a multicolored abstract gradient" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuByQCSTdJ9Yyk4fj778zt_l_MCIX9fagLDcqEAJvIQ2XyxpoJFuM8Z_ebcNxCbGAmd9Ubd5lBLvKkiSmAPe6PyhEOFg4bbvmyy8ErSn_kUPDpvfzaPdCD1djNAd6xpXmOaHfyDKyAqZgdzRlxaLW_vmzHx9JsOxxCDlPyOz3ceeZpbKScY81rePK7Osx96M1ysM7p80a5g2ECKgR5FRk-m1j8C1J9K8RHA3DOZ3dzi_S05J6NbPmQH7_dyf2H_QyznRQrALWYTE2KVu");'></div>
+</div>
+<div class="flex items-stretch justify-between gap-4 rounded-xl bg-white dark:bg-[#182d34] p-4 shadow-sm flex-1">
+<div class="flex flex-col gap-1 flex-[2_2_0px]">
+<p class="text-text-light dark:text-text-dark text-base font-bold leading-tight">Player 2</p>
+<p class="text-gray-500 dark:text-[#90bccb] text-sm font-normal leading-normal">Waiting...</p>
+</div>
+<div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg flex-1 max-w-[80px]" data-alt="User avatar with a purple and blue abstract pattern" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDTCOkjPGoqR8Snt3C4oekpexpu5h6GK-8s_65pK18KaaegDM0bxrbJWVgoqxnCR5E3yXBmqZJqPu3ugSBjSjM_hDVVI0wQOZWfw5Oe8jHTVZN3w0zNQMWRe436-trWGka5qL8cEvnLIGbSGI5L_8TxjObhHxRS8qdOUfsUo3pqfIKnvpX_TN1OIHrw3PQasVTZ57sWbnAPK95N2w2UiMDBUhIIrFreMEe24wCP0RF5DuxbIHgMYMHaEqXdgshaIqwBYZ-dyRBDHr8u");'></div>
+</div>
+</div>
+<div class="bg-white dark:bg-[#182d34] p-6 rounded-xl mt-6 shadow-sm">
+<h2 class="text-text-light dark:text-text-dark text-[22px] font-bold leading-tight tracking-[-0.015em] pb-4">Game Settings</h2>
+<div class="flex flex-col sm:flex-row gap-6">
+<div class="flex-[2_2_0px]">
+<h3 class="text-text-light/90 dark:text-text-dark/90 text-base font-bold leading-tight mb-3">Choose Difficulty</h3>
+<div class="grid grid-cols-3 gap-3">
+<button class="flex flex-col items-center justify-center gap-1 p-4 rounded-lg border-2 border-primary bg-primary/10 text-primary dark:bg-primary/20">
+<span class="font-bold">Easy</span>
+<span class="text-xs opacity-80">16 Characters</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-1 p-4 rounded-lg border-2 border-transparent bg-gray-100 dark:bg-black/20 text-text-light dark:text-text-dark hover:border-gray-300 dark:hover:border-gray-600">
+<span class="font-bold">Medium</span>
+<span class="text-xs opacity-60">24 Characters</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-1 p-4 rounded-lg border-2 border-transparent bg-gray-100 dark:bg-black/20 text-text-light dark:text-text-dark hover:border-gray-300 dark:hover:border-gray-600">
+<span class="font-bold">Hard</span>
+<span class="text-xs opacity-60">32 Characters</span>
+</button>
+</div>
+</div>
+<div class="flex-1">
+<h3 class="text-text-light/90 dark:text-text-dark/90 text-base font-bold leading-tight mb-3">Invite Player</h3>
+<div class="flex items-center gap-2 rounded-lg bg-gray-100 dark:bg-black/20 p-2">
+<input class="flex-1 bg-transparent border-none text-sm text-gray-600 dark:text-gray-300 focus:ring-0" readonly="" type="text" value="https://guesswho.io/join/A8X3K"/>
+<button class="flex items-center justify-center rounded-md h-9 px-3 bg-primary text-white text-sm font-bold gap-2">
+<span class="material-symbols-outlined" style="font-size: 16px;">content_copy</span> Copy
+                                        </button>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-8 flex flex-col sm:flex-row items-center justify-end gap-4">
+<button class="w-full sm:w-auto flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 bg-gray-200 dark:bg-[#223f49] text-text-light dark:text-text-dark gap-2 text-base font-bold leading-normal tracking-[0.015em] min-w-0 px-8">
+                                I'm Ready
+                            </button>
+<button class="w-full sm:w-auto flex max-w-[480px] cursor-not-allowed items-center justify-center overflow-hidden rounded-lg h-12 bg-disabled dark:bg-disabled/20 text-white dark:text-disabled/40 gap-2 text-base font-bold leading-normal tracking-[0.015em] min-w-0 px-8">
+                                Start Game
+                            </button>
+</div>
+</main>
+</div>
+</div>
+</div>
+</div>
+</body></html>

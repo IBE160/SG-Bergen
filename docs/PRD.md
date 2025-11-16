@@ -73,17 +73,7 @@ Following a successful MVP launch and the rollout of growth features, the long-t
 
 ---
 
-{{#if project_type_requirements}}
 
-## {{project_type}} Specific Requirements
-
-As a web application, "Digital Guess Who" has the following specific requirements:
-*   **Responsive Web Application:** The application must be a responsive web application, adapting to various screen sizes and devices.
-*   **Browser Compatibility:** The application must maintain a usable and clean layout on the latest versions of Chrome and Firefox on desktop.
-*   **Real-time Synchronization:** Game state changes, such as character eliminations and turn transitions, must be synchronized between players in real-time.
-
-
-{{/if}}
 
 ---
 

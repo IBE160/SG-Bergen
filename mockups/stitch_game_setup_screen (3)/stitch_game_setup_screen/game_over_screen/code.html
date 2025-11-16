@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Game Over - You Win!</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<style type="text/tailwindcss">
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#0db9f2",
+              "background-light": "#f5f8f8",
+              "background-dark": "#101e22",
+              "win": "#2ECC71", /* Bright Green for win state */
+              "win-text": "#1A202C"
+            },
+            fontFamily: {
+              "display": ["Be Vietnam Pro", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="relative flex min-h-screen w-full flex-col items-center justify-center p-4">
+<div class="layout-container flex h-full w-full grow flex-col items-center justify-center">
+<div class="layout-content-container flex w-full max-w-[560px] flex-col items-center gap-4 rounded-xl bg-background-light p-6 shadow-2xl dark:bg-[#182d34] sm:p-8">
+<!-- Result Graphic/Icon -->
+<div class="flex h-20 w-20 items-center justify-center rounded-full bg-win">
+<span class="material-symbols-outlined text-5xl text-win-text" data-icon="trophy">trophy</span>
+</div>
+<!-- Outcome Header -->
+<h1 class="text-center font-display text-[32px] font-bold leading-tight tracking-tight text-slate-900 dark:text-white sm:text-4xl">YOU WIN!</h1>
+<p class="text-center font-display text-base text-slate-600 dark:text-[#90bccb]">Congratulations, you guessed correctly!</p>
+<!-- Revealed Character Card -->
+<div class="w-full p-4 @container">
+<div class="flex flex-col items-stretch justify-start rounded-lg bg-slate-50 shadow-[0_0_4px_rgba(0,0,0,0.1)] dark:bg-[#101e22] @xl:flex-row @xl:items-start">
+<div class="aspect-video w-full rounded-lg bg-cover bg-center bg-no-repeat @xl:h-40 @xl:w-40 @xl:aspect-square" data-alt="Cartoon portrait of a man with a red hat and a long white beard." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCnU6zfyf1J5HdM4CIetc_YvGXN2p-38pYqloXkJUaeU19s9eWy1C7vHPwgYIG7nLwQpu9MfucPdAR1cOSi13uJxA8zwLRyXCB3i4ymIzwsTFgDV7tFcJOGXOn4MGhwJJs0Qk42keErXxuGEv8nrEzHGW996XseRhRII9tiKIXAEvNyRpNnlwnBY0nYvYYkYALveCdaA7S_lBNiswyRj91X5htM43cunAnfmesaljeO63aZzyijLLdABk1KIX_aHSebXn4-PHwzJF7Z");'></div>
+<div class="flex w-full min-w-72 grow flex-col items-stretch justify-center gap-1 p-4 @xl:py-4">
+<p class="font-display text-sm font-normal leading-normal text-slate-500 dark:text-[#90bccb]">Opponent's Choice</p>
+<p class="font-display text-lg font-bold leading-tight tracking-[-0.015em] text-slate-800 dark:text-white">Their character was...</p>
+<div class="flex items-end justify-between gap-3 pt-2">
+<div class="flex flex-col gap-1">
+<p class="font-display text-base font-medium leading-normal text-slate-700 dark:text-slate-200">Alex</p>
+<p class="font-display text-sm font-normal leading-normal text-slate-500 dark:text-[#90bccb]">The character with a red hat and a beard.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Game Stats Summary -->
+<div class="grid w-full grid-cols-1 gap-x-4 border-t border-solid border-slate-200 p-4 dark:border-t-[#315a68] sm:grid-cols-2">
+<div class="flex flex-col gap-1 py-4 sm:pr-2">
+<p class="font-display text-sm font-normal leading-normal text-slate-500 dark:text-[#90bccb]">Time Played</p>
+<p class="font-display text-sm font-medium leading-normal text-slate-800 dark:text-white">02:45</p>
+</div>
+<div class="border-t border-solid border-slate-200 py-4 dark:border-t-[#315a68] sm:border-t-0 sm:pl-2">
+<div class="flex flex-col gap-1">
+<p class="font-display text-sm font-normal leading-normal text-slate-500 dark:text-[#90bccb]">Guesses Made</p>
+<p class="font-display text-sm font-medium leading-normal text-slate-800 dark:text-white">5</p>
+</div>
+</div>
+</div>
+<!-- Button Group -->
+<div class="flex w-full max-w-[480px] flex-col items-stretch gap-3 px-4 pb-3 pt-3">
+<button class="flex h-12 min-w-[84px] max-w-[480px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-win px-5 text-base font-bold leading-normal tracking-[0.015em] text-win-text transition-opacity hover:opacity-90">
+<span class="truncate">Play Again</span>
+</button>
+<button class="flex h-12 min-w-[84px] max-w-[480px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-slate-200 px-5 text-base font-bold leading-normal tracking-[0.015em] text-slate-700 transition-colors hover:bg-slate-300 dark:bg-[#223f49] dark:text-white dark:hover:bg-[#315a68]">
+<span class="truncate">Return to Main Menu</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

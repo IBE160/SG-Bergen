@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Digital Guess Who?</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#4A90E2", // vibrant, friendly blue
+              accent: "#F5A623", // warm, energetic yellow/orange
+              "background-light": "#F8F9FA", // soft, off-white
+              "background-dark": "#101e22", // dark theme bg
+              "text-light": "#333333", // dark grey for light mode
+              "text-dark": "#e2e8f0", // light grey for dark mode
+            },
+            fontFamily: {
+              display: ["Be Vietnam Pro", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.5rem", // increased default
+              lg: "0.75rem",
+              xl: "1rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
+<div class="relative flex min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
+<div class="w-full max-w-4xl">
+<header class="mb-8 text-center">
+<div class="inline-flex items-center gap-3">
+<span class="material-symbols-outlined text-4xl text-primary"> groups </span>
+<h1 class="text-3xl font-bold tracking-tight sm:text-4xl">Digital Guess Who?</h1>
+</div>
+<p class="mt-2 text-base text-text-light/80 dark:text-text-dark/80">The classic guessing game, now online! Connect with a friend and find out who's who.</p>
+</header>
+<div class="overflow-hidden rounded-xl bg-white dark:bg-background-dark/50 shadow-lg ring-1 ring-black/5 dark:ring-white/10">
+<div class="flex flex-col md:flex-row md:items-center p-8 lg:p-12 gap-8 md:gap-12">
+<div class="flex flex-col items-center justify-center gap-4 text-center flex-1">
+<div class="flex flex-col items-center gap-2">
+<h2 class="text-2xl font-bold tracking-tight">Start a New Game</h2>
+<p class="text-sm text-text-light/70 dark:text-text-dark/70 max-w-xs">This will generate a unique code to share with a friend.</p>
+</div>
+<button class="flex w-full max-w-xs cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] transition-transform hover:scale-105">
+<span class="truncate">Create New Game</span>
+</button>
+</div>
+<div class="relative block md:hidden">
+<div aria-hidden="true" class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-slate-200 dark:border-slate-200/20"></div>
+</div>
+<div class="relative flex justify-center">
+<span class="bg-white dark:bg-background-dark/50 px-3 text-sm font-medium text-text-light/70 dark:text-text-dark/70">OR</span>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center gap-4 text-center flex-1">
+<div class="flex flex-col items-center gap-2">
+<h2 class="text-2xl font-bold tracking-tight">Join an Existing Game</h2>
+<p class="text-sm text-text-light/70 dark:text-text-dark/70 max-w-xs">Enter the game code you received from your friend below.</p>
+</div>
+<div class="w-full max-w-xs">
+<label class="flex flex-col min-w-40 h-14 w-full">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-slate-200/20 focus-within:ring-2 focus-within:ring-primary">
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-l-lg bg-transparent text-text-light dark:text-text-dark focus:outline-0 focus:ring-0 border-none h-full placeholder:text-text-light/50 dark:placeholder:text-text-dark/50 px-4 text-base font-normal leading-normal" placeholder="Enter Game Code" value=""/>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-r-lg h-full px-5 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] transition-opacity hover:opacity-90">
+<span class="truncate">Join</span>
+</button>
+</div>
+</label>
+</div>
+</div>
+</div>
+</div>
+<section class="mt-12 w-full max-w-2xl mx-auto">
+<details class="group rounded-lg bg-white/50 dark:bg-background-dark/30 p-6 ring-1 ring-black/5 dark:ring-white/10 open:ring-primary dark:open:ring-primary">
+<summary class="flex cursor-pointer list-none items-center justify-between font-medium">
+<h3 class="text-lg font-bold">How to Play</h3>
+<span class="transition group-open:rotate-180">
+<span class="material-symbols-outlined">expand_more</span>
+</span>
+</summary>
+<div class="mt-4 text-text-light/80 dark:text-text-dark/80">
+<ol class="list-decimal space-y-2 pl-5">
+<li><span class="font-bold">Get your character:</span> At the start of the game, you and your opponent will each be assigned a secret character from the board.</li>
+<li><span class="font-bold">Ask yes/no questions:</span> Take turns asking questions that can only be answered with "yes" or "no" to narrow down the possibilities. (e.g., "Does your character have glasses?").</li>
+<li><span class="font-bold">Guess to win:</span> When you think you know who their character is, make your guess on your turn. If you're right, you win! But be careful, if you're wrong, you lose the game.</li>
+</ol>
+</div>
+</details>
+</section>
+</div>
+<footer class="absolute bottom-4 text-center text-xs text-text-light/60 dark:text-text-dark/60">
+<a class="hover:text-primary" href="#">About</a> • <a class="hover:text-primary" href="#">Contact</a>
+</footer>
+</div>
+
+</body></html>

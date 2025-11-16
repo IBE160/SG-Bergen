@@ -200,7 +200,7 @@ As a user,
 I want to secretly select my character from the available grid,
 So that the game can begin.
 
-**Traceability:** FR2.1
+**Traceability:** FR2.1, FR2.2
 
 **Acceptance Criteria:**
 
@@ -276,7 +276,7 @@ As a user,
 I want to make a guess about my opponent's secret character and see the game outcome,
 So that I know if I won or lost.
 
-**Traceability:** FR3.4, FR3.6
+**Traceability:** FR3.4
 
 **Acceptance Criteria:**
 

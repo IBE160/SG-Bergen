@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Digital Guess Who</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#0db9f2",
+              "background-light": "#f5f8f8",
+              "background-dark": "#101e23",
+            },
+            fontFamily: {
+              "display": ["Be Vietnam Pro", "sans-serif"]
+            },
+            borderRadius: { "DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px" },
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24
+      }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<!-- TopNavBar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-white/10 px-6 sm:px-10 py-3 bg-background-light dark:bg-background-dark/50 sticky top-0 z-10 backdrop-blur-sm">
+<div class="flex items-center gap-4 text-gray-800 dark:text-white">
+<div class="size-6 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M12.0799 24L4 19.2479L9.95537 8.75216L18.04 13.4961L18.0446 4H29.9554L29.96 13.4961L38.0446 8.75216L44 19.2479L35.92 24L44 28.7521L38.0446 39.2479L29.96 34.5039L29.9554 44H18.0446L18.04 34.5039L9.95537 39.2479L4 28.7521L12.0799 24Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-gray-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Digital Guess Who</h2>
+</div>
+<div class="flex gap-2">
+<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-background-dark text-sm font-bold leading-normal tracking-[0.015em]">
+<span class="truncate">New Game</span>
+</button>
+<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-200 dark:bg-white/10 text-gray-800 dark:text-white text-sm font-bold leading-normal tracking-[0.015em]">
+<span class="truncate">How to Play</span>
+</button>
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-gray-200 dark:bg-white/10 text-gray-800 dark:text-white gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5">
+<span class="material-symbols-outlined text-gray-700 dark:text-white">info</span>
+</button>
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-gray-200 dark:bg-white/10 text-gray-800 dark:text-white gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5">
+<span class="material-symbols-outlined text-gray-700 dark:text-white">settings</span>
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-grow p-4 lg:p-8">
+<div class="flex flex-col xl:flex-row gap-8 max-w-screen-2xl mx-auto">
+<!-- Player's Board -->
+<div class="flex-grow xl:w-2/3">
+<div class="bg-gray-200/50 dark:bg-white/5 rounded-xl p-4 md:p-6">
+<h3 class="text-gray-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] px-2 pb-4">Your Board</h3>
+<div class="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-3">
+<div class="relative bg-cover bg-center flex flex-col gap-3 rounded-lg justify-end p-3 aspect-[3/4] cursor-pointer group" data-alt="A portrait of Anne" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 40%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuC1pCgNWRe8fkg_zMi0t9ot-A16IpMwUJe_h4RU2nyNCRFVMPR9wiVJ7PeKjVhfGakssocNyGuuT3buiBJ0siuxK_Gqf97kvbRyfvsvtEqdlO0LSk61NCHOGtAJEH4a8sDtGsYqXSevn-SNb8koXPfrqzG4PxAbQCWqZrUbnIZCbp9KZPrn5op18fYeKRlG7-UEoxr_XnD89LjSAmN2vkj-o-0haiH2Qafdl0NOqGXrAY494mTe59ItJlYdHk1yAf9mVxkyKR9AmGGw");'>
+<div class="absolute inset-0 bg-red-500/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm rounded-lg">
+<span class="material-symbols-outlined text-white text-5xl">cancel</span>
+</div>
+<p class="text-white text-base font-bold leading-tight relative z-[1]">Anne</p>
+</div>
+<div class="relative bg-cover bg-center flex flex-col gap-3 rounded-lg justify-end p-3 aspect-[3/4] cursor-pointer group opacity-40 grayscale" data-alt="A portrait of Bernard, eliminated" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 40%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuB35abp1cFbOAyIc8aa-jGwUxFt8RJHaN5ezLOjId-jZaM44ZyVQd8DPfVsrAUdXJjHeyFkqi1K5DL3KejvxQryoNDbMgym0VqfVWI_GZw6V5Cn3T_1OqOnXkR36AFOxRuxs646_3X48a-3VR38YA5uB_ZR0-RbEgtdeu4dDpf6NYjXF83ZHNzYYdVoEtLk3Irn3Xy1lU2kyers7qfVwc-W4btK_FGSjqLJm1o33CNHypqgmnY1zQhpSEgG8IvOyc7nuebISlSPz0Wo");'>
+<div class="absolute inset-0 bg-red-500/70 opacity-100 flex items-center justify-center backdrop-blur-sm rounded-lg">
+<span class="material-symbols-outlined text-white text-5xl">cancel</span>
+</div>
+<p class="text-white text-base font-bold leading-tight relative z-[1]">Bernard</p>
+</div>
+<div class="relative bg-cover bg-center flex flex-col gap-3 rounded-lg justify-end p-3 aspect-[3/4] cursor-pointer group" data-alt="A portrait of Claire" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 40%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuDCDgAHKnu8IU5ezIrfeSlqCrq4rLeJVk6MCSuvxdfFESW6OBTrqG_A6veX7MIQvCj56vgBGCq6fU9y0TU_JPeVGCA3VtuMjYG-JSKlBNspHDBUyIENeisj3ySRwqMaHoE1kypeN5ohCwMY-4SYHKoXBgGpJ8uP8885n1s-dAZHIER950oEpFU9ziH8XytEeGPnmF_uswsUPpumE6ro7udYdX-G8PWHLwAsaA7MmmA0_idHNJnhxEbXD0ovhBKoAf2otlam2Um6MwCw");'>
+<div class="absolute inset-0 bg-red-500/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm rounded-lg">
+<span class="material-symbols-outlined text-white text-5xl">cancel</span>
+</div>
+<p class="text-white text-base font-bold leading-tight relative z-[1]">Claire</p>
+</div>
+<div class="relative bg-cover bg-center flex flex-col gap-3 rounded-lg justify-end p-3 aspect-[3/4] cursor-pointer group" data-alt="A portrait of David" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 40%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuAd_-NEFGi9fm_j65x6nR8gzczn62wWx3TBmHLi7ui_QoOaG5TOhLx_cnS1lsTYmOKZ6TSlCC69627esXmQFOseCi40KwQuNO3zHaMREo83ZguZcngMfprqCrCzOlTV84g5ezm-ae_vKgOZ1izlXgpSgBRT-cf7lNu6lgeLJNRMajHVpFAwGZ0oyg6Fg4_qHmwVFolrKRE_uKymqY98Y2yBmpXwN9MOkhr4WVw1LwxIwBPge4DNMW6SuaJslX_smicIifxYIDSJg_Uc");'>
+<div class="absolute inset-0 bg-red-500/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm rounded-lg">
+<span class="material-symbols-outlined text-white text-5xl">cancel</span>
+</div>
+<p class="text-white text-base font-bold leading-tight relative z-[1]">David</p>
+</div>
+<div class="relative bg-cover bg-center flex flex-col gap-3 rounded-lg justify-end p-3 aspect-[3/4] cursor-pointer group" data-alt="A portrait of Emma" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 40%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuAIyFtnWrXOWuxQEZYROpV2AKHQt8EEibl8M-5_trJJFdqg8BP8fEDyAr9Wri1e4oIcA6rbHDPLlVHBFyquQOAM36sFZwXikswBtnl5uxLDZStW0IyS4rYPoC2QL5Kzn-q1yNvmOyCO15dDHfIIEPHWQXcouKAMA38_w95iYIUx_qmnmb_t8wDGCQ6sUOmvaPppYq-wl3cEXAtdJ_auGILO52vdcs111rywKnbfkgOGXHmVr9ZzlqJWbGA_UUH-co9NDYI4Y3nqg3Xv");'>
+<div class="absolute inset-0 bg-red-500/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm rounded-lg">
+<span class="material-symbols-outlined text-white text-5xl">cancel</span>
+</div>
+<p class="text-white text-base font-bold leading-tight relative z-[1]">Emma</p>
+</div>
+<div class="relative bg-cover bg-center flex flex-col gap-3 rounded-lg justify-end p-3 aspect-[3/4] cursor-pointer group opacity-40 grayscale" data-alt="A portrait of Frank, eliminated" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 40%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuBomrJ2o6IUKqR6zMmm3OJe7xCUN44vgbV49-0riEh3Fy0u8Inhg2EFf97CDlY21VWaAG7HRwZtXbFXnwhD5sdtDGvN6cVJ204ZbXY28OQjdFNimBgr_8m6_xEIUsV1ILvnoKVd89cg2iaGipgCeCl4k5LQH3j8ewTpU-z5GW-geLteBRI_9MI3IOEE_nnsXMYw7u6XVjOwhLJmFqzAkRpEiRqK6MiHFc7Mux-CYapzziIOpgGEFwihunQIXJ3OSV8oYKZc6nSj6LWA");'>
+<div class="absolute inset-0 bg-red-500/70 opacity-100 flex items-center justify-center backdrop-blur-sm rounded-lg">
+<span class="material-symbols-outlined text-white text-5xl">cancel</span>
+</div>
+<p class="text-white text-base font-bold leading-tight relative z-[1]">Frank</p>
+</div>
+<div class="relative bg-cover bg-center flex flex-col gap-3 rounded-lg justify-end p-3 aspect-[3/4] cursor-pointer group" data-alt="A portrait of Grace" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 40%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuBWEkZD5hM06WWKMEB-WzP2DLG6kfAgDA16UAqJ2afcELSRX19Zy5fbCIGvgr9Op2gLcJuVO_Lu2epoNMOx2oS7LYsGfIO6evVKLyagasIItNS6qipT_LGBPCjmlgV-ug1kKD4GF0SVwrp-jNZAWWmDk86JN-F9300ayUCt617CYi04kNAHje0rnx2kl9Il73FVnLo5ubUNolNe5_32XoptiHiMswqfjvq9jl9AQ0xFBJ4-pYbEGGcaVxEzjq_7R-Hwz4uUonRfuatZ");'>
+<div class="absolute inset-0 bg-red-500/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm rounded-lg">
+<span class="material-symbols-outlined text-white text-5xl">cancel</span>
+</div>
+<p class="text-white text-base font-bold leading-tight relative z-[1]">Grace</p>
+</div>
+<div class="relative bg-cover bg-center flex flex-col gap-3 rounded-lg justify-end p-3 aspect-[3/4] cursor-pointer group" data-alt="A portrait of Henry" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 40%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuBvaqQb1rWd2W7QLOmNyA9pRjBzRpqS8XVgZ8SiEVCdpjuJHPgTmGkx-OwYfhsgnNTIt7E-LdbFMISsw0-Zethn0U4iVXy-L0APZYg_Dbu2lJMW4Cnm9QVjhy77_5R5a0ZR9At3G4P80VC1klUcCPZybY4LjEZ49SFwgI8Z8WrmOakSLfiyNZA4J359V3-JfQbxzysyWAZkuAHn6U0p8PJ-Z2dTCzOntd3QalYECTq1h8q-znHaSdRD-YL_mTgzpIj4ovTZxawECI3J");'>
+<div class="absolute inset-0 bg-red-500/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm rounded-lg">
+<span class="material-symbols-outlined text-white text-5xl">cancel</span>
+</div>
+<p class="text-white text-base font-bold leading-tight relative z-[1]">Henry</p>
+</div>
+<div class="relative bg-cover bg-center flex flex-col gap-3 rounded-lg justify-end p-3 aspect-[3/4] cursor-pointer group" data-alt="A portrait of Isabella" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 40%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuC9MVJ-lkapFNQFmMBXYSg1ZgLusqkNSayyRxD2AIOjJ9Fyh8cujQA6G4_pe45I4HZzQAaHJBZB4kj_2LWuoPDrdy0iU_Ir9r9CM8SOwh-rAqu_Qsnac_DucSxVIMFOmw2mHr5u8R-vX-WkTV70fYmnewYlVvIJ3OMQrlRShEEp67raekkBfHvaW2RG8dNu30HLktlFnSYZtDwTtAcfVLTRe8JN8klryhOyr3E9-ddSKE0QXF87K0GiXwIi02xIgPf_U82vdLcY-Q76");'>
+<div class="absolute inset-0 bg-red-500/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm rounded-lg">
+<span class="material-symbols-outlined text-white text-5xl">cancel</span>
+</div>
+<p class="text-white text-base font-bold leading-tight relative z-[1]">Isabella</p>
+</div>
+<div class="relative bg-cover bg-center flex flex-col gap-3 rounded-lg justify-end p-3 aspect-[3/4] cursor-pointer group" data-alt="A portrait of Jack" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 40%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuA2fK72dTYMl40_5bJeD_CsCFpTdNoXQIIS6Sxr8w6JkArahp6CUXnBdp8-pRmYXYGI4FhkK_-UbQeGDQ41zC1z9zv2CzvdKYcbZpetQ5hggeFKR8pdkQxx8RwBkNZprMOvMTOZvzof5MJbdrPWIITlv-pk4cSqXwZtDoNkPrOo_XSM-s0C3RC1GsutW1DEyauGZ8nlkmHjorUVNk5wOPHMZj-UV8P5vPYhgMY_qbua5DPlUDqlPOk-1qyTYx2cwRz3hf1NHc-X3aKS");'>
+<div class="absolute inset-0 bg-red-500/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm rounded-lg">
+<span class="material-symbols-outlined text-white text-5xl">cancel</span>
+</div>
+<p class="text-white text-base font-bold leading-tight relative z-[1]">Jack</p>
+</div>
+<div class="relative bg-cover bg-center flex flex-col gap-3 rounded-lg justify-end p-3 aspect-[3/4] cursor-pointer group opacity-40 grayscale" data-alt="A portrait of Kate, eliminated" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 40%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuCh07GSNfj2rVwv5ZxXQJFzO3XInrm9feUDeSztp2_5snQ2OcsuJMb-hGiMT8EjT6eWzozkAeMeaoeEcvB5pPeS1Tm1MSjUa5hD1ItmGrDEJ1Si0ddpOkpqeWnX7R4Rrxx7bgRTaCxcFY8ylT58WtK3YNQgueteEPehrGCiR-2lZ1v7bCHAbvvLdMT3BS8kFSYp7UriwMafbzW1BbtdWlhLADh6d3R5AfkseC1ZVAuS1nEjaBeydaKcr3rbpu5-6HRxgkVf6gElxKAn");'>
+<div class="absolute inset-0 bg-red-500/70 opacity-100 flex items-center justify-center backdrop-blur-sm rounded-lg">
+<span class="material-symbols-outlined text-white text-5xl">cancel</span>
+</div>
+<p class="text-white text-base font-bold leading-tight relative z-[1]">Kate</p>
+</div>
+<div class="relative bg-cover bg-center flex flex-col gap-3 rounded-lg justify-end p-3 aspect-[3/4] cursor-pointer group" data-alt="A portrait of Leo" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 40%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuClgHrds9_jDwUW0YMQZtBOQhQW2z2lqRvQF5LU2NyrN5Gv4-aCzcD3UhjYvyVvxKruo2JDLGi2rZ1He9eezsRua5aHrYCxcmnlbvYj5l_3SbGC1d6tNmEQCDwCiBNme5bClbGAxtbSUQX0R3h-2v2wb-oAwcGusyqDukAwvk5A74q_d5YbUDiqZvgHWFQDl9CkOcm3WczU3RPrFQsh4dAYALpfrgnlFfwL3bJ4pxbibBG4vL53B78g-D010fYHj0AZ44xeJon6ASr5");'>
+<div class="absolute inset-0 bg-red-500/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm rounded-lg">
+<span class="material-symbols-outlined text-white text-5xl">cancel</span>
+</div>
+<p class="text-white text-base font-bold leading-tight relative z-[1]">Leo</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Side Panel: Opponent's Board & Game Status -->
+<div class="xl:w-1/3 flex flex-col gap-8">
+<div class="bg-primary/10 dark:bg-primary/20 rounded-xl p-6 text-center">
+<h1 class="text-gray-900 dark:text-white tracking-light text-2xl md:text-3xl font-bold leading-tight">Your Turn to Ask</h1>
+</div>
+<div class="bg-gray-200/50 dark:bg-white/5 rounded-xl p-4 md:p-6">
+<h3 class="text-gray-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] px-2 pb-4">Opponent's Board</h3>
+<div class="grid grid-cols-6 gap-2">
+<!-- 24 hidden cards -->
+<div class="bg-gray-300 dark:bg-white/10 flex items-center justify-center rounded-lg aspect-[3/4]"><span class="material-symbols-outlined text-gray-500 dark:text-white/40 text-4xl">question_mark</span></div>
+<div class="bg-gray-300 dark:bg-white/10 flex items-center justify-center rounded-lg aspect-[3/4]"><span class="material-symbols-outlined text-gray-500 dark:text-white/40 text-4xl">question_mark</span></div>
+<div class="bg-gray-300 dark:bg-white/10 flex items-center justify-center rounded-lg aspect-[3/4]"><span class="material-symbols-outlined text-gray-500 dark:text-white/40 text-4xl">question_mark</span></div>
+<div class="bg-gray-300 dark:bg-white/10 flex items-center justify-center rounded-lg aspect-[3/4]"><span class="material-symbols-outlined text-gray-500 dark:text-white/40 text-4xl">question_mark</span></div>
+<div class="bg-gray-300 dark:bg-white/10 flex items-center justify-center rounded-lg aspect-[3/4]"><span class="material-symbols-outlined text-gray-500 dark:text-white/40 text-4xl">question_mark</span></div>
+<div class="bg-gray-300 dark:bg-white/10 flex items-center justify-center rounded-lg aspect-[3/4]"><span class="material-symbols-outlined text-gray-500 dark:text-white/40 text-4xl">question_mark</span></div>
+<div class="bg-gray-300 dark:bg-white/10 flex items-center justify-center rounded-lg aspect-[3/4]"><span class="material-symbols-outlined text-gray-500 dark:text-white/40 text-4xl">question_mark</span></div>
+<div class="bg-gray-300 dark:bg-white/10 flex items-center justify-center rounded-lg aspect-[3/4]"><span class="material-symbols-outlined text-gray-500 dark:text-white/40 text-4xl">question_mark</span></div>
+<div class="bg-gray-300 dark:bg-white/10 flex items-center justify-center rounded-lg aspect-[3/4]"><span class="material-symbols-outlined text-gray-500 dark:text-white/40 text-4xl">question_mark</span></div>
+<div class="bg-gray-300 dark:bg-white/10 flex items-center justify-center rounded-lg aspect-[3/4]"><span class="material-symbols-outlined text-gray-500 dark:text-white/40 text-4xl">question_mark</span></div>
+<div class="bg-gray-300 dark:bg-white/10 flex items-center justify-center rounded-lg aspect-[3/4]"><span class="material-symbols-outlined text-gray-500 dark:text-white/40 text-4xl">question_mark</span></div>
+<div class="bg-gray-300 dark:bg-white/10 flex items-center justify-center rounded-lg aspect-[3/4]"><span class="material-symbols-outlined text-gray-500 dark:text-white/40 text-4xl">question_mark</span></div>
+<div class="bg-gray-300 dark:bg-white/10 flex items-center justify-center rounded-lg aspect-[3/4]"><span class="material-symbols-outlined text-gray-500 dark:text-white/40 text-4xl">question_mark</span></div>
+<div class="bg-gray-300 dark:bg-white/10 flex items-center justify-center rounded-lg aspect-[3/4]"><span class="material-symbols-outlined text-gray-500 dark:text-white/40 text-4xl">question_mark</span></div>
+<div class="bg-gray-300 dark:bg-white/10 flex items-center justify-center rounded-lg aspect-[3/4]"><span class="material-symbols-outlined text-gray-500 dark:text-white/40 text-4xl">question_mark</span></div>
+<div class="bg-gray-300 dark:bg-white/10 flex items-center justify-center rounded-lg aspect-[3/4]"><span class="material-symbols-outlined text-gray-500 dark:text-white/40 text-4xl">question_mark</span></div>
+<div class="bg-gray-300 dark:bg-white/10 flex items-center justify-center rounded-lg aspect-[3/4]"><span class="material-symbols-outlined text-gray-500 dark:text-white/40 text-4xl">question_mark</span></div>
+<div class="bg-gray-300 dark:bg-white/10 flex items-center justify-center rounded-lg aspect-[3/4]"><span class="material-symbols-outlined text-gray-500 dark:text-white/40 text-4xl">question_mark</span></div>
+</div>
+</div>
+<button class="w-full flex min-w-[84px] cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg h-14 px-4 bg-yellow-400 dark:bg-yellow-500 text-background-dark text-lg font-bold leading-normal tracking-[0.015em]">
+<span class="material-symbols-outlined">psychology</span>
+<span class="truncate">Make a Guess</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Question/Chat Panel -->
+<footer class="sticky bottom-0 mt-auto bg-gray-100 dark:bg-background-dark/80 backdrop-blur-lg border-t border-gray-300 dark:border-white/10 p-4">
+<div class="max-w-screen-2xl mx-auto flex flex-col md:flex-row gap-4">
+<div class="flex-grow md:w-1/2 flex flex-col gap-2">
+<p class="text-sm font-semibold text-gray-600 dark:text-gray-400 px-2">Chat History</p>
+<div class="h-24 overflow-y-auto space-y-2 rounded-lg bg-gray-200 dark:bg-white/5 p-3 text-sm">
+<div>
+<span class="font-bold text-primary">You asked:</span>
+<span class="text-gray-800 dark:text-gray-200"> "Does your character have a beard?"</span>
+</div>
+<div>
+<span class="font-bold text-red-500">Opponent answered:</span>
+<span class="text-gray-800 dark:text-gray-200"> No.</span>
+</div>
+<div>
+<span class="font-bold text-gray-500 dark:text-gray-400">Opponent asked:</span>
+<span class="text-gray-800 dark:text-gray-200"> "Is your character a woman?"</span>
+</div>
+<div>
+<span class="font-bold text-green-500">You answered:</span>
+<span class="text-gray-800 dark:text-gray-200"> Yes.</span>
+</div>
+</div>
+</div>
+<div class="flex-grow md:w-1/2 flex flex-col gap-2">
+<p class="text-sm font-semibold text-gray-600 dark:text-gray-400 px-2">Ask a Question</p>
+<div class="flex items-center gap-2">
+<input class="flex-grow h-12 px-4 bg-gray-200 dark:bg-white/10 border-transparent focus:border-primary focus:ring-primary rounded-lg text-gray-800 dark:text-white" placeholder="Ask a yes/no question..." type="text"/>
+<button class="flex items-center justify-center rounded-lg h-12 px-6 bg-primary text-background-dark font-bold">Send</button>
+</div>
+<div class="flex items-center gap-2 mt-1">
+<button class="w-full flex items-center justify-center gap-2 rounded-lg h-12 bg-green-500/20 dark:bg-green-500/30 text-green-700 dark:text-green-300 font-bold opacity-50 cursor-not-allowed">
+<span class="material-symbols-outlined">check_circle</span> Yes
+                            </button>
+<button class="w-full flex items-center justify-center gap-2 rounded-lg h-12 bg-red-500/20 dark:bg-red-500/30 text-red-700 dark:text-red-300 font-bold opacity-50 cursor-not-allowed">
+<span class="material-symbols-outlined">cancel</span> No
+                            </button>
+</div>
+</div>
+</div>
+</footer>
+</div>
+</div>
+</body></html>
