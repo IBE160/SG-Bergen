@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Guess Who - Color Theme Explorer</title>
+    <style>
+        :root {
+            --primary-blue: #4299E1;
+            --secondary-green: #48BB78;
+            --tertiary-yellow: #ECC94B;
+            --destructive-red: #E53E3E;
+            --background: #1A202C;
+            --card-background: #2D3748;
+            --text-color: #FFFFFF;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        body {
+            font-family: var(--font-family);
+            background-color: var(--background);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1, h2, h3 {
+            text-align: center;
+            color: var(--text-color);
+        }
+        .section {
+            background-color: var(--card-background);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 800px;
+        }
+        .color-palette {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .color-swatch {
+            width: 120px;
+            height: 120px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-start;
+            padding: 10px;
+            font-size: 0.9em;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        .color-swatch span {
+            display: block;
+            margin-top: 5px;
+        }
+        .swatch-primary-blue { background-color: var(--primary-blue); }
+        .swatch-secondary-green { background-color: var(--secondary-green); }
+        .swatch-tertiary-yellow { background-color: var(--tertiary-yellow); }
+        .swatch-destructive-red { background-color: var(--destructive-red); }
+        .swatch-background { background-color: var(--background); }
+        .swatch-card-background { background-color: var(--card-background); }
+        .swatch-text-color { background-color: var(--text-color); color: #333; text-shadow: none; }
+
+        .component-examples {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+        .button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: var(--font-family);
+            transition: background-color 0.2s ease;
+        }
+        .button-primary { background-color: var(--primary-blue); color: var(--text-color); }
+        .button-primary:hover { background-color: #5aacef; }
+        .button-secondary { background-color: var(--secondary-green); color: var(--text-color); }
+        .button-secondary:hover { background-color: #63d18e; }
+        .button-destructive { background-color: var(--destructive-red); color: var(--text-color); }
+        .button-destructive:hover { background-color: #ff6b6b; }
+        .button-warning { background-color: var(--tertiary-yellow); color: #333; }
+        .button-warning:hover { background-color: #ffe070; }
+        .button-disabled { background-color: #555; color: #aaa; cursor: not-allowed; }
+
+        .input-field {
+            background-color: var(--background);
+            border: 1px solid var(--primary-blue);
+            padding: 10px;
+            border-radius: 8px;
+            color: var(--text-color);
+            font-family: var(--font-family);
+            width: 300px;
+        }
+        .input-field::placeholder {
+            color: #888;
+        }
+        .card-example {
+            background-color: var(--card-background);
+            padding: 20px;
+            border-radius: 12px;
+            width: 300px;
+            text-align: center;
+        }
+        .card-example h3 {
+            margin-top: 0;
+            color: var(--primary-blue);
+        }
+        .card-example p {
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Digital Guess Who - Color Theme Explorer</h1>
+
+    <div class="section">
+        <h2>Color Palette</h2>
+        <div class="color-palette">
+            <div class="color-swatch swatch-primary-blue">Primary Blue<span>#4299E1</span></div>
+            <div class="color-swatch swatch-secondary-green">Secondary Green<span>#48BB78</span></div>
+            <div class="color-swatch swatch-tertiary-yellow">Tertiary Yellow<span>#ECC94B</span></div>
+            <div class="color-swatch swatch-destructive-red">Destructive Red<span>#E53E3E</span></div>
+            <div class="color-swatch swatch-background">Background<span>#1A202C</span></div>
+            <div class="color-swatch swatch-card-background">Card Background<span>#2D3748</span></div>
+            <div class="color-swatch swatch-text-color">Text Color<span>#FFFFFF</span></div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Component Examples</h2>
+        <div class="component-examples">
+            <button class="button button-primary">Primary Button</button>
+            <button class="button button-secondary">Secondary Button</button>
+            <button class="button button-warning">Warning Button</button>
+            <button class="button button-destructive">Destructive Button</button>
+            <button class="button button-disabled">Disabled Button</button>
+
+            <input type="text" class="input-field" placeholder="Text Input Example">
+
+            <div class="card-example">
+                <h3>Card Title</h3>
+                <p>This is an example of a card using the defined background and text colors.</p>
+                <button class="button button-primary">Action</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

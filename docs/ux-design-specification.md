@@ -38,7 +38,7 @@ These principles will guide every design decision to ensure the app consistently
 
 ### 2.3 Novel UX Patterns
 
-{{novel_ux_patterns}}
+No truly novel UX patterns were identified that required custom design from scratch. The core gameplay leverages established patterns for turn-based interaction and visual feedback.
 
 ---
 
@@ -282,15 +282,11 @@ This document provides a solid foundation for the development phase, ensuring th
 
 This UX Design Specification was created through visual collaboration:
 
-- **Color Theme Visualizer**: {{color_themes_html}}
-  - Interactive HTML showing all color theme options explored
-  - Live UI component examples in each theme
-  - Side-by-side comparison and semantic color usage
+- **Color Theme Visualizer**: [docs/ux-color-themes.html](./ux-color-themes.html)
+  - Interactive HTML showcasing the chosen color palette applied to various UI components.
 
-- **Design Direction Mockups**: {{design_directions_html}}
-  - Interactive HTML with 6-8 complete design approaches
-  - Full-screen mockups of key screens
-  - Design philosophy and rationale for each direction
+- **Design Direction Mockups**: [docs/ux-design-directions.html](./ux-design-directions.html)
+  - Interactive HTML presenting the confirmed design direction across key screens.
 
 ### Optional Enhancement Deliverables
 
