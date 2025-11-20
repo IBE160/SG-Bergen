@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Guess Who - Key Screens Showcase</title>
+    <style>
+        :root {
+            --primary-blue: #4299E1;
+            --secondary-green: #48BB78;
+            --tertiary-yellow: #ECC94B;
+            --destructive-red: #E53E3E;
+            --background: #1A202C;
+            --card-background: #2D3748;
+            --text-color: #FFFFFF;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        body {
+            font-family: var(--font-family);
+            background-color: var(--background);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .nav {
+            margin-bottom: 20px;
+        }
+        .nav button {
+            background-color: var(--card-background);
+            color: var(--text-color);
+            border: 1px solid var(--primary-blue);
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+        .nav button.active {
+            background-color: var(--primary-blue);
+        }
+        .screen {
+            display: none;
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+            border: 1px solid var(--card-background);
+            border-radius: 12px;
+            background-color: var(--background);
+        }
+        .screen.active {
+            display: block;
+        }
+        h1, h2, h3 {
+            text-align: center;
+        }
+        .button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .button-primary {
+            background-color: var(--primary-blue);
+            color: var(--text-color);
+        }
+        .button-secondary {
+            background-color: var(--secondary-green);
+            color: var(--text-color);
+        }
+        .button-destructive {
+            background-color: var(--destructive-red);
+            color: var(--text-color);
+        }
+        .button-warning {
+            background-color: var(--tertiary-yellow);
+            color: #000;
+        }
+        .card {
+            background-color: var(--card-background);
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        /* Lobby Screen */
+        .lobby-container {
+            display: flex;
+            justify-content: space-around;
+            gap: 20px;
+        }
+        .lobby-option {
+            flex: 1;
+        }
+
+        /* Game Setup Screen */
+        .game-setup-container .player-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .game-setup-container .difficulty-options {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Gameplay Screen */
+        .gameplay-container {
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 20px;
+        }
+        .character-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+        }
+        .character-card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 5px;
+            text-align: center;
+        }
+        .character-card img {
+            width: 100%;
+            border-radius: 4px;
+        }
+        .character-card.eliminated img {
+            filter: grayscale(100%);
+            opacity: 0.5;
+        }
+        .chat-history {
+            height: 100px;
+            overflow-y: auto;
+            border: 1px solid var(--card-background);
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* Game Over Screen */
+        .game-over-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Digital Guess Who - Key Screens Showcase</h1>
+
+    <div class="nav">
+        <button onclick="showScreen('lobby')" class="active">Lobby</button>
+        <button onclick="showScreen('setup')">Game Setup</button>
+        <button onclick="showScreen('gameplay')">Gameplay</button>
+        <button onclick="showScreen('gameover')">Game Over</button>
+    </div>
+
+    <!-- Lobby Screen -->
+    <div id="lobby" class="screen active">
+        <h2>Digital Guess Who?</h2>
+        <p style="text-align: center;">The classic guessing game, now online! Connect with a friend and find out who's who.</p>
+        <div class="lobby-container card">
+            <div class="lobby-option">
+                <h3>Start a New Game</h3>
+                <p>This will generate a unique code to share with a friend.</p>
+                <button class="button button-primary">Create New Game</button>
+            </div>
+            <div class="lobby-option">
+                <h3>Join an Existing Game</h3>
+                <p>Enter the game code you received from your friend below.</p>
+                <input type="text" placeholder="Enter Game Code" style="padding: 10px; border-radius: 8px; border: 1px solid #ccc;">
+                <button class="button button-primary" style="margin-left: 10px;">Join</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Setup Screen -->
+    <div id="setup" class="screen">
+        <h2>Game Lobby</h2>
+        <p style="text-align: center;">Configure your match and get ready to play!</p>
+        <div class="game-setup-container">
+            <div class="player-panel card">
+                <div>
+                    <h4>Player 1 (You)</h4>
+                    <p style="color: var(--secondary-green);">Ready!</p>
+                </div>
+                <div>
+                    <h4>Player 2</h4>
+                    <p>Waiting...</p>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Game Settings</h3>
+                <div class="difficulty-options">
+                    <button class="button button-primary">Easy</button>
+                    <button class="button">Medium</button>
+                    <button class="button">Hard</button>
+                </div>
+                <h3>Invite Player</h3>
+                <input type="text" value="https://guesswho.io/join/XYZ123" readonly style="width: 70%; padding: 10px; border-radius: 8px; border: 1px solid #ccc;">
+                <button class="button button-primary" style="margin-left: 10px;">Copy</button>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="button button-secondary">I'm Ready</button>
+                <button class="button" disabled>Start Game</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gameplay Screen -->
+    <div id="gameplay" class="screen">
+        <div class="gameplay-container">
+            <div>
+                <h3>Your Board</h3>
+                <div class="character-board">
+                    <div class="character-card">
+                        <img src="https://i.imgur.com/kQJ3A2q.png" alt="Anne">
+                        <span>Anne</span>
+                    </div>
+                    <div class="character-card eliminated">
+                        <img src="https://i.imgur.com/kQJ3A2q.png" alt="Bernard">
+                        <span>Bernard</span>
+                    </div>
+                    <div class="character-card">
+                        <img src="https://i.imgur.com/kQJ3A2q.png" alt="Claire">
+                        <span>Claire</span>
+                    </div>
+                     <div class="character-card">
+                        <img src="https://i.imgur.com/kQJ3A2q.png" alt="David">
+                        <span>David</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Your Turn to Ask</h3>
+                <button class="button button-warning" style="width: 100%; margin-bottom: 10px;">Make a Guess</button>
+                <div class="chat-history">
+                    <p>You asked: "Does your character have a beard?"</p>
+                    <p style="color: var(--destructive-red);">Opponent answered: No.</p>
+                </div>
+                <h4>Ask a Question</h4>
+                <input type="text" placeholder="Ask a yes/no question..." style="width: 95%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 10px;">
+                <button class="button button-primary">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="gameover" class="screen">
+        <div class="game-over-container card">
+            <h2 style="color: var(--secondary-green);">YOU WIN!</h2>
+            <p>Congratulations, you guessed correctly!</p>
+            <div class="character-card">
+                <img src="https://i.imgur.com/kQJ3A2q.png" alt="Alex">
+            </div>
+            <h4>Opponent's Choice</h4>
+            <h3>Their character was... Alex</h3>
+            <div>
+                <button class="button button-secondary">Play Again</button>
+                <button class="button" style="margin-left: 10px; background-color: var(--card-background); color: var(--text-color);">Return to Main Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.querySelectorAll('.nav button').forEach(button => {
+                button.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+            document.querySelector(`.nav button[onclick="showScreen('${screenId}')"]`).classList.add('active');
+        }
+    </script>
+
+</body>
+</html>
