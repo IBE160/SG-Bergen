@@ -18,7 +18,7 @@ workflow_status:
   product-brief: docs/product-brief-ibe160-2025-11-16.md
   prd: docs/PRD.md
   validate-prd: optional
-  create-design: conditional
+  create-design: docs/ux-design-specification.md
   create-architecture: required
   validate-architecture: optional
   solutioning-gate-check: required

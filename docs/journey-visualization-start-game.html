@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Journey Visualization: Starting a Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1A202C;
+            color: #FFFFFF;
+        }
+        .btn-primary { background-color: #4299E1; }
+        .btn-secondary { background-color: #48BB78; }
+        .btn-destructive { background-color: #E53E3E; }
+        .card { background-color: #2D3748; }
+        .input-field {
+            background-color: #1A202C;
+            border-color: #4A5568;
+        }
+        .input-field:focus {
+            background-color: #2D3748;
+            border-color: #4299E1;
+            outline: none;
+            box-shadow: 0 0 0 2px #4299E1;
+        }
+        .disabled-btn {
+            background-color: #4A5568;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div id="journey-container" class="w-full max-w-lg text-center">
+        <!-- Content will be injected here -->
+    </div>
+
+    <script>
+        const container = document.getElementById('journey-container');
+        let gameState = {
+            isHost: false,
+            gameCode: '',
+            difficulty: 'Medium',
+            hostReady: false,
+            guestReady: false
+        };
+
+        function generateGameCode() {
+            return Math.random().toString(36).substring(2, 8).toUpperCase();
+        }
+
+        function renderStep1_Lobby() {
+            container.innerHTML = `
+                <div class="card p-8 rounded-lg shadow-2xl">
+                    <h1 class="text-4xl font-bold mb-2">Digital Guess Who</h1>
+                    <p class="text-gray-400 mb-8">The classic game, reimagined.</p>
+                    <div class="flex flex-col space-y-4">
+                        <button onclick="handleStartNewGame()" class="btn-primary text-white font-bold py-3 px-4 rounded-lg text-lg transition-transform transform hover:scale-105">Start a New Game</button>
+                        <button onclick="renderStep4_GuestJoin()" class="border border-blue-500 text-blue-400 font-bold py-3 px-4 rounded-lg text-lg transition-transform transform hover:scale-105">Join an Existing Game</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleStartNewGame() {
+            gameState.isHost = true;
+            gameState.gameCode = generateGameCode();
+            renderStep2_HostSetup();
+        }
+
+        function renderStep2_HostSetup() {
+            container.innerHTML = `
+                <div class="card p-8 rounded-lg shadow-2xl">
+                    <h2 class="text-3xl font-bold mb-6">Game Setup</h2>
+                    <div class="text-left mb-6">
+                        <label for="difficulty" class="block text-lg font-medium text-gray-300 mb-2">Difficulty</label>
+                        <select id="difficulty" onchange="gameState.difficulty = this.value" class="input-field w-full p-3 rounded-lg border-2 focus:ring-2 focus:ring-blue-500">
+                            <option value="Easy">Easy (12 Characters)</option>
+                            <option value="Medium" selected>Medium (24 Characters)</option>
+                            <option value="Hard">Hard (48 Characters)</option>
+                        </select>
+                    </div>
+                    <button onclick="renderStep3_HostWaiting()" class="btn-primary w-full text-white font-bold py-3 px-4 rounded-lg text-lg transition-transform transform hover:scale-105">Create Game</button>
+                    <button onclick="renderStep1_Lobby()" class="mt-4 text-gray-400 hover:text-white">Back</button>
+                </div>
+            `;
+            document.getElementById('difficulty').value = gameState.difficulty;
+        }
+
+        function renderStep3_HostWaiting() {
+            container.innerHTML = `
+                <div class="card p-8 rounded-lg shadow-2xl">
+                    <h2 class="text-3xl font-bold mb-4">Waiting for Opponent...</h2>
+                    <p class="text-gray-400 mb-6">Share this code with your friend:</p>
+                    <div class="bg-gray-800 border-2 border-dashed border-gray-600 rounded-lg p-4 mb-6">
+                        <p id="gameCode" class="text-4xl font-mono tracking-widest">${gameState.gameCode}</p>
+                    </div>
+                    <button onclick="copyCode()" class="btn-secondary text-white font-bold py-2 px-6 rounded-lg mb-8 transition-transform transform hover:scale-105">Copy Code</button>
+                    <div class="animate-pulse text-gray-500">
+                        <p>A player will join the lobby shortly.</p>
+                    </div>
+                     <button onclick="renderStep1_Lobby()" class="mt-8 text-gray-400 hover:text-white">Cancel</button>
+                </div>
+            `;
+            // Simulate another player joining
+            setTimeout(() => {
+                renderStep5_GameLobby();
+            }, 4000);
+        }
+
+        function copyCode() {
+            navigator.clipboard.writeText(gameState.gameCode);
+            alert('Game code copied to clipboard!');
+        }
+
+        function renderStep4_GuestJoin() {
+            container.innerHTML = `
+                <div class="card p-8 rounded-lg shadow-2xl">
+                    <h2 class="text-3xl font-bold mb-6">Join Game</h2>
+                    <div class="text-left mb-4">
+                        <label for="code-input" class="block text-lg font-medium text-gray-300 mb-2">Enter Game Code</label>
+                        <input type="text" id="code-input" class="input-field w-full p-3 rounded-lg border-2 uppercase" placeholder="ABCXYZ">
+                        <p id="error-msg" class="text-red-500 mt-2 h-4"></p>
+                    </div>
+                    <button onclick="handleJoinGame()" class="btn-primary w-full text-white font-bold py-3 px-4 rounded-lg text-lg transition-transform transform hover:scale-105">Join</button>
+                    <button onclick="renderStep1_Lobby()" class="mt-4 text-gray-400 hover:text-white">Back</button>
+                </div>
+            `;
+        }
+
+        function handleJoinGame() {
+            const input = document.getElementById('code-input');
+            const errorMsg = document.getElementById('error-msg');
+            // In a real app, this would be a network request.
+            // Here, we simulate a successful join if the code is not empty.
+            if (input.value.trim() !== '') {
+                gameState.isHost = false;
+                gameState.gameCode = input.value.toUpperCase();
+                renderStep5_GameLobby();
+            } else {
+                errorMsg.textContent = 'Please enter a valid game code.';
+                input.classList.add('border-red-500');
+            }
+        }
+        
+        function renderStep5_GameLobby() {
+            let hostReadyClass = gameState.hostReady ? 'border-green-500' : 'border-gray-600';
+            let guestReadyClass = gameState.guestReady ? 'border-green-500' : 'border-gray-600';
+            
+            let hostBtnClass = gameState.hostReady ? 'disabled-btn' : 'btn-secondary';
+            let guestBtnClass = gameState.guestReady ? 'disabled-btn' : 'btn-secondary';
+
+            container.innerHTML = `
+                <div class="card p-8 rounded-lg shadow-2xl">
+                    <h2 class="text-3xl font-bold mb-2">Game Lobby</h2>
+                    <p class="text-gray-400 mb-8">Game Code: <span class="font-mono">${gameState.gameCode}</span></p>
+
+                    <div class="grid grid-cols-2 gap-8 mb-8">
+                        <!-- Host Player -->
+                        <div class="border-2 ${hostReadyClass} p-4 rounded-lg">
+                            <h3 class="text-xl font-bold">Host Player</h3>
+                            <p class="text-gray-400">${gameState.hostReady ? "Ready!" : "Not Ready"}</p>
+                            ${gameState.isHost ? `<button id="hostReadyBtn" onclick="toggleReady('host')" class="${hostBtnClass} mt-4 text-white font-bold py-2 px-6 rounded-lg">${gameState.hostReady ? "Waiting..." : "I'm Ready"}</button>` : ''}
+                        </div>
+
+                        <!-- Guest Player -->
+                        <div class="border-2 ${guestReadyClass} p-4 rounded-lg">
+                            <h3 class="text-xl font-bold">Guest Player</h3>
+                            <p class="text-gray-400">${gameState.guestReady ? "Ready!" : "Not Ready"}</p>
+                            ${!gameState.isHost ? `<button id="guestReadyBtn" onclick="toggleReady('guest')" class="${guestBtnClass} mt-4 text-white font-bold py-2 px-6 rounded-lg">${gameState.guestReady ? "Waiting..." : "I'm Ready"}</button>` : ''}
+                        </div>
+                    </div>
+                     <p id="waiting-msg" class="text-gray-500 h-5 mb-4"></p>
+                     <button onclick="renderStep1_Lobby()" class="mt-4 text-gray-400 hover:text-white">Leave Lobby</button>
+                </div>
+            `;
+            
+            // Simulate the other player's actions
+            if (gameState.isHost) {
+                 setTimeout(() => {
+                    if (!gameState.guestReady) {
+                        toggleReady('guest');
+                    }
+                }, 2500);
+            } else {
+                 setTimeout(() => {
+                    if (!gameState.hostReady) {
+                        toggleReady('host');
+                    }
+                 }, 1500);
+            }
+        }
+
+        function toggleReady(player) {
+            if (player === 'host') gameState.hostReady = !gameState.hostReady;
+            if (player === 'guest') gameState.guestReady = !gameState.guestReady;
+            
+            if (gameState.hostReady && gameState.guestReady) {
+                renderStep6_GameStart();
+            } else {
+                renderStep5_GameLobby();
+                 if ((gameState.isHost && gameState.hostReady) || (!gameState.isHost && gameState.guestReady)) {
+                    document.getElementById('waiting-msg').textContent = 'Waiting for other player...';
+                 }
+            }
+        }
+
+        function renderStep6_GameStart() {
+             container.innerHTML = `
+                <div class="card p-8 rounded-lg shadow-2xl">
+                    <h2 class="text-4xl font-bold mb-4">Game Starting!</h2>
+                    <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-500 mx-auto"></div>
+                    <p class="mt-6 text-gray-400">Get ready to choose your character...</p>
+                </div>
+            `;
+            // In a real app, this would navigate to the main game screen
+             setTimeout(() => {
+                alert("The game would now begin!");
+                renderStep1_Lobby();
+             }, 3000);
+        }
+
+        // Initial render
+        renderStep1_Lobby();
+    </script>
+</body>
+</html>

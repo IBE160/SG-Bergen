@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Journey Visualization: Core Gameplay Loop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1A202C;
+            color: #FFFFFF;
+        }
+        .btn-primary { background-color: #4299E1; }
+        .btn-secondary { background-color: #48BB78; }
+        .btn-destructive { background-color: #E53E3E; }
+        .card { background-color: #2D3748; }
+        .character-card {
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+        .character-card.eliminated {
+            filter: grayscale(100%);
+            opacity: 0.5;
+        }
+        .character-card.selected {
+            box-shadow: 0 0 0 4px #4299E1;
+            transform: scale(1.05);
+        }
+        .input-field {
+            background-color: #1A202C;
+            border-color: #4A5568;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div id="journey-container" class="w-full max-w-7xl mx-auto">
+        <!-- Content will be injected here -->
+    </div>
+
+    <div id="modal-container" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center">
+        <div id="modal-content" class="card rounded-lg p-8 shadow-2xl w-full max-w-md text-center">
+            <!-- Modal content will be injected here -->
+        </div>
+    </div>
+
+    <script>
+        const container = document.getElementById('journey-container');
+        const modalContainer = document.getElementById('modal-container');
+        const modalContent = document.getElementById('modal-content');
+
+        const characters = [
+            'Albert', 'Amara', 'Andre', 'Aurora', 'Autumn', 'Axel', 
+            'Benjamin', 'Blake', 'Chloe', 'Dante', 'Derek', 'Ellie', 
+            'Emma', 'Ethan', 'Felix', 'George', 'Grace', 'Hannah', 
+            'Isabella', 'Isaiah', 'Jack', 'Jamal', 'Kai', 'Lily'
+        ];
+
+        let gameState = {
+            playerSecret: null,
+            opponentSecret: 'Chloe', // Pre-defined for simulation
+            turn: 'player', // 'player' or 'opponent'
+            phase: 'select', // 'select', 'player_ask', 'player_eliminate', 'opponent_ask', 'opponent_eliminate'
+            eliminated: [],
+            lastPlayerQuestion: '',
+            lastOpponentQuestion: 'Does your character have a hat?',
+            chatHistory: []
+        };
+
+        function hideModal() {
+            modalContainer.classList.add('hidden');
+        }
+
+        function showModal({ title, message, buttons }) {
+            modalContent.innerHTML = `
+                <h2 class="text-2xl font-bold mb-4">${title}</h2>
+                <p class="text-gray-300 mb-6">${message}</p>
+                <div class="flex justify-center space-x-4">
+                    ${buttons.map(btn => `<button class="${btn.classes} text-white font-bold py-2 px-6 rounded-lg" onclick="${btn.onClick}">${btn.text}</button>`).join('')}
+                </div>
+            `;
+            modalContainer.classList.remove('hidden');
+        }
+
+        function showAlert(message) {
+            showModal({
+                title: 'Alert',
+                message: message,
+                buttons: [{ text: 'OK', classes: 'btn-primary', onClick: 'hideModal()' }]
+            });
+        }
+
+        function showConfirm(title, message) {
+            return new Promise((resolve) => {
+                showModal({
+                    title: title,
+                    message: message,
+                    buttons: [
+                        { text: 'Yes', classes: 'btn-secondary', onClick: `resolveConfirm(true)` },
+                        { text: 'No', classes: 'btn-destructive', onClick: `resolveConfirm(false)` }
+                    ]
+                });
+                window.resolveConfirm = (value) => {
+                    hideModal();
+                    resolve(value);
+                };
+            });
+        }
+
+
+        function renderCharacterGrid(isSelectable) {
+            return `
+                <div class="grid grid-cols-6 gap-4">
+                    ${characters.map(name => `
+                        <div id="card-${name}" class="character-card card rounded-lg p-2 text-center transform hover:scale-105 ${gameState.eliminated.includes(name) ? 'eliminated' : ''}" onclick="${isSelectable ? `handleCharacterSelect('${name}')` : `toggleEliminate('${name}')`}">
+                            <img src="guess-who-characters/${name}.png" alt="${name}" class="w-full h-auto rounded-md mx-auto">
+                            <p class="mt-2 text-sm font-medium">${name}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        function handleCharacterSelect(name) {
+            document.querySelectorAll('.character-card').forEach(c => c.classList.remove('selected'));
+            document.getElementById(`card-${name}`).classList.add('selected');
+            gameState.playerSecret = name;
+
+            const confirmBtn = document.getElementById('confirm-btn');
+            confirmBtn.disabled = false;
+            confirmBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            confirmBtn.classList.add('hover:bg-blue-600');
+        }
+
+        function startGame() {
+            gameState.phase = 'player_ask';
+            addStatusMessage("Your Turn: Ask a yes/no question.");
+            renderGameScreen();
+        }
+
+        function toggleEliminate(name) {
+            if (gameState.phase !== 'player_eliminate') {
+                showAlert("You can only eliminate characters after getting an answer!");
+                return;
+            }
+            const card = document.getElementById(`card-${name}`);
+            if (gameState.eliminated.includes(name)) {
+                gameState.eliminated = gameState.eliminated.filter(n => n !== name);
+                card.classList.remove('eliminated');
+            } else {
+                gameState.eliminated.push(name);
+                card.classList.add('eliminated');
+            }
+        }
+
+        function addStatusMessage(text) {
+            gameState.chatHistory.push({ type: 'status', text });
+        }
+        
+        async function submitQuestion() {
+            const input = document.getElementById('question-input');
+            if (!input.value.trim()) {
+                showAlert("Please type a question.");
+                return;
+            }
+            gameState.lastPlayerQuestion = input.value;
+            gameState.phase = 'opponent_answer';
+            addStatusMessage(`Waiting for opponent to answer...`);
+            renderGameScreen();
+            
+            setTimeout(async () => {
+                const answer = await showConfirm('Opponent is Answering', `Your question was:<br><br><strong>"${gameState.lastPlayerQuestion}"</strong><br><br>Is the opponent's answer 'Yes'?`);
+                
+                gameState.chatHistory.push({ type: 'qa', question: gameState.lastPlayerQuestion, answer: answer ? 'Yes' : 'No', askedBy: 'player' });
+                addStatusMessage(`Now eliminate characters.`);
+                gameState.phase = 'player_eliminate';
+                renderGameScreen();
+            }, 1500);
+        }
+
+        function endPlayerTurn() {
+            gameState.phase = 'opponent_ask';
+            gameState.turn = 'opponent';
+            addStatusMessage("Opponent's Turn: They are asking a question...");
+            renderGameScreen();
+            
+            setTimeout(() => {
+                renderGameScreen();
+            }, 2000);
+        }
+        
+        function handleAnswer(answer) {
+            gameState.chatHistory.push({ type: 'qa', question: gameState.lastOpponentQuestion, answer: answer ? 'Yes' : 'No', askedBy: 'opponent' });
+            // addStatusMessage(`You answered ${answer ? 'YES' : 'NO'}. Waiting for opponent...`);
+            renderGameScreen();
+             
+             setTimeout(() => {
+                gameState.turn = 'player';
+                gameState.phase = 'player_ask';
+                addStatusMessage("Your Turn: Ask a yes/no question.");
+                renderGameScreen();
+             }, 3000);
+        }
+
+        function renderSelectScreen() {
+            gameState.chatHistory = [];
+            addStatusMessage("Game Started! Choose your character.");
+            container.innerHTML = `
+                <div class="text-center mb-8">
+                    <h1 class="text-4xl font-bold">Secretly Choose Your Character</h1>
+                    <p class="text-gray-400">Your opponent will not see your choice.</p>
+                </div>
+                ${renderCharacterGrid(true)}
+                <div class="text-center mt-8">
+                    <button id="confirm-btn" onclick="startGame()" disabled class="btn-primary text-white font-bold py-3 px-6 rounded-lg text-lg opacity-50 cursor-not-allowed">Confirm Selection</button>
+                </div>
+            `;
+        }
+
+        function renderChatHistory() {
+            const historyEl = document.getElementById('chat-history');
+            if (!historyEl) return;
+
+            historyEl.innerHTML = gameState.chatHistory.map(item => {
+                if (item.type === 'status') {
+                    return `<div class="text-center my-2"><span class="bg-gray-700 text-yellow-300 text-xs font-semibold px-2 py-1 rounded-full">${item.text}</span></div>`;
+                }
+                if (item.type === 'qa') {
+                    const playerClass = item.askedBy === 'player' ? 'bg-blue-900 bg-opacity-50' : 'bg-gray-800 bg-opacity-50';
+                    const answerColor = item.answer === 'Yes' ? 'text-green-400' : 'text-red-400';
+                    return `
+                        <div class="p-3 rounded-lg ${playerClass}">
+                            <p class="font-semibold text-gray-300">${item.askedBy === 'player' ? 'You asked:' : 'Opponent asked:'}</p>
+                            <p class="italic text-white my-1">"${item.question}"</p>
+                            <p class="text-right font-bold ${answerColor}">Answer: ${item.answer}</p>
+                        </div>
+                    `;
+                }
+                return '';
+            }).join('');
+            historyEl.scrollTop = historyEl.scrollHeight;
+        }
+
+        function renderGameScreen() {
+            let actionArea = '';
+
+            switch(gameState.phase) {
+                case 'player_ask':
+                    actionArea = `
+                        <input id="question-input" type="text" class="input-field w-full p-3 rounded-lg border-2 mb-2" placeholder="e.g., Is your character wearing glasses?">
+                        <button onclick="submitQuestion()" class="btn-primary text-white font-bold py-2 px-5 rounded-lg">Ask</button>
+                    `;
+                    break;
+                case 'opponent_answer':
+                    actionArea = `<p class="text-gray-400 animate-pulse">Waiting for answer...</p>`;
+                    break;
+                case 'opponent_ask':
+                    actionArea = `
+                        <p class="text-center mb-2">Opponent asked: <strong class="italic">"${gameState.lastOpponentQuestion}"</strong></p>
+                        <div class="flex space-x-4">
+                            <button onclick="handleAnswer(true)" class="btn-secondary text-white font-bold py-2 px-8 rounded-lg">Yes</button>
+                            <button onclick="handleAnswer(false)" class="btn-destructive text-white font-bold py-2 px-8 rounded-lg">No</button>
+                        </div>
+                    `;
+                    break;
+                 case 'player_eliminate':
+                    actionArea = `<button onclick="endPlayerTurn()" class="btn-primary text-white font-bold py-2 px-4 rounded-lg">Done Eliminating</button>`;
+                    break;
+            }
+
+            container.innerHTML = `
+                <div class="flex gap-8">
+                    <div class="w-3/4">
+                        <h2 class="text-2xl font-bold text-center mb-4">Character Board</h2>
+                        ${renderCharacterGrid(false)}
+                    </div>
+                    <div class="w-1/4 card p-6 rounded-lg flex flex-col" style="height: 85vh;">
+                        <div id="action-area-container" class="flex-shrink-0 mb-4">
+                             ${actionArea}
+                        </div>
+
+                        <!-- Unified Chat Log -->
+                        <div id="chat-history-container" class="flex-grow border-t-2 border-gray-600 pt-4 flex flex-col min-h-0">
+                            <div id="chat-history" class="flex-grow overflow-y-auto text-sm space-y-3 pr-2">
+                                <!-- History will be rendered by renderChatHistory -->
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4 border-t-2 border-gray-600 pt-4 flex-shrink-0">
+                            <p class="text-gray-400">Your Character</p>
+                            <div class="character-card card bg-gray-900 rounded-lg p-2 text-center mt-2 inline-block">
+                                <img src="guess-who-characters/${gameState.playerSecret}.png" alt="${gameState.playerSecret}" class="w-24 h-auto rounded-md mx-auto">
+                                <p class="mt-2 text-sm font-medium">${gameState.playerSecret}</p>
+                            </div>
+                            <button onclick="renderSelectScreen()" class="block mx-auto mt-4 text-sm text-gray-500 hover:text-white">Restart Visualization</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            // We call renderChatHistory separately to ensure the DOM is updated first.
+            renderChatHistory();
+        }
+
+        // Initial Render
+        renderSelectScreen();
+    </script>
+</body>
+</html>
