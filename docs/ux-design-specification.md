@@ -48,6 +48,8 @@ No truly novel UX patterns were identified that required custom design from scra
 
 The visual foundation is built upon a modern dark theme, drawing inspiration directly from the provided mockups.
 
+**Note on Process:** The color palette and overall theme were derived from strong, pre-existing mockups that were reviewed and approved. This established a clear visual direction, making a broader collaborative exploration of multiple color themes unnecessary for this project.
+
 **Color Palette:**
 
 *   **Primary Accent (Blue):** `#4299E1` - Used for primary calls to action, interactive elements, and branding.
@@ -61,11 +63,26 @@ The visual foundation is built upon a modern dark theme, drawing inspiration dir
 
 **Typography:**
 
-A clean, modern sans-serif typeface will be used for all text elements, ensuring readability and maintaining a contemporary aesthetic. Font weights will be utilized to establish clear visual hierarchy.
+A clean, modern sans-serif typeface will be used for all text elements.
+
+*   **Font Family:** `Inter`, a variable font that is highly readable at all sizes. A system font stack (e.g., `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, ...`) will be used as a fallback.
+*   **Type Scale:**
+    *   `h1`: 36px, Bold (700)
+    *   `h2`: 28px, Bold (700)
+    *   `h3`: 22px, Semi-Bold (600)
+    *   `Body`: 16px, Regular (400)
+    *   `Small / Meta`: 14px, Regular (400)
+*   **Line Height:** A line height of `1.5` will be used for body copy to ensure readability, with tighter line heights for headings.
 
 **Spacing and Layout:**
 
-A consistent spacing system (likely based on an 8px or 4px grid) will be applied throughout the interface to ensure visual harmony, alignment, and responsiveness. Elements are well-organized with appropriate use of whitespace to reduce cognitive load.
+*   **Base Unit:** A base unit of **4px** will be used, meaning all spacing and sizing will be in multiples of 4 (e.g., 8px, 12px, 16px).
+*   **Layout Grid:** A responsive **12-column grid** will be used for the main layout structure, providing flexibility and consistency across screen sizes.
+*   **Breakpoints:**
+    *   `sm`: 640px
+    *   `md`: 768px
+    *   `lg`: 1024px
+    *   `xl`: 1280px
 
 **Interactive Visualizations:**
 
@@ -77,7 +94,9 @@ A consistent spacing system (likely based on an 8px or 4px grid) will be applied
 
 ### 4.1 Chosen Design Approach
 
-The design direction is established by the provided mockups for the Lobby, Game Setup, Gameplay, and Game Over screens. These mockups present a modern, dark-themed, clean, and engaging visual style that fully captures the desired aesthetic and user experience for the game. No refinements or changes are requested at this stage.
+The design direction is established by the provided mockups for the Lobby, Game Setup, Gameplay, and Game Over screens. These mockups present a modern, dark-themed, clean, and engaging visual style that fully captures the desired aesthetic and user experience for the game.
+
+**Note on Process:** As with the color theme, the overall design direction was confidently established by the high-quality mockups provided at the project's outset. These were validated with the user, and no refinements or changes were requested. This is why a typical exploration of 6-8 different design directions was not required.
 
 **Interactive Mockups:**
 
@@ -187,62 +206,165 @@ The design direction is established by the provided mockups for the Lobby, Game 
 
 ### 6.1 Component Strategy
 
+
+
 The component library strategy is to leverage the `shadcn/ui` design system for foundational components and create custom, application-specific components for more complex UI elements.
+
+
 
 **From Design System (`shadcn/ui`):**
 
+
+
 *   **Button:** Used for all interactive actions (e.g., "Create Game", "Join", "Ready", "Ask", "Yes/No").
+
 *   **Input:** Used for entering the game code and typing questions.
+
 *   **Card:** Used as the base for character cards and UI panels.
+
 *   **AlertDialog / Dialog:** Used for confirmation prompts (e.g., "Make a Guess?").
+
 *   **Avatar:** Used for player profile icons in the lobby.
+
+
+
+**Customization of `shadcn/ui`:** While `shadcn/ui` components are unstyled, they will be customized to strictly follow the project's Visual Foundation (colors, typography, spacing) to ensure a cohesive look and feel.
+
+
 
 **Custom Components:**
 
+
+
 The primary custom component is the **Character Board**, which is a grid composed of interactive **Character Cards**.
+
+
 
 #### Custom Component: Character Card
 
+
+
 *   **Purpose:** To display a single character and allow the user to toggle their "eliminated" state.
+
 *   **Anatomy:**
+
     *   A `Card` component containing the character's `Image` and `Name`.
+
 *   **Behavior:**
+
     *   On click, the card toggles between its "Active" and "Eliminated" states.
+
 *   **States:**
+
     *   **Active:** The character is a potential candidate. The card is displayed in full color.
+
     *   **Eliminated:** The character has been ruled out. The character's image is grayed out to maintain visibility, allowing the user to easily see who they have eliminated and potentially undo the action.
+
+*   **Variants:**
+
+    *   **Default:** Standard size for the main character board.
+
+    *   **Small:** A smaller version could be used to show the opponent's chosen character at the end of the game.
+
 *   **Accessibility:**
+
     *   The card should be focusable and its state (Active/Eliminated) should be announced to screen readers.
+
+
 
 **Rationale for Refinement:** Graying out the image instead of using an 'X' allows users to more easily review their eliminated characters and correct any mistakes, which aligns with our "Intuitive Guidance" principle.
 
+
+
 ---
+
+
 
 ## 7. UX Pattern Decisions
 
+
+
 ### 7.1 Consistency Rules
+
+
 
 The following UX pattern decisions will be applied consistently throughout the application to ensure a predictable and intuitive user experience:
 
+
+
 *   **Button Hierarchy:**
+
     *   **Primary Actions:** Solid blue (`#4299E1`) buttons for the main action on a screen (e.g., "Create New Game", "Start Game").
+
     *   **Secondary Actions:** Solid green (`#48BB78`) buttons for positive secondary actions (e.g., "Play Again", "Yes" in a question).
+
     *   **Destructive Actions:** A distinct red color (`#E53E3E`) for actions with negative consequences (e.g., "Quit Game", "No" in a question).
+
 *   **Feedback Patterns:**
+
     *   **Success Messages:** Temporary, non-intrusive "toast" notifications (e.g., "Game code copied!").
+
     *   **Error Messages:** Displayed directly below the relevant input field for context (e.g., "Invalid game code").
+
     *   **Loading Indicators:** Subtle spinners or skeleton loaders to indicate content is being fetched or processed.
+
 *   **Modal Patterns:**
+
     *   **Critical Confirmations:** Use a modal with a dark overlay for high-stakes actions requiring explicit user confirmation (e.g., "Are you sure you want to make a guess?").
+
     *   **Dismissal:** Non-critical modals can be dismissed by clicking the overlay or pressing the Escape key.
+
+
+
+### 7.2 Additional Pattern Definitions
+
+
+
+*   **Form Patterns:**
+
+    *   **Labels:** All input fields must have a clearly associated `<label>`.
+
+    *   **Help Text:** Optional helper text can be placed below the input field to provide context.
+
+    *   **Validation:** Input is validated on blur or form submission. Error messages appear below the field and are tied to the input with `aria-describedby`.
+
+*   **Navigation Patterns:**
+
+    *   **Active State:** The current active page or section in any navigation menu will be visually distinct (e.g., using the Primary Accent color or a bold font weight).
+
+    *   **Back Button:** In-game navigation will rely on clearly labeled buttons (e.g., "Return to Main Menu") rather than browser history to avoid breaking the game state.
+
+*   **Empty State Patterns:**
+
+    *   **Purpose:** When a list or area has no content, it should not be left blank.
+
+    *   **Content:** Display a simple message that explains why the area is empty and what the user can do next (e.g., "No games found. Why not start a new one?"). An icon or subtle illustration can be included.
+
+
 
 ---
 
+
+
 ## 8. Responsive Design & Accessibility
+
+
 
 ### 8.1 Responsive Strategy
 
-The game will be developed as a **Responsive Web Application**, with an initial focus on **PC-web browsers**. The design will ensure a clean and usable layout on desktop screen sizes. While future iterations may expand to tablet and mobile, the current scope prioritizes the desktop experience.
+
+
+The game will be developed as a **Responsive Web Application**, with an initial focus on **PC-web browsers**. The design will ensure a clean and usable layout on desktop screen sizes.
+
+
+
+*   **Adaptation Patterns:**
+
+    *   **Layout:** On smaller screens (tablet and below), multi-column layouts will collapse into a single-column layout to ensure readability and usability. The character board will wrap into a vertical-scrolling grid.
+
+    *   **Navigation:** For smaller viewports, primary navigation controls may be consolidated into a hamburger menu or a bottom tab bar to save space.
+
+    *   **Touch Targets:** All interactive elements will have a minimum touch target size of 44x44 pixels on smaller screens to ensure they are easily tappable.
 
 **Accessibility Strategy:**
 
@@ -252,6 +374,10 @@ To ensure the game is usable by a broad audience, we will aim for **WCAG 2.1 Lev
 *   **Color Contrast:** Sufficient contrast between text and background elements for readability.
 *   **Screen Reader Support:** Semantic HTML and ARIA attributes will be used to provide a clear and understandable experience for screen reader users.
 *   **Focus Indicators:** Visible focus states will be provided for all interactive elements.
+*   **Alt Text Strategy:** All meaningful images must have descriptive `alt` text. For the character cards, the alt text will simply be the character's name (e.g., `alt="Albert"`), as their visual characteristics are part of the game's discovery process. Decorative images will have an empty `alt` attribute (`alt=""`).
+*   **Accessibility Testing Strategy:** Testing will be a combination of automated and manual processes.
+    *   **Automated:** We will use tools like `axe-core` integrated into the development process to catch common violations.
+    *   **Manual:** We will perform manual testing using keyboard-only navigation and a screen reader (e.g., NVDA or VoiceOver) to ensure a high-quality user experience.
 
 ---
 
@@ -287,6 +413,10 @@ This UX Design Specification was created through visual collaboration:
 
 - **Design Direction Mockups**: [docs/ux-design-directions.html](./ux-design-directions.html)
   - Interactive HTML presenting the confirmed design direction across key screens.
+
+- **Interactive Journey Visualizations**:
+  - **Game Start Journey**: [docs/journey-visualization-start-game.html](./journey-visualization-start-game.html)
+  - **Game Loop Journey**: [docs/journey-visualization-game-loop.html](./journey-visualization-game-loop.html)
 
 ### Optional Enhancement Deliverables
 
