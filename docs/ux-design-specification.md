@@ -474,6 +474,7 @@ This alignment ensures that the detailed design work is accurately reflected in 
 - Product Requirements: `docs/PRD.md`
 - Product Brief: `docs/product-brief-ibe160-2025-11-16.md`
 - Brainstorming: `docs/brainstorming-session-results-lørdag 8. november 2025.md`
+- Character Assets: `docs/guess-who-characters/`
 
 ### Core Interactive Deliverables
 
