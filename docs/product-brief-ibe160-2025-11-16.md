@@ -49,19 +49,35 @@ The secondary users are adults who have nostalgic memories of playing "Guess Who
 
 ### User Journey
 
-The user journey for "Digital Guess Who" is designed to be intuitive and engaging, guiding players through a seamless experience from game initiation to conclusion.
+The user journey is broken down into three distinct flows, ensuring a clear and intuitive experience from start to finish.
 
-1.  **Application Launch & Game Selection:** The journey begins when a user opens the application, presented with clear options to either 'Create Game' or 'Join Game'.
-2.  **Game Creation (Host):** A host player selects 'Create Game', configures game settings like difficulty and character set, and receives a unique Game Code. They then enter a 'Waiting for Opponent' screen, sharing the code with a friend.
-3.  **Game Joining (Opponent):** An opponent player selects 'Join Game', enters the provided Game Code, and upon validation, is directed to the game room.
-4.  **Game Start & Character Selection:** Once both players are in the room, they confirm readiness. The game prompts each player to secretly 'Choose your secret character' from the displayed grid, with a confirmation step to finalize their choice.
-5.  **Core Gameplay Loop:**
-    *   **Player's Turn:** The active player uses a 'Question Box' to type a yes/no question, with an optional 'AI Hint' button for strategic suggestions. They submit the question.
-    *   **Opponent's Answer:** The opponent receives the question and provides a 'Yes' or 'No' answer.
-    *   **Elimination:** The active player then eliminates characters from the board that do not match the opponent's answer, visually 'flipping down' their portraits.
-    *   **Turn End:** The turn automatically passes to the other player, and this loop continues.
-6.  **Making a Guess & Outcome:** At any point during their turn, a player can choose to 'Make a Guess' instead of asking a question. After a confirmation, they select a character. The system then determines if the guess is correct, displaying a 'You Win!' or 'You Lose!' screen to both players accordingly.
-7.  **Post-Game Options:** Following the game's conclusion, players are offered options to 'Play Again' or 'Return to Main Menu', facilitating continued engagement.
+**Flow 1: Pre-Game Setup**
+
+1.  **Main Screen & Initial Action:** The user opens the application to a main screen with two clear primary actions: 'Create Game' and 'Join Game'. A "How to Play" guide is available in a secondary menu.
+2.  **'Create Game' Flow (Host):**
+    *   The Host selects a difficulty level (Easy, Medium, Hard).
+    *   The Host is taken to a lobby where they can see the game board and a pool of available characters. They can randomly populate the board or manually upload their own characters (providing a name and image for each).
+    *   The lobby displays a unique Game Code with a "Copy" button.
+    *   The 'Start Game' button remains disabled until the board is full and a second player has joined.
+3.  **'Join Game' Flow (Joining Player):**
+    *   The joining player enters the Game Code provided by the host.
+    *   Upon validation, they enter the lobby and see the game board being prepared by the host in real-time. They have no actions available at this stage.
+4.  **Game Start:** Once the conditions are met, the host clicks 'Start Game', and both players are transitioned to the main game interface.
+
+**Flow 2: Core Gameplay Loop**
+
+1.  **Secret Character Selection:** The first action for both players is to secretly select their character from the board. After confirming their choice, a 'Ready' button becomes active. The game officially begins once both players have clicked 'Ready'. The joining player takes the first turn.
+2.  **Turn-Based Play:**
+    *   **Asking a Question:** The active player uses a chat-style window to ask a yes/no question. They can type a custom question, select from a pre-made list, or (in a future release) use an 'AI Hint' button.
+    *   **Answering:** The opponent receives the question and responds with simple 'Yes' or 'No' buttons.
+    *   **Elimination:** The active player clicks on character portraits to gray them out, narrowing down the possibilities based on the answer.
+    *   **Ending the Turn:** The player clicks an 'End Turn' button to pass control to the opponent.
+
+**Flow 3: Winning and Rematch**
+
+1.  **Making a Guess:** Instead of asking a question, a player can choose to 'Make a Guess'. After confirming this final decision, they select the character they believe is their opponent's.
+2.  **Game Outcome:** A correct guess results in a 'You Win!' screen for the guesser and 'You Lose!' for the opponent. An incorrect guess reverses the outcome.
+3.  **Post-Game:** The game over screen provides two options: 'End Game' (return to main menu) or 'Rematch', which immediately restarts the game with the same board and players, skipping the setup lobby.
 {{/if}}
 
 ---
@@ -101,6 +117,7 @@ The success of the "Digital Guess Who" MVP will be measured by the following cri
 
 The MVP will focus on delivering the complete, core gameplay loop with the following features:
 -   **Two-Player Online Gameplay:** Players can create or join a game room using a unique code.
+-   **User-Uploaded Custom Character Sets:** A host player can upload their own character images and names to create a custom game board.
 -   **Base Character Pool:** A default set of at least 50 characters will be available.
 -   **Interactive Elimination:** Players can visually "flip down" or gray out characters to narrow down possibilities.
 -   **Digital Rule Implementation:** The game will enforce the official "Guess Who" rules for turn-based play and win/loss conditions.
@@ -109,9 +126,8 @@ The MVP will focus on delivering the complete, core gameplay loop with the follo
 ### Out of Scope for MVP
 
 To ensure a focused and timely launch, the following features will not be included in the initial MVP release:
--   User-uploaded custom character sets.
--   In-game chat functionality.
--   AI-powered question hints.
+-   **AI-powered question hints.** The UI may contain a disabled button for this feature as a teaser for future updates.
+-   **Free-form in-game chat.** The question and answer system will be a structured, non-chat interface.
 -   A full user account system for stat tracking and saved sets.
 
 ### Future Vision
@@ -138,7 +154,7 @@ Following a successful MVP launch, the product roadmap includes the phased rollo
 
 ## Technical Preferences
 
-The project will be built on a modern, all-JavaScript technology stack, chosen for its development efficiency and suitability for real-time applications:
+The project will be built on a modern, all-JavaScript technology stack, chosen for its development efficiency and suitability for real-time applications. The decision has been made to proceed with this unified stack and **not** introduce a separate backend language (like Python) to maintain architectural simplicity and meet the project timeline.
 -   **Frontend:** Next.js with Tailwind CSS
 -   **Backend & Database:** Supabase (for PostgreSQL, real-time sync, and authentication)
 -   **AI Integration:** Google Gemini 2.5 Pro (for the future AI hint feature)
@@ -163,6 +179,7 @@ This Product Brief was created based on the following documents:
 -   `docs/brainstorming-session-results-2025-11-08.md`
 -   `docs/brainstorming-session-results-lørdag 8. november 2025.md`
 -   `docs/research-technical-lørdag 8. november 2025.md`
+-   `docs/brainstorming-session-results-2025-11-24.md`
 {{/if}}
 
 ---
