@@ -185,6 +185,7 @@ So that I can invite a friend to play.
 - **Arch:** Call API `/api/game/create` (or Supabase directly).
 - **Data:** Create `game_sessions` row. Create `players` row for host.
 - **Difficulty:** Easy=12 chars, Medium=24, Hard=48. Store in `game_session` metadata.
+- **Security (RLS):** Tighten `game_sessions` policy to allow `insert` for authenticated users. Update `select` policy to allow access only to participants (host/guest).
 
 ### Story 2.2: Join Game Functionality
 
@@ -309,6 +310,7 @@ So that I can eliminate characters.
     2. Player B receives Realtime event.
     3. Player B responds -> `moves` insert (action: answer).
     4. Player A receives Realtime event.
+- **Security (RLS):** Tighten `moves` policy to only allow `insert` where `player_id` matches the authenticated user's player record in the active game.
 
 ### Story 3.4: Character Elimination Mechanics
 
