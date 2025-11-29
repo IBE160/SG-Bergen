@@ -1,7 +1,7 @@
 ---
 epic: "Epic 1: Game Setup & Core UI"
 story: "As a developer, I want to set up a UI library and define global styles so that we have a consistent and efficient way to build the user interface."
-status: "Done"
+status: "review"
 ---
 
 # Sprint Artifact: UI Library and Global Styles Setup

@@ -14,14 +14,14 @@
     <iWant>to configure Tailwind CSS and shadcn/ui with the project's color palette</iWant>
     <soThat>we can build consistent UI components efficiently</soThat>
     <tasks>
-- [ ] **Task: Install and Configure shadcn/ui (AC: 2, 3, 4)**
-  - [ ] Run `npx shadcn-ui@latest init` to initialize the library.
-  - [ ] Update `tailwind.config.ts` and `globals.css` to match the color palette and typography specified in the UX Design Specification.
-  - [ ] Add the `Button` component using `npx shadcn-ui@latest add button`.
-  - [ ] **Test Subtask:** Create a simple test page or component to render the `Button` and verify its styling against the design spec.
-- [ ] **Task: Set Global Font (AC: 5)**
-  - [ ] Update `app/layout.tsx` or `globals.css` to ensure the `Inter` font is applied as the default font for the application.
-  - [ ] **Test Subtask:** Inspect the rendered text in a browser's developer tools to confirm the `Inter` font is being used.
+- [x] **Task: Install and Configure shadcn/ui (AC: 2, 3, 4)**
+  - [x] Run `npx shadcn-ui@latest init` to initialize the library.
+  - [x] Update `tailwind.config.ts` and `globals.css` to match the color palette and typography specified in the UX Design Specification.
+  - [x] Add the `Button` component using `npx shadcn-ui@latest add button`.
+  - [x] **Test Subtask:** Create a simple test page or component to render the `Button` and verify its styling against the design spec.
+- [x] **Task: Set Global Font (AC: 5)**
+  - [x] Update `app/layout.tsx` or `globals.css` to ensure the `Inter` font is applied as the default font for the application.
+  - [x] **Test Subtask:** Inspect the rendered text in a browser's developer tools to confirm the `Inter` font is being used.
     </tasks>
   </story>
 
