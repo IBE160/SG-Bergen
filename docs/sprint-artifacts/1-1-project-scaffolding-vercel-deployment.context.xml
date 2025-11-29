@@ -1,0 +1,137 @@
+<story-context id=".bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>1.1</storyId>
+    <title>Project Scaffolding & Vercel Deployment</title>
+    <status>drafted</status>
+    <generatedAt>lørdag 29. november 2025</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/1-1-project-scaffolding-vercel-deployment.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>to initialize the Next.js + Supabase project and deploy it to Vercel</iWant>
+    <soThat>we have a live URL and a production-ready environment from day one.</soThat>
+    <tasks>
+- [ ] **Task: Initialize Next.js + Supabase Project (AC: 2, 3)**
+  - [ ] Execute `npx create-next-app -e with-supabase digital-guess-who` in the project root.
+  - [ ] Verify the created project uses Next.js App Router and TypeScript.
+  - [ ] Add project to Git (if not already done).
+- [ ] **Task: Connect to Vercel and Deploy (AC: 4, 5)**
+  - [ ] Log in to Vercel CLI (`vercel login`).
+  - [ ] Create a new Vercel project and link it to the local directory (`vercel link`).
+  - [ ] Configure Vercel environment variables for `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+  - [ ] Trigger an initial Vercel deployment (`vercel --prod`).
+  - [ ] Access the deployed URL and verify the Next.js welcome page loads correctly.
+- [ ] **Task: Push Project to GitHub (AC: 6)**
+  - [ ] Commit all initial project files.
+  - [ ] Create a new remote GitHub repository.
+  - [ ] Push the local repository to the remote GitHub repository.
+- [ ] **Test Task: Validate Project Scaffolding**
+  - [ ] Manually check `package.json` for Next.js and Supabase dependencies.
+  - [ ] Manually verify `next.config.js` and `tsconfig.json` are present.
+  - [ ] Manually verify the Vercel project is linked and deployed.
+  - [ ] Manual test: Verify code pushed to GitHub matches local repository.
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+1.  **Given** I have the necessary Vercel and Supabase credentials
+2.  **When** I run the initialization command `npx create-next-app -e with-supabase`
+3.  **Then** A new Next.js 15+ (App Router) project is created with TypeScript
+4.  **And** The project is connected to a Vercel project
+5.  **And** A successful build is deployed to a production URL (e.g., `digital-guess-who.vercel.app`)
+6.  **And** The repository is pushed to GitHub
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/tech-spec-epic-1.md</path>
+        <title>Epic Technical Specification: Project Foundation</title>
+        <section>Detailed Design</section>
+        <snippet>
+*   **Next.js Application:** Serves as the web framework, handling frontend rendering and API routes (`app/`).
+*   **Supabase:** Provides managed PostgreSQL database, authentication services, and real-time capabilities.
+*   **Authentication Pages (`app/(auth)/login/page.tsx`):** Handles user sign-up and sign-in functionality using Supabase Auth.
+*   **Styling Configuration (`tailwind.config.ts`, `globals.css`):** Defines the project's visual style and integrates Tailwind CSS with `shadcn/ui`.
+        </snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>System Architecture</title>
+        <section>Project Initialization</section>
+        <snippet>The `npx create-next-app -e with-supabase` command will establish the core Next.js App Router structure, including `db/` directory placeholders and initial configuration files like `next.config.js`, `tailwind.config.ts`, `tsconfig.json`.</snippet>
+      </doc>
+      <doc>
+        <path>docs/PRD.md</path>
+        <title>Product Requirements Document</title>
+        <section>Non-Functional Requirements</section>
+        <snippet>
+*   **Security:** User authentication (via Supabase) shall be secure. Game session data shall be protected.
+*   **Scalability:** The chosen technology stack (Next.js, Supabase) should support a growing number of concurrent users.
+*   **Accessibility:** The application shall maintain a usable and clean layout on Chrome and Firefox.
+        </snippet>
+      </doc>
+      <doc>
+        <path>docs/ux-design-specification.md</path>
+        <title>UX Design Specification</title>
+        <section>Design System Foundation</section>
+        <snippet>
+**Chosen Design System:** shadcn/ui
+**Rationale:** shadcn/ui is an ideal choice. Its unstyled, customizable components built on Radix UI and integrated with Tailwind will allow us to precisely match the desired look and feel.
+        </snippet>
+      </doc>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Epic Breakdown</title>
+        <section>Epic 1: Project Foundation</section>
+        <snippet>
+**Goal:** Establish the core technical infrastructure, development environment, and deployment pipeline.
+**Scope:** Project scaffolding (Next.js + Supabase), tailored UI library setup (shadcn/ui + Tailwind), database schema initialization, and deployment to Vercel.
+        </snippet>
+      </doc>
+    </docs>
+    <code>
+      <!-- No existing code artifacts as this is the scaffolding story -->
+    </code>
+    <dependencies>
+      <!-- Planned dependencies from Tech Spec (Project not yet initialized) -->
+      <dependency>Next.js 15+ (App Router)</dependency>
+      <dependency>TypeScript 5.x</dependency>
+      <dependency>Supabase (Client & Auth Helpers)</dependency>
+      <dependency>Tailwind CSS 4.x</dependency>
+      <dependency>shadcn/ui</dependency>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint>Use `kebab-case` for files/folders and `PascalCase` for React components.</constraint>
+    <constraint>Use `npx create-next-app -e with-supabase` for initialization.</constraint>
+    <constraint>Deploy to Vercel.</constraint>
+    <constraint>Use TypeScript.</constraint>
+  </constraints>
+
+  <interfaces>
+    <!-- No interfaces defined yet -->
+  </interfaces>
+
+  <tests>
+    <standards>
+      Unit: 40% (Jest/React Testing Library), Component: 30% (Playwright Component), API: 20% (Playwright), E2E: 10% (Playwright).
+      See `docs/test-design-system.md` for full details.
+    </standards>
+    <locations>
+      <location>tests/unit</location>
+      <location>tests/integration</location>
+      <location>tests/e2e</location>
+    </locations>
+    <ideas>
+      <idea id="1.1.3">Verify `package.json` scripts and `next.config.js` after scaffolding.</idea>
+      <idea id="1.1.4">Check Vercel project settings via CLI or Dashboard.</idea>
+      <idea id="1.1.5">Access deployed URL, verify basic Next.js welcome page.</idea>
+      <idea id="1.1.6">Confirm remote GitHub repository exists and matches local.</idea>
+    </ideas>
+  </tests>
+</story-context>

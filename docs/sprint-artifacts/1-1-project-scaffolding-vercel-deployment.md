@@ -1,6 +1,6 @@
 # Story 1.1: Project Scaffolding & Vercel Deployment
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -61,7 +61,7 @@ This story is responsible for initiating the project, thereby laying down the fo
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+*   **Story Context:** `docs/sprint-artifacts/1-1-project-scaffolding-vercel-deployment.context.xml`
 
 ### Agent Model Used
 
