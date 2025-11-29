@@ -67,7 +67,7 @@
       - [x ] /run-agent-task sm *create-story-context {prompt / user-input-file}
 
         - [x ] File: sprint-artifacts/{{story_key}}.context.xml
-      - [ ] /run-agent-task sm *validate-story-context {prompt / user-input-file}
+      - [ x] /run-agent-task sm *validate-story-context {prompt / user-input-file}
 
       - [ ] /run-agent-task sm *story-ready-for-dev {prompt / user-input-file}
       while code-review != approved:

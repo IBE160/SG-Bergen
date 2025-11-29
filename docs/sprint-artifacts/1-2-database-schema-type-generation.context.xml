@@ -1,0 +1,97 @@
+<story-context id=".bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>1.2</storyId>
+    <title>Database Schema & Type Generation</title>
+    <status>drafted</status>
+    <generatedAt>lørdag 29. november 2025</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/1-2-database-schema-type-generation.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>define the initial Supabase database schema and generate TypeScript types</iWant>
+    <soThat>we can interact with the database using type-safe methods</soThat>
+    <tasks>
+- [ ] **Task: Define Supabase Schema (AC: 2, 3)**
+  - [ ] Create `db/schema.ts` and define SQL for `users`, `game_sessions`, `players`, and `moves` tables as per Architecture and Epic details.
+  - [ ] Include columns `id` (UUID), `code` (text), `status` (enum), `host_id` (UUID) for `game_sessions`.
+  - [ ] Include columns `id` (UUID), `game_id` (UUID), `user_id` (UUID), `character_id` (int), `is_ready` (bool) for `players`.
+  - [ ] Include columns `id` (UUID), `game_id` (UUID), `player_id` (UUID), `action_type` (enum), `details` (jsonb) for `moves`.
+  - [ ] Enable Row Level Security (RLS) for all tables with permissive policies initially.
+  - [ ] **Test Subtask:** Verify schema syntax is valid SQL.
+- [ ] **Task: Run Migration Script (AC: 3)**
+  - [ ] Execute the generated SQL migration script against the Supabase database.
+  - [ ] **Test Subtask:** Verify tables are created in the Supabase UI.
+- [ ] **Task: Generate TypeScript Types (AC: 4, 5)**
+  - [ ] Run `supabase gen types typescript --project-id &lt;your-project-id&gt; --schema public > db/types.ts`.
+  - [ ] **Test Subtask:** Verify `db/types.ts` is generated and contains accurate types for the new tables and their columns.
+- [ ] **Test Task: Validate Type-Safety (AC: 5)**
+  - [ ] Write a simple test or create a temporary script to demonstrate type-safe access to one of the new tables using the generated types.
+</tasks>
+  </story>
+
+  <acceptanceCriteria>
+1.  **Given** The Supabase project is active
+2.  **When** I run the SQL migration script defined in Architecture
+3.  **Then** Tables for `users`, `game_sessions`, `players`, and `moves` are created in the public schema
+4.  **And** I can run `supabase gen types typescript` to generate `database.types.ts`
+5.  **And** The generated types accurately reflect the schema (e.g., `game_sessions` has `code`, `status`, `host_id`)
+</acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/tech-spec-epic-1.md</path>
+        <title>Epic Technical Specification: Project Foundation</title>
+        <section>Data Models and Contracts</section>
+        <snippet>Defines core models: game_sessions, players, moves, users. Specifies columns, types, and relationships.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Data Architecture</section>
+        <snippet>Core Models: User, GameSession, Player, Move. Security Architecture: RLS policies.</snippet>
+      </doc>
+       <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Implementation Patterns</section>
+        <snippet>Naming Patterns: Database Tables (snake_case plural), Columns (snake_case).</snippet>
+      </doc>
+    </docs>
+    <code>
+      <!-- No existing schema/types code found in project scan -->
+    </code>
+    <dependencies>
+      <dep>
+         <ecosystem>npm</ecosystem>
+         <package>supabase</package>
+         <version>latest</version>
+      </dep>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint>Naming Patterns: Database Tables: snake_case (plural), Database Columns: snake_case.</constraint>
+    <constraint>Security: Enable Row Level Security (RLS) for all tables (permissive initially for MVP).</constraint>
+    <constraint>Type Safety: Must generate TypeScript types from schema.</constraint>
+  </constraints>
+  <interfaces>
+    <!-- No specific interfaces defined yet -->
+  </interfaces>
+  <tests>
+    <standards>Verify schema syntax. Verify table creation in Supabase. Verify generated types file content and accuracy. Demonstrate type-safe access in a simple test script.</standards>
+    <locations>
+       <location>db/schema.ts</location>
+       <location>db/types.ts</location>
+    </locations>
+    <ideas>
+       <idea id="AC2">Validate SQL syntax in schema file.</idea>
+       <idea id="AC3">Check Supabase project for table existence.</idea>
+       <idea id="AC4">Check file system for db/types.ts existence.</idea>
+       <idea id="AC5">Compile a TS file importing generated types to ensure no errors.</idea>
+    </ideas>
+  </tests>
+</story-context>
