@@ -251,3 +251,10 @@ The testing strategy for Epic 1 will encompass a multi-layered approach:
     *   **Focus:** Crucial for UI/UX validation, cross-browser compatibility (Chrome, Firefox desktop), and visual regression testing after `shadcn/ui` integration.
 *   **Coverage:** Prioritize test coverage for critical paths related to project setup, database integrity, and user authentication as defined by the Acceptance Criteria.
 
+## Post-Review Follow-ups
+
+### Story 1.1 Follow-ups
+*   Update `README.md` to reflect the "Digital Guess Who" project title, description, and setup instructions, replacing the generic starter kit text.
+*   Pin the `next` dependency in `package.json` to a specific version number instead of "latest" to prevent future breaking changes.
+
+
