@@ -1,0 +1,161 @@
+<story-context id="{bmad_folder}/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>4</storyId>
+    <title>Authentication Skeleton (Supabase Auth)</title>
+    <status>drafted</status>
+    <generatedAt>2025-11-29</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>{project-root}/docs/sprint-artifacts/1.4.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>As a developer</asA>
+    <iWant>I want to implement basic authentication pages</iWant>
+    <soThat>So that I can verify user sessions which are required for game creation.</soThat>
+    <tasks>
+      <task id="1" references="AC:2,3">Create login page component
+        <subtask>Create file `app/(auth)/login/page.tsx`.</subtask>
+        <subtask>Add a simple form with email and password inputs and a submit button.</subtask>
+      </task>
+      <task id="2" references="AC:4">Implement sign-up and sign-in logic
+        <subtask>Use `@supabase/auth-helpers-nextjs` to handle form submission.</subtask>
+        <subtask>Implement both sign-up and sign-in functionality.</subtask>
+      </task>
+      <task id="3" references="AC:5,6">Handle redirection and session management
+        <subtask>On successful authentication, redirect the user to the home page.</subtask>
+        <subtask>Verify that the user session is correctly managed by the Supabase Auth Helper.</subtask>
+      </task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <criterion id="1">Given The Supabase Auth service is enabled</criterion>
+    <criterion id="2">When I visit `/login`</criterion>
+    <criterion id="3">Then I see a basic login form</criterion>
+    <criterion id="4">And I can sign up/sign in with email/password</criterion>
+    <criterion id="5">And Upon success, I am redirected to the home page (`/`)</criterion>
+    <criterion id="6">And My session is persisted</criterion>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Epic Breakdown</title>
+        <section>Story 1.4: Authentication Skeleton (Supabase Auth)</section>
+        <snippet>As a developer, I want to implement basic authentication pages, so that I can verify user sessions which are required for game creation.</snippet>
+      </doc>
+      <doc>
+        <path>docs/tech-spec-epic-1.md</path>
+        <title>Epic Technical Specification: Project Foundation</title>
+        <section>Story 1.4: Authentication Skeleton (Supabase Auth)</section>
+        <snippet>Implement basic login and signup pages (e.g., `app/(auth)/login/page.tsx`). Integrate Supabase Auth Helpers for handling user sessions and redirects.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Security Architecture</section>
+        <snippet>Authentication: Supabase Auth (Email/Password or Social). Secrets: API keys managed via .env.local and Vercel Environment Variables. Never committed to Git.</snippet>
+      </doc>
+      <doc>
+        <path>docs/PRD.md</path>
+        <title>Product Requirements Document</title>
+        <section>Security</section>
+        <snippet>User authentication (via Supabase) shall be secure. Game session data shall be protected from unauthorized access or manipulation.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <artifact>
+        <path>digital-guess-who/components/login-form.tsx</path>
+        <kind>component</kind>
+        <symbol>LoginForm</symbol>
+        <reason>Provides the UI and client-side logic for user login.</reason>
+      </artifact>
+      <artifact>
+        <path>digital-guess-who/components/sign-up-form.tsx</path>
+        <kind>component</kind>
+        <symbol>SignUpForm</symbol>
+        <reason>Provides the UI and client-side logic for user registration.</reason>
+      </artifact>
+      <artifact>
+        <path>digital-guess-who/lib/supabase/client.ts</path>
+        <kind>utility</kind>
+        <symbol>createClient</symbol>
+        <reason>Creates a Supabase client instance for use in browser environments.</reason>
+      </artifact>
+      <artifact>
+        <path>digital-guess-who/lib/supabase/server.ts</path>
+        <kind>utility</kind>
+        <symbol>createClient</symbol>
+        <reason>Creates a Supabase client instance for use in server environments (Server Components, Route Handlers).</reason>
+      </artifact>
+      <artifact>
+        <path>digital-guess-who/app/auth/confirm/route.ts</path>
+        <kind>api-route</kind>
+        <symbol>GET</symbol>
+        <reason>Handles the server-side logic for verifying email OTPs sent during sign-up.</reason>
+      </artifact>
+    </code>
+    <dependencies>
+      <dependency>
+        <name>@supabase/ssr</name>
+        <version>latest</version>
+      </dependency>
+      <dependency>
+        <name>@supabase/supabase-js</name>
+        <version>latest</version>
+      </dependency>
+      <dependency>
+        <name>next</name>
+        <version>latest</version>
+      </dependency>
+      <dependency>
+        <name>react</name>
+        <version>^19.0.0</version>
+      </dependency>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint>Use Supabase Auth Helpers for Next.js App Router.</constraint>
+    <constraint>Keep the UI and logic minimal for this initial implementation.</constraint>
+    <constraint>API keys and other sensitive configurations will be managed via .env.local and Vercel Environment Variables, and never committed to version control.</constraint>
+  </constraints>
+  <interfaces>
+    <interface>
+      <name>Supabase Auth</name>
+      <kind>SDK</kind>
+      <signature>signInWithPassword({ email, password })</signature>
+      <path>digital-guess-who/components/login-form.tsx</path>
+    </interface>
+    <interface>
+      <name>Supabase Auth</name>
+      <kind>SDK</kind>
+      <signature>signUp({ email, password, options })</signature>
+      <path>digital-guess-who/components/sign-up-form.tsx</path>
+    </interface>
+    <interface>
+      <name>Supabase Auth</name>
+      <kind>SDK</kind>
+      <signature>verifyOtp({ type, token_hash })</signature>
+      <path>digital-guess-who/app/auth/confirm/route.ts</path>
+    </interface>
+  </interfaces>
+  <tests>
+    <standards>
+      The testing strategy includes unit tests (Jest/React Testing Library) for isolated components, integration tests for Supabase interactions, and E2E tests (Playwright/Cypress) for core user journeys like the authentication flow.
+    </standards>
+    <locations>
+      <location>tests/unit/</location>
+      <location>tests/integration/</location>
+      <location>tests/e2e/</location>
+    </locations>
+    <ideas>
+      <idea id="AC2,3">Write a unit test to render the LoginForm component and check for the presence of email and password fields.</idea>
+      <idea id="AC4">Write an integration test to mock the Supabase client and verify that `signInWithPassword` is called with the correct credentials on form submission.</idea>
+      <idea id="AC5">Write an E2E test using Playwright to simulate a full login flow: navigate to /login, fill in the form, and assert that the user is redirected to the home page.</idea>
+      <idea id="AC6">In the E2E test, after logging in, reload the page and assert that the user remains logged in, verifying session persistence.</idea>
+    </ideas>
+  </tests>
+</story-context>
