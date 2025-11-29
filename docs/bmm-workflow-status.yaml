@@ -19,7 +19,7 @@ workflow_status:
   prd: docs/PRD.md
   validate-prd: optional
   create-design: docs/ux-design-specification.md
-  create-architecture: required
+  create-architecture: C:\Users\Akbar\OneDrive\Desktop\VS\ghuess who\SG-Bergen\docs\architecture.md
   validate-architecture: optional
   solutioning-gate-check: required
   sprint-planning: required
