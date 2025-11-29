@@ -1,0 +1,121 @@
+<story-context id=".bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>3</storyId>
+    <title>UI Library & Global Styles Setup</title>
+    <status>drafted</status>
+    <generatedAt>2025-11-29</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/1-3-ui-library-global-styles-setup.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>to configure Tailwind CSS and shadcn/ui with the project's color palette</iWant>
+    <soThat>we can build consistent UI components efficiently</soThat>
+    <tasks>
+- [ ] **Task: Install and Configure shadcn/ui (AC: 2, 3, 4)**
+  - [ ] Run `npx shadcn-ui@latest init` to initialize the library.
+  - [ ] Update `tailwind.config.ts` and `globals.css` to match the color palette and typography specified in the UX Design Specification.
+  - [ ] Add the `Button` component using `npx shadcn-ui@latest add button`.
+  - [ ] **Test Subtask:** Create a simple test page or component to render the `Button` and verify its styling against the design spec.
+- [ ] **Task: Set Global Font (AC: 5)**
+  - [ ] Update `app/layout.tsx` or `globals.css` to ensure the `Inter` font is applied as the default font for the application.
+  - [ ] **Test Subtask:** Inspect the rendered text in a browser's developer tools to confirm the `Inter` font is being used.
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+1.  **Given** The project is initialized
+2.  **When** I install `shadcn/ui` and configure `tailwind.config.ts`
+3.  **Then** The color palette from UX Spec (Primary: #4299E1, Secondary: #48BB78, Destructive: #E53E3E, Background: #1A202C) is available as utility classes (e.g., `bg-primary`, `text-destructive`)
+4.  **And** I can import and use a basic `Button` component from `@/components/ui/button`
+5.  **And** The global font is set to `Inter`
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+        <doc>
+            <path>docs/ux-design-specification.md</path>
+            <title>ibe160 UX Design Specification</title>
+            <section>1. Design System Foundation</section>
+            <snippet>Chosen Design System: shadcn/ui. Rationale: Given the existing strong visual direction from the mockups and the project's use of Tailwind CSS, shadcn/ui is an ideal choice.</snippet>
+        </doc>
+        <doc>
+            <path>docs/ux-design-specification.md</path>
+            <title>ibe160 UX Design Specification</title>
+            <section>3. Visual Foundation</section>
+            <snippet>Color Palette: Primary Accent (Blue): #4299E1, Secondary Accent (Green): #48BB78, Tertiary Accent (Yellow/Orange): #ECC94B, Destructive/Warning (Red): #E53E3E, Background: #1A202C. Typography: Font Family: Inter.</snippet>
+        </doc>
+        <doc>
+            <path>docs/architecture.md</path>
+            <title>Architecture</title>
+            <section>Decision Summary</section>
+            <snippet>Styling: Tailwind CSS | v4.x | All UI Epics | Rapid UI development, consistent with `shadcn/ui` component library. Component Library: shadcn/ui | Latest | All UI Epics | Provides accessible, customizable foundation components (Buttons, Dialogs) that integrate perfectly with Tailwind.</snippet>
+        </doc>
+        <doc>
+            <path>docs/epics.md</path>
+            <title>ibe160 - Epic Breakdown</title>
+            <section>Story 1.3: UI Library & Global Styles Setup</section>
+            <snippet>As a developer, I want to configure Tailwind CSS and shadcn/ui with the project's color palette, So that we can build consistent UI components efficiently.</snippet>
+        </doc>
+    </docs>
+    <code>
+        <file>
+            <path>digital-guess-who/tailwind.config.ts</path>
+            <kind>config</kind>
+            <reason>This file needs to be updated with the project's color palette.</reason>
+        </file>
+        <file>
+            <path>digital-guess-who/app/globals.css</path>
+            <kind>stylesheet</kind>
+            <reason>This file needs to be updated with global styles and font definitions.</reason>
+        </file>
+    </code>
+    <dependencies>
+        <dependency>
+            <name>next</name>
+            <version>latest</version>
+            <type>production</type>
+        </dependency>
+        <dependency>
+            <name>react</name>
+            <version>^19.0.0</version>
+            <type>production</type>
+        </dependency>
+        <dependency>
+            <name>tailwindcss</name>
+            <version>^3.4.1</version>
+            <type>dev</type>
+        </dependency>
+        <dependency>
+            <name>@radix-ui/react-slot</name>
+            <version>^1.2.2</version>
+            <type>production</type>
+        </dependency>
+         <dependency>
+            <name>class-variance-authority</name>
+            <version>^0.7.1</version>
+            <type>production</type>
+        </dependency>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    - Use `shadcn/ui` for the component library.
+    - Use `Tailwind CSS` for styling.
+    - The color palette defined in the UX Design Specification must be used.
+    - The default font for the application must be `Inter`.
+  </constraints>
+  <interfaces></interfaces>
+  <tests>
+    <standards>Unit tests should be created using Jest and React Testing Library.</standards>
+    <locations>
+        - `digital-guess-who/components/ui/`
+    </locations>
+    <ideas>
+        - Create a test page that renders the `Button` component with different variants to visually verify the styles.
+        - Write a unit test that asserts that the `Button` component renders without crashing.
+    </ideas>
+  </tests>
+</story-context>

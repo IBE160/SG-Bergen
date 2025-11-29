@@ -58,7 +58,7 @@
     - [x ] /run-agent-task sm validate-epic-tech-context {prompt / user-input-file}
 
 
-    - foreach story in epic:
+    - for each story in epic:
       - [x ] /run-agent-task sm *create-story {prompt / user-input-file}
         - [ x] File: sprint-artifacts/{{story_key}}.md
 
