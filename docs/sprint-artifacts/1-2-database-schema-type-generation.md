@@ -1,6 +1,6 @@
 # Story 1.2: Database Schema & Type Generation
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -18,21 +18,21 @@ So that we can interact with the database using type-safe methods.
 
 ## Tasks / Subtasks
 
-- [ ] **Task: Define Supabase Schema (AC: 2, 3)**
-  - [ ] Create `db/schema.ts` and define SQL for `users`, `game_sessions`, `players`, and `moves` tables as per Architecture and Epic details.
-  - [ ] Include columns `id` (UUID), `code` (text), `status` (enum), `host_id` (UUID) for `game_sessions`.
-  - [ ] Include columns `id` (UUID), `game_id` (UUID), `user_id` (UUID), `character_id` (int), `is_ready` (bool) for `players`.
-  - [ ] Include columns `id` (UUID), `game_id` (UUID), `player_id` (UUID), `action_type` (enum), `details` (jsonb) for `moves`.
-  - [ ] Enable Row Level Security (RLS) for all tables with permissive policies initially.
-  - [ ] **Test Subtask:** Verify schema syntax is valid SQL.
-- [ ] **Task: Run Migration Script (AC: 3)**
-  - [ ] Execute the generated SQL migration script against the Supabase database.
-  - [ ] **Test Subtask:** Verify tables are created in the Supabase UI.
-- [ ] **Task: Generate TypeScript Types (AC: 4, 5)**
-  - [ ] Run `supabase gen types typescript --project-id <your-project-id> --schema public > db/types.ts`.
-  - [ ] **Test Subtask:** Verify `db/types.ts` is generated and contains accurate types for the new tables and their columns.
-- [ ] **Test Task: Validate Type-Safety (AC: 5)**
-  - [ ] Write a simple test or create a temporary script to demonstrate type-safe access to one of the new tables using the generated types.
+- [x] **Task: Define Supabase Schema (AC: 2, 3)**
+  - [x] Create `db/schema.ts` and define SQL for `users`, `game_sessions`, `players`, and `moves` tables as per Architecture and Epic details.
+  - [x] Include columns `id` (UUID), `code` (text), `status` (enum), `host_id` (UUID) for `game_sessions`.
+  - [x] Include columns `id` (UUID), `game_id` (UUID), `user_id` (UUID), `character_id` (int), `is_ready` (bool) for `players`.
+  - [x] Include columns `id` (UUID), `game_id` (UUID), `player_id` (UUID), `action_type` (enum), `details` (jsonb) for `moves`.
+  - [x] Enable Row Level Security (RLS) for all tables with permissive policies initially.
+  - [x] **Test Subtask:** Verify schema syntax is valid SQL.
+- [x] **Task: Run Migration Script (AC: 3)**
+  - [x] Execute the generated SQL migration script against the Supabase database.
+  - [x] **Test Subtask:** Verify tables are created in the Supabase UI.
+- [x] **Task: Generate TypeScript Types (AC: 4, 5)**
+  - [x] Run `supabase gen types typescript --project-id <your-project-id> --schema public > db/types.ts`.
+  - [x] **Test Subtask:** Verify `db/types.ts` is generated and contains accurate types for the new tables and their columns.
+- [x] **Test Task: Validate Type-Safety (AC: 5)**
+  - [x] Write a simple test or create a temporary script to demonstrate type-safe access to one of the new tables using the generated types.
 
 ## Dev Notes
 
@@ -69,10 +69,22 @@ gemini-1.5-flash
 
 ### Completion Notes List
 
+- Successfully defined schema in `db/schema.sql` and `db/schema.ts`.
+- Applied migration to remote Supabase project.
+- Generated TypeScript types in `db/types.ts`.
+- Verified type safety with `db/type-check.ts`.
+
 ### File List
+
+- digital-guess-who/db/schema.sql
+- digital-guess-who/db/schema.ts
+- digital-guess-who/db/types.ts
+- digital-guess-who/db/type-check.ts
+- digital-guess-who/supabase/migrations/20251129120000_initial_schema.sql
 
 ## Change Log
 
 - [{{date}}] Created story draft.
 - [{{date}}] Updated story to address validation issues: Added Tech Spec citation, added testing subtasks, and initialized Change Log.
 - [lørdag 29. november 2025] Story marked ready-for-dev. Context generated.
+- [lørdag 29. november 2025] Implemented schema, migration, and type generation. Verified type safety.
