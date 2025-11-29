@@ -71,6 +71,7 @@
 
       - [ ] /run-agent-task sm *story-ready-for-dev {prompt / user-input-file}
       while code-review != approved:
+      
         - [ ] /run-agent-task dev *develop-story {prompt / user-input-file}
         - [ ] /run-agent-task dev *code-review {prompt / user-input-file}
       - [ ] /run-agent-task dev *story-done {prompt / user-input-file}
