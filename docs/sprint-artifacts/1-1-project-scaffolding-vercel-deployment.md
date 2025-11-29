@@ -1,6 +1,6 @@
 # Story 1.1: Project Scaffolding & Vercel Deployment
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -19,25 +19,25 @@ So that we have a live URL and a production-ready environment from day one.
 
 ## Tasks / Subtasks
 
-- [ ] **Task: Initialize Next.js + Supabase Project (AC: 2, 3)**
-  - [ ] Execute `npx create-next-app -e with-supabase digital-guess-who` in the project root.
-  - [ ] Verify the created project uses Next.js App Router and TypeScript.
-  - [ ] Add project to Git (if not already done).
-- [ ] **Task: Connect to Vercel and Deploy (AC: 4, 5)**
-  - [ ] Log in to Vercel CLI (`vercel login`).
-  - [ ] Create a new Vercel project and link it to the local directory (`vercel link`).
-  - [ ] Configure Vercel environment variables for `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
-  - [ ] Trigger an initial Vercel deployment (`vercel --prod`).
-  - [ ] Access the deployed URL and verify the Next.js welcome page loads correctly.
-- [ ] **Task: Push Project to GitHub (AC: 6)**
-  - [ ] Commit all initial project files.
-  - [ ] Create a new remote GitHub repository.
-  - [ ] Push the local repository to the remote GitHub repository.
-- [ ] **Test Task: Validate Project Scaffolding**
-  - [ ] Manually check `package.json` for Next.js and Supabase dependencies.
-  - [ ] Manually verify `next.config.js` and `tsconfig.json` are present.
-  - [ ] Manually verify the Vercel project is linked and deployed.
-  - [ ] Manual test: Verify code pushed to GitHub matches local repository.
+- [x] **Task: Initialize Next.js + Supabase Project (AC: 2, 3)**
+  - [x] Execute `npx create-next-app -e with-supabase digital-guess-who` in the project root.
+  - [x] Verify the created project uses Next.js App Router and TypeScript.
+  - [x] Add project to Git (if not already done).
+- [x] **Task: Connect to Vercel and Deploy (AC: 4, 5)**
+  - [x] Log in to Vercel CLI (`vercel login`).
+  - [x] Create a new Vercel project and link it to the local directory (`vercel link`).
+  - [x] Configure Vercel environment variables for `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+  - [x] Trigger an initial Vercel deployment (`vercel --prod`).
+  - [x] Access the deployed URL and verify the Next.js welcome page loads correctly.
+- [x] **Task: Push Project to GitHub (AC: 6)**
+  - [x] Commit all initial project files.
+  - [x] Create a new remote GitHub repository.
+  - [x] Push the local repository to the remote GitHub repository.
+- [x] **Test Task: Validate Project Scaffolding**
+  - [x] Manually check `package.json` for Next.js and Supabase dependencies.
+  - [x] Manually verify `next.config.js` and `tsconfig.json` are present.
+  - [x] Manually verify the Vercel project is linked and deployed.
+  - [x] Manual test: Verify code pushed to GitHub matches local repository.
 
 ## Dev Notes
 
@@ -69,6 +69,20 @@ gemini-1.5-flash
 
 ### Debug Log References
 
+*   Manual initialization of Next.js project performed by user.
+*   Verified project structure: `digital-guess-who/` created with `app/`, `tsconfig.json`, and `package.json`.
+
 ### Completion Notes List
 
+*   Successfully initialized Next.js project with Supabase template (`digital-guess-who/`).
+*   Configured and deployed to Vercel, including environment variables for Supabase.
+*   Pushed initial project to GitHub.
+
 ### File List
+
+*   digital-guess-who/
+
+### Change Log
+
+*   feat: Initial project scaffolding, Vercel deployment, and GitHub push (Date: lørdag 29. november 2025)
+

@@ -37,7 +37,7 @@ story_location: docs/sprint-artifacts
 
 development_status:
   epic-1: contexted
-  1-1-project-scaffolding-vercel-deployment: in-progress
+  1-1-project-scaffolding-vercel-deployment: review
   1-2-database-schema-type-generation: ready-for-dev
   1-3-ui-library-global-styles-setup: backlog
   1-4-authentication-skeleton-supabase-auth: backlog
