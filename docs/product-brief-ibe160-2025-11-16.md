@@ -49,19 +49,37 @@ The secondary users are adults who have nostalgic memories of playing "Guess Who
 
 ### User Journey
 
-The user journey for "Digital Guess Who" is designed to be intuitive and engaging, guiding players through a seamless experience from game initiation to conclusion.
+The user journey is divided into three main flows: Pre-Game Setup, Core Gameplay, and Winning/Rematching.
 
-1.  **Application Launch & Game Selection:** The journey begins when a user opens the application, presented with clear options to either 'Create Game' or 'Join Game'.
-2.  **Game Creation (Host):** A host player selects 'Create Game', configures game settings like difficulty and character set, and receives a unique Game Code. They then enter a 'Waiting for Opponent' screen, sharing the code with a friend.
-3.  **Game Joining (Opponent):** An opponent player selects 'Join Game', enters the provided Game Code, and upon validation, is directed to the game room.
-4.  **Game Start & Character Selection:** Once both players are in the room, they confirm readiness. The game prompts each player to secretly 'Choose your secret character' from the displayed grid, with a confirmation step to finalize their choice.
-5.  **Core Gameplay Loop:**
-    *   **Player's Turn:** The active player uses a 'Question Box' to type a yes/no question, with an optional 'AI Hint' button for strategic suggestions. They submit the question.
-    *   **Opponent's Answer:** The opponent receives the question and provides a 'Yes' or 'No' answer.
-    *   **Elimination:** The active player then eliminates characters from the board that do not match the opponent's answer, visually 'flipping down' their portraits.
-    *   **Turn End:** The turn automatically passes to the other player, and this loop continues.
-6.  **Making a Guess & Outcome:** At any point during their turn, a player can choose to 'Make a Guess' instead of asking a question. After a confirmation, they select a character. The system then determines if the guess is correct, displaying a 'You Win!' or 'You Lose!' screen to both players accordingly.
-7.  **Post-Game Options:** Following the game's conclusion, players are offered options to 'Play Again' or 'Return to Main Menu', facilitating continued engagement.
+**1. Pre-Game Setup**
+
+*   **Initial Interaction:** The user is greeted with a main screen featuring two primary options: 'Create Game' and 'Join Game'. A 'How to Play' guide is also accessible.
+*   **Host Flow ('Create Game'):**
+    1.  **Difficulty Selection:** The host chooses a difficulty level (Easy, Medium, Hard), which determines the number of characters on the board.
+    2.  **Lobby & Board Setup:** The host enters a waiting lobby where they see the game board. They can manually populate the board with characters from a character pool, use a "Fill in Board" button for random selection, or upload custom characters.
+    3.  **Invite Opponent:** The host is provided with a unique Game Code to share. The 'Start Game' button remains disabled until another player joins and the board is full.
+*   **Joiner Flow ('Join Game'):**
+    1.  **Enter Code:** The joining player enters the Game Code provided by the host.
+    2.  **Waiting Lobby:** The joiner enters the lobby and sees the board being prepared by the host in real-time. They have no actions available at this stage and wait for the host to start the game.
+
+**2. Core Gameplay Loop**
+
+*   **Secret Character Selection:** Once the host starts the game, both players are prompted to secretly select their character from the main board. Their choice is displayed in a private "Your Character" area. A 'Ready' button appears.
+*   **Starting the Game:** The game officially begins once both players have clicked 'Ready'. The player who joined the game takes the first turn.
+*   **Turn-Based Play:**
+    1.  **Ask a Question:** The active player uses a chat-style interface to ask a yes/no question. They can type a custom question, choose from a predefined list, or use an AI Hint.
+    2.  **Provide an Answer:** The opposing player responds with simple 'Yes' or 'No' buttons.
+    3.  **Eliminate Characters:** Based on the answer, the active player clicks on character portraits to gray them out, narrowing down the possibilities.
+    4.  **End Turn:** The player clicks 'End Turn' to pass control to their opponent.
+
+**3. Winning and Rematching**
+
+*   **Making a Final Guess:** At any point during their turn, a player can choose to 'Make a Guess' instead of asking a question. They then select the single character they believe is their opponent's secret one.
+*   **Game Outcome:**
+    *   A correct guess results in a win for the guessing player.
+    *   An incorrect guess results in a loss.
+*   **Game Over Screen:** A pop-up announces the winner and provides two options: 'End Game' (returns to the main menu) or 'Rematch'.
+*   **Rematch:** If 'Rematch' is chosen, players return directly to the secret character selection phase with the same board, skipping the initial setup lobby.
 {{/if}}
 
 ---
@@ -161,6 +179,7 @@ This Product Brief was created based on the following documents:
 -   `proposal.md`
 -   `docs/brainstorming-session-results-2025-10-26.md`
 -   `docs/brainstorming-session-results-2025-11-08.md`
+-   `docs/brainstorming-session-results-2025-11-24.md`
 -   `docs/brainstorming-session-results-lørdag 8. november 2025.md`
 -   `docs/research-technical-lørdag 8. november 2025.md`
 {{/if}}
