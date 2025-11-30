@@ -59,6 +59,68 @@ export async function createGameSession(userId: string, difficulty: Difficulty) 
   return session
 }
 
+export async function joinGameSession(userId: string, code: string) {
+  const supabase = await createClient()
+
+  // 1. Fetch game session
+  const { data: session, error: sessionError } = await supabase
+    .from('game_sessions')
+    .select('id, status')
+    .eq('code', code)
+    .maybeSingle()
+
+  if (sessionError) throw sessionError
+  if (!session) throw new Error('Invalid game code')
+
+  if (session.status !== 'waiting') {
+    throw new Error('Game is already in progress or finished')
+  }
+
+  // 2. Check current player count
+  const { count, error: countError } = await supabase
+    .from('players')
+    .select('*', { count: 'exact', head: true })
+    .eq('game_id', session.id)
+
+  if (countError) throw countError
+
+  // 3. Check if user is already joined
+  const { data: existingPlayer } = await supabase
+    .from('players')
+    .select('id')
+    .eq('game_id', session.id)
+    .eq('user_id', userId)
+    .maybeSingle()
+
+  if (existingPlayer) {
+    return session // Already joined
+  }
+
+  // 4. Check for full game (max 2 players)
+  if (count !== null && count >= 2) {
+    throw new Error('Game is full')
+  }
+
+  // 5. Insert player
+  const { error: insertError } = await supabase
+    .from('players')
+    .insert({
+      game_id: session.id,
+      user_id: userId,
+      is_ready: false
+    })
+
+  if (insertError) {
+    // Handle race condition where another player joined just now
+    if (insertError.code === '23505') { // unique_violation (user+game)
+        return session
+    }
+    throw insertError
+  }
+
+  return session
+}
+
 function generateGameCode(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
   let result = ''
