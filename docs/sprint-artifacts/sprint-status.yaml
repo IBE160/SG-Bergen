@@ -41,7 +41,7 @@ development_status:
   1-2-database-schema-type-generation: done
   1-3-ui-library-global-styles-setup: done
   1-4-authentication-skeleton-supabase-auth: done
-  epic-1-retrospective: optional
+  epic-1-retrospective: done
 
   epic-2: backlog
   2-1-lobby-ui-game-creation: backlog
