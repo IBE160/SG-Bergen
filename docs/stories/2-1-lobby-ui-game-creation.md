@@ -1,6 +1,6 @@
 # Story 2.1: Lobby UI & Game Creation
 
-Status: review
+Status: done
 
 ## Story
 
@@ -70,6 +70,10 @@ So that I can invite a friend to play.
 ### Debug Log References
 
 ### Completion Notes List
+
+### Completion Notes
+**Completed:** søndag 30. november 2025
+**Definition of Done:** All acceptance criteria met, code reviewed, tests passing
 
 ### File List
 
