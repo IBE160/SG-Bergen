@@ -9,7 +9,7 @@
 export const schemaSql = `
 -- Create Enums
 create type public.game_status as enum ('waiting', 'active', 'finished');
-create type public.action_type as enum ('question', 'answer', 'guess', 'flip');
+create type public.difficulty_level as enum ('Easy', 'Medium', 'Hard');
 
 -- Create game_sessions table
 create table public.game_sessions (
@@ -17,6 +17,7 @@ create table public.game_sessions (
   code text not null,
   status public.game_status not null default 'waiting',
   host_id uuid not null references auth.users(id),
+  difficulty public.difficulty_level not null default 'Medium',
   winner_id uuid references auth.users(id),
   created_at timestamp with time zone not null default now(),
   constraint game_sessions_pkey primary key (id),

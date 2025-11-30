@@ -1,0 +1,419 @@
+<story-context id=".bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>2</epicId>
+    <storyId>1</storyId>
+    <title>Lobby UI &amp; Game Creation</title>
+    <status>drafted</status>
+    <generatedAt>søndag 30. november 2025</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>C:\Users\Akbar\OneDrive\Desktop\VS\ghuess who\SG-Bergen\docs\stories\2-1-lobby-ui-game-creation.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>Host</asA>
+    <iWant>to create a new game and receive a unique code</iWant>
+    <soThat>I can invite a friend to play</soThat>
+    <tasks>
+- [ ] Task 1: Create Game Setup UI (AC: 1)
+  - [ ] Create page `app/game-lobby/page.tsx`.
+  - [ ] Add UI for selecting difficulty (Easy, Medium, Hard) and a "Create" button that calls the creation API.
+- [ ] Task 2: Implement Game Creation Logic (AC: 2)
+  - [ ] Create an API route `app/api/game/create/route.ts`.
+  - [ ] The API will generate a unique code and create a `game_sessions` record in the database.
+  - [ ] It will also create a `players` record for the host user.
+- [ ] Task 3: Implement Redirection and Lobby UI (AC: 3, 4)
+  - [ ] On successful creation, redirect the user to `/game/[code]`.
+  - [ ] The lobby page should display the game code prominently.
+  - [ ] Add a button to copy the game code to the clipboard.
+- [ ] Task 4: Testing (AC: 1, 2, 3, 4)
+  - [ ] Write a unit test for the Game Setup UI to verify the "Create" button's API call.
+  - [ ] Write an integration test for the `/api/game/create` endpoint to validate database record creation.
+  - [ ] Write an E2E test to simulate the full game creation flow, from clicking "Create" to verifying the lobby page content.
+</tasks>
+  </story>
+
+  <acceptanceCriteria>
+1.  **Given** an authenticated user is on the game setup screen, **when** they select a difficulty ("Easy", "Medium", or "Hard") and click the "Create" button, **then** a `POST` request is sent to the `/api/game/create` endpoint.
+2.  **Given** the game is successfully created via the API, **then** a new `game_sessions` record exists in the database with the correct `host_id`, `difficulty`, `status: 'waiting'`, and a unique 6-character `code`.
+3.  **Given** the game is successfully created, **then** the user is automatically redirected to the lobby URL at `/game/[code]`.
+4.  **Given** the user is on the lobby page, **then** the unique game code is displayed prominently with a "Copy" button.
+</acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <entry>
+        <path>docs/PRD.md</path>
+        <title>Product Requirements Document</title>
+        <section>Executive Summary</section>
+        <snippet>This PRD outlines the full vision, from functional requirements for game setup and mechanics to non-functional requirements for performance and security.</snippet>
+      </entry>
+      <entry>
+        <path>docs/PRD.md</path>
+        <title>Product Requirements Document</title>
+        <section>Product Scope - MVP</section>
+        <snippet>The MVP will focus on delivering the complete, core gameplay loop with the following features... Two-Player Online Gameplay... Difficulty Settings.</snippet>
+      </entry>
+      <entry>
+        <path>docs/PRD.md</path>
+        <title>Product Requirements Document</title>
+        <section>Functional Requirements - Game Setup &amp; Management</section>
+        <snippet>FR1.1 - Game Creation... FR1.2 - Game Joining... FR1.3 - Player Readiness... FR4.1 - Difficulty Settings.</snippet>
+      </entry>
+      <entry>
+        <path>docs/PRD.md</path>
+        <title>Product Requirements Document</title>
+        <section>Implementation Planning - Epic Breakdown</section>
+        <snippet>Epic 2: Game Session Management (Goal: Enable users to create and join game sessions... Scope: Game creation (generating codes), lobby system, game joining logic, player readiness state, and difficulty selection).</snippet>
+      </entry>
+      <entry>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Decision Summary</section>
+        <snippet>Leveraging Next.js (App Router) + Supabase stack, Supabase Realtime for low-latency game state synchronization, and Zustand for clean client-side state management.</snippet>
+      </entry>
+      <entry>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Project Structure</section>
+        <snippet>Details project structure including app/game-lobby/ and app/api/game/ for game session management.</snippet>
+      </entry>
+      <entry>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Epic to Architecture Mapping - Epic 2: Game Session Management</section>
+        <snippet>Maps to Supabase Client, Zustand Store (Lobby), API Routes; Key Files/Directories: app/game-lobby/, lib/supabase/, app/api/game/.</snippet>
+      </entry>
+      <entry>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Communication Patterns (Supabase Realtime)</section>
+        <snippet>Channel Naming: game:[game-id], Event Names: player-joined, game-started.</snippet>
+      </entry>
+      <entry>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Data Architecture</section>
+        <snippet>Defines GameSession and Player tables, crucial for tracking game state and participants.</snippet>
+      </entry>
+      <entry>
+        <path>docs/ux-design-specification.md</path>
+        <title>UX Design Specification</title>
+        <section>Executive Summary</section>
+        <snippet>Focus on creating a fun, engaging, and effortless online 'Guess Who' experience, especially when it comes to starting a game with a friend.</snippet>
+      </entry>
+      <entry>
+        <path>docs/ux-design-specification.md</path>
+        <title>UX Design Specification</title>
+        <section>Core Experience Principles</section>
+        <snippet>Effortless Setup: Starting and joining a game should be quick, intuitive, and free of friction.</snippet>
+      </entry>
+      <entry>
+        <path>docs/ux-design-specification.md</path>
+        <title>UX Design Specification</title>
+        <section>User Journey Flows - Journey 1: Starting and Joining a Game</section>
+        <snippet>Detailed flow for Host and Guest players for game creation, joining, and game start, including error states and recovery.</snippet>
+      </entry>
+      <entry>
+        <path>docs/ux-design-specification.md</path>
+        <title>UX Design Specification</title>
+        <section>Component Library</section>
+        <snippet>Outlines usage of shadcn/ui components like Button, Input, Card, AlertDialog / Dialog, Avatar.</snippet>
+      </entry>
+      <entry>
+        <path>docs/epics.md</path>
+        <title>Epic Breakdown</title>
+        <section>Epics Summary - Epic 2: Game Session Management</section>
+        <snippet>Goal: Enable users to create and join game sessions... Scope: Game creation (generating codes), lobby system, game joining logic, player readiness state, and difficulty selection.</snippet>
+      </entry>
+      <entry>
+        <path>docs/epics.md</path>
+        <title>Epic Breakdown</title>
+        <section>Epic 2: Game Session Management - Story 2.1: Lobby UI &amp; Game Creation</section>
+        <snippet>Details the user story for a Host to create a new game and receive a unique code to invite a friend.</snippet>
+      </entry>
+      <entry>
+        <path>docs/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Game Session Management</title>
+        <section>Overview</section>
+        <snippet>Outlines the design and implementation details for Epic 2: Game Session Management, covering game creation, joining, and real-time player synchronization.</snippet>
+      </entry>
+      <entry>
+        <path>docs/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Game Session Management</title>
+        <section>Objectives and Scope</section>
+        <snippet>Details in-scope features such as Game Creation, Difficulty Selection, Game Joining, Real-time Lobby, Player Readiness, and Transition to Gameplay.</snippet>
+      </entry>
+      <entry>
+        <path>docs/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Game Session Management</title>
+        <section>System Architecture Alignment</section>
+        <snippet>Aligns implementation with Supabase Realtime, Zustand for client-side state, Supabase (PostgreSQL) for data persistence, and Next.js API Routes.</snippet>
+      </entry>
+      <entry>
+        <path>docs/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Game Session Management</title>
+        <section>Detailed Design - Services and Modules</section>
+        <snippet>Specifies GameSessionService, LobbyStore, LobbyPage, and SupabaseRealtimeClient with their responsibilities and locations.</snippet>
+      </entry>
+      <entry>
+        <path>docs/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Game Session Management</title>
+        <section>Detailed Design - Data Models and Contracts</section>
+        <snippet>Defines game_sessions and players tables with their schemas and fields, crucial for game state and player tracking.</snippet>
+      </entry>
+      <entry>
+        <path>docs/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Game Session Management</title>
+        <section>Detailed Design - APIs and Interfaces</section>
+        <snippet>Details POST /api/game/create and POST /api/game/join endpoints, and Real-time Events (player-joined, player-ready, game-starting).</snippet>
+      </entry>
+      <entry>
+        <path>docs/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Game Session Management</title>
+        <section>Detailed Design - Workflows and Sequencing</section>
+        <snippet>Outlines the sequential steps for Create Game Flow, Join Game Flow, and Game Start Flow, crucial for understanding the system's operation.</snippet>
+      </entry>
+      <entry>
+        <path>docs/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Game Session Management</title>
+        <section>Non-Functional Requirements</section>
+        <snippet>Covers Performance (latency, API response), Security (Auth, RLS, Input Validation), Reliability (Disconnection, Error States, Race Conditions), and Observability.</snippet>
+      </entry>
+      <entry>
+        <path>docs/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Game Session Management</title>
+        <section>Acceptance Criteria (Authoritative)</section>
+        <snippet>Provides definitive, testable acceptance criteria (AC1-AC7) for the epic, covering game creation, joining, real-time updates, and game auto-start.</snippet>
+      </entry>
+      <entry>
+        <path>docs/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Game Session Management</title>
+        <section>Test Strategy Summary</section>
+        <snippet>Summarizes Unit, Integration, and End-to-End testing approaches for the epic, including specific test cases like happy path and error scenarios.</snippet>
+      </entry>
+    </docs>
+    <code>
+      <entry>
+        <path>digital-guess-who/db/schema.ts</path>
+        <kind>schema</kind>
+        <symbol>game_sessions</symbol>
+        <lines>10-20</lines>
+        <reason>Defines the game session structure, including code, status, host_id, and difficulty.</reason>
+      </entry>
+      <entry>
+        <path>digital-guess-who/db/schema.ts</path>
+        <kind>schema</kind>
+        <symbol>players</symbol>
+        <lines>23-32</lines>
+        <reason>Defines the player structure within a game session, linking users to games.</reason>
+      </entry>
+      <entry>
+        <path>digital-guess-who/lib/supabase/client.ts</path>
+        <kind>supabase-client</kind>
+        <symbol>createClient</symbol>
+        <reason>Provides the client-side Supabase instance for database and real-time interactions.</reason>
+      </entry>
+      <entry>
+        <path>digital-guess-who/lib/supabase/server.ts</path>
+        <kind>supabase-server</kind>
+        <symbol>createServerClient</symbol>
+        <reason>Provides the server-side Supabase instance for privileged operations in API routes.</reason>
+      </entry>
+      <entry>
+        <path>digital-guess-who/tailwind.config.ts</path>
+        <kind>config</kind>
+        <symbol>tailwind configuration</symbol>
+        <reason>Base for styling and theme, aligns with UX design specification.</reason>
+      </entry>
+      <entry>
+        <path>digital-guess-who/package.json</path>
+        <kind>config</kind>
+        <symbol>dependencies</symbol>
+        <reason>Lists project dependencies, including Next.js, React, Supabase, and Zustand.</reason>
+      </entry>
+      <entry>
+        <path>digital-guess-who/tsconfig.json</path>
+        <kind>config</kind>
+        <symbol>typescript configuration</symbol>
+        <reason>Defines TypeScript compilation settings for the project.</reason>
+      </entry>
+      <entry>
+        <path>digital-guess-who/eslint.config.mjs</path>
+        <kind>config</kind>
+        <symbol>eslint configuration</symbol>
+        <reason>Ensures code quality and adherence to coding standards.</reason>
+      </entry>
+    </code>
+    <dependencies>
+      <entry>
+        <path>digital-guess-who/package.json</path>
+        <kind>npm</kind>
+        <symbol>@supabase/supabase-js</symbol>
+        <reason>Core Supabase client library for database and real-time interactions.</reason>
+      </entry>
+      <entry>
+        <path>digital-guess-who/package.json</path>
+        <kind>npm</kind>
+        <symbol>@supabase/ssr</symbol>
+        <reason>Supabase SSR utilities for Next.js App Router.</reason>
+      </entry>
+      <entry>
+        <path>digital-guess-who/package.json</path>
+        <kind>npm</kind>
+        <symbol>next</symbol>
+        <reason>Frontend framework.</reason>
+      </entry>
+      <entry>
+        <path>digital-guess-who/package.json</path>
+        <kind>npm</kind>
+        <symbol>react</symbol>
+        <reason>UI library.</reason>
+      </entry>
+      <entry>
+        <path>digital-guess-who/package.json</path>
+        <kind>npm</kind>
+        <symbol>zustand</symbol>
+        <reason>Client-side state management library for LobbyStore.</reason>
+      </entry>
+      <entry>
+        <path>digital-guess-who/package.json</path>
+        <kind>npm</kind>
+        <symbol>tailwindcss</symbol>
+        <reason>CSS framework for styling.</reason>
+      </entry>
+      <entry>
+        <path>digital-guess-who/package.json</path>
+        <kind>npm</kind>
+        <symbol>shadcn/ui</symbol>
+        <reason>Component library for UI elements.</reason>
+      </entry>
+    </dependencies>
+  <constraints>
+    <entry>
+      <type>Architectural Alignment</type>
+      <description>Adhere to Next.js App Router, Supabase, Zustand, Tailwind CSS, shadcn/ui.</description>
+    </entry>
+    <entry>
+      <type>Feature Slicing</type>
+      <description>New components and logic for game lobby must reside in 'app/game-lobby/'.</description>
+    </entry>
+    <entry>
+      <type>Row Level Security (RLS)</type>
+      <description>Policies need to be configured for 'game_sessions' and 'players' tables as described in 'tech-spec-epic-2.md' for insert, update, and select operations.</description>
+    </entry>
+    <entry>
+      <type>Input Validation</type>
+      <description>Game code and difficulty parameters must be strictly validated.</description>
+    </entry>
+    <entry>
+      <type>Authentication</type>
+      <description>All API endpoints for game creation and joining require an authenticated user session.</description>
+    </entry>
+    <entry>
+      <type>Real-time</type>
+      <description>Utilize Supabase Realtime for instant synchronization of lobby state (player joins, readiness changes).</description>
+    </entry>
+    <entry>
+      <type>API Design</type>
+      <description>Implement POST /api/game/create and POST /api/game/join endpoints.</description>
+    </entry>
+    <entry>
+      <type>Database Schema</type>
+      <description>The 'game_sessions' table must include a 'difficulty' column with 'Easy', 'Medium', 'Hard' enum values.</description>
+    </entry>
+  </constraints>
+  <interfaces>
+    <entry>
+      <name>POST /api/game/create</name>
+      <kind>REST endpoint</kind>
+      <signature>Request: { "difficulty": "Easy" | "Medium" | "Hard" }, Response: { "data": { "code": "ABC-DEF" } }</signature>
+      <path>digital-guess-who/app/api/game/create/route.ts</path>
+    </entry>
+    <entry>
+      <name>POST /api/game/join</name>
+      <kind>REST endpoint</kind>
+      <signature>Request: { "code": "ABC-DEF" }, Response: { "data": { "gameId": "..." } }</signature>
+      <path>digital-guess-who/app/api/game/join/route.ts</path>
+    </entry>
+    <entry>
+      <name>Supabase Realtime Channel</name>
+      <kind>WebSocket</kind>
+      <signature>Channel: "game-[gameId]", Events: "player-joined", "player-ready", "game-starting"</signature>
+      <path>digital-guess-who/lib/supabase/client.ts</path>
+    </entry>
+    <entry>
+      <name>LobbyStore</name>
+      <kind>Zustand Store</kind>
+      <signature>Manages client-side state for lobby, including game code, player list, readiness status.</signature>
+      <path>digital-guess-who/app/game-lobby/store.ts</path>
+    </entry>
+    <entry>
+      <name>GameSessionService</name>
+      <kind>Service</kind>
+      <signature>Handles business logic for creating, joining, and managing game sessions. Interacts with Supabase.</signature>
+      <path>digital-guess-who/lib/services/game-session.ts</path>
+    </entry>
+  </interfaces>
+  <tests>
+    <standards>
+      <paragraph>
+        The project utilizes Jest and React Testing Library for unit and integration tests. E2E tests are planned using Playwright or Cypress (TBD). Tests should cover all levels of the testing pyramid. Client-side state (Zustand) logic, utility functions, individual React components, and API route handlers should be unit/integration tested. End-to-end tests are crucial for verifying the full user flow, including game creation, joining, real-time updates, and game auto-start.
+      </paragraph>
+    </standards>
+    <locations>
+      <directory>digital-guess-who/__tests__/</directory>
+      <file>digital-guess-who/__tests__/LoginForm.test.tsx</file>
+      <note>New unit/integration tests will be created in relevant feature directories (e.g., app/game-lobby/__tests__/) or a centralized __tests__ directory, mirroring existing patterns.</note>
+    </locations>
+    <ideas>
+      <idea id="AC1-Test">
+        <description>E2E: Simulate user clicking create, verifying redirection, and database entry.</description>
+        <related-ac>AC1 (Game Creation)</related-ac>
+      </idea>
+      <idea id="AC2-Test">
+        <description>E2E: Simulate a second user joining with a valid code and verifying redirection.</description>
+        <related-ac>AC2 (Game Joining)</related-ac>
+      </idea>
+      <idea id="AC3-Test">
+        <description>Integration: Test the /api/game/join endpoint with a non-existent code, assert error message.</description>
+        <related-ac>AC3 (Invalid Join)</related-ac>
+      </idea>
+      <idea id="AC4-Test">
+        <description>Integration: Test the /api/game/join endpoint for a game that already has 2 players, assert error message.</description>
+        <related-ac>AC4 (Full Game)</related-ac>
+      </idea>
+      <idea id="AC5-Test">
+        <description>E2E: Two concurrent test clients; one joins and verify the other's UI updates automatically.</description>
+        <related-ac>AC5 (Real-time Join Notification)</related-ac>
+      </idea>
+      <idea id="AC6-Test">
+        <description>E2E: Player clicks "Ready" and verify the status updates for both clients.</description>
+        <related-ac>AC6 (Player Readiness)</related-ac>
+      </idea>
+      <idea id="AC7-Test">
+        <description>E2E: Second player clicks "Ready" and verify both clients are navigated to the gameplay screen.</description>
+        <related-ac>AC7 (Game Auto-Start)</related-ac>
+      </idea>
+      <idea id="LobbyStore-Unit">
+        <description>Unit: Test LobbyStore (Zustand) logic in isolation for state transitions (e.g., adding player, updating readiness).</description>
+        <related-ac>AC5, AC6, AC7</related-ac>
+      </idea>
+      <idea id="GameCodeGenerator-Unit">
+        <description>Unit: Test game code generator utility functions.</description>
+        <related-ac>AC1</related-ac>
+      </idea>
+      <idea id="LobbyPage-Component">
+        <description>Unit: Test LobbyPage component with mocked data for correct rendering in different states.</description>
+        <related-ac>AC1, AC2, AC3, AC4, AC5, AC6</related-ac>
+      </idea>
+      <idea id="API-GameCreate-Integration">
+        <description>Integration: Test /api/game/create endpoint, mocking Supabase client to verify input validation and DB interaction.</description>
+        <related-ac>AC1</related-ac>
+      </idea>
+      <idea id="API-GameJoin-Integration">
+        <description>Integration: Test /api/game/join endpoint, mocking Supabase client to verify input validation and DB interaction.</description>
+        <related-ac>AC2, AC3, AC4</related-ac>
+      </idea>
+    </ideas>
+  </tests>
+</story-context>

@@ -1,6 +1,6 @@
 # Story 2.1: Lobby UI & Game Creation
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
