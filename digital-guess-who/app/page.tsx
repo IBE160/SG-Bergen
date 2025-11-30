@@ -13,8 +13,18 @@ import { JoinGameForm } from "@/components/join-game-form";
 import { Button } from "@/components/ui/button";
 
 export default async function Home() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  let user = null;
+
+  // Only attempt to fetch user if env vars are present to avoid crashing
+  if (hasEnvVars) {
+    try {
+      const supabase = await createClient();
+      const { data } = await supabase.auth.getUser();
+      user = data.user;
+    } catch (error) {
+      console.error("Failed to initialize Supabase client:", error);
+    }
+  }
 
   return (
     <main className="min-h-screen flex flex-col items-center">
@@ -35,7 +45,15 @@ export default async function Home() {
         </nav>
 
         <div className="flex-1 flex flex-col gap-20 max-w-5xl p-5 w-full items-center">
-          {user ? (
+          {!hasEnvVars ? (
+            <>
+               <Hero />
+               <main className="flex-1 flex flex-col gap-6 px-4">
+                 <h2 className="font-medium text-xl mb-4">Connect Supabase</h2>
+                 <ConnectSupabaseSteps />
+               </main>
+            </>
+          ) : user ? (
              <div className="flex flex-col gap-8 w-full max-w-md items-center mt-10">
                 <div className="text-center space-y-2">
                    <h1 className="text-3xl font-bold">Welcome!</h1>
@@ -62,7 +80,7 @@ export default async function Home() {
                 <Hero />
                 <main className="flex-1 flex flex-col gap-6 px-4">
                   <h2 className="font-medium text-xl mb-4">Next steps</h2>
-                  {hasEnvVars ? <SignUpUserSteps /> : <ConnectSupabaseSteps />}
+                  <SignUpUserSteps />
                 </main>
              </>
           )}
