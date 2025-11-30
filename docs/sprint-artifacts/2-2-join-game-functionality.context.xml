@@ -1,0 +1,478 @@
+<story-context id=".bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>2</epicId>
+    <storyId>2</storyId>
+    <title>Join Game Functionality</title>
+    <status>drafted</status>
+    <generatedAt>søndag 30. november 2025</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/2-2-join-game-functionality.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>Guest</asA>
+    <iWant>to join an existing game using a code</iWant>
+    <soThat>so that I can play with the host</soThat>
+    <tasks>
+    - [ ] **Backend: Implement Join API** (AC: 1, 2, 3)
+      - [ ] Create `POST /api/game/join` endpoint
+      - [ ] Implement validation: Check `code` exists, `status` is 'waiting', and `players` count &lt; 2
+      - [ ] Implement player creation: Insert into `players` table (userId, gameId)
+      - [ ] Handle race conditions (e.g., check count and insert in transaction or use explicit lock if needed)
+      - [ ] Test: Integration tests for `POST /api/game/join` (Valid, Invalid Code, Full Game scenarios)
+
+    - [ ] **Frontend: Update Home Page Join Form** (AC: 1, 2, 3)
+      - [ ] Add "Join Game" input field and button to `app/(auth)/page.tsx` (or Home page)
+      - [ ] Implement `handleJoin` function calling `GameSessionService` or API directly
+      - [ ] Display loading state during request
+      - [ ] Display error messages (toast or inline) for "Invalid Code" and "Full Game"
+      - [ ] Implement redirection to `/game/[code]` on success
+      - [ ] Test: Unit test for form state and submission logic
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    1. **Successful Join:**
+       - **Given** a valid game `code` for a session with `status: 'waiting'` and only one player
+       - **When** a second authenticated user enters the code and clicks "Join"
+       - **Then** a new `players` record is created linking the second user to the game session
+       - **And** the user is redirected to the lobby URL (`/game/[code]`)
+
+    2. **Invalid Code Error:**
+       - **Given** a user attempts to join with an invalid or expired code
+       - **When** they submit the join request
+       - **Then** the UI displays a clear error message (e.g., "Invalid game code")
+       - **And** the user remains on the home/join page
+
+    3. **Full Game Error:**
+       - **Given** a user attempts to join a game that already has two players
+       - **When** they submit the join request
+       - **Then** the UI displays a clear error message (e.g., "This game is already full")
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <artifact>
+        <path>docs/PRD.md</path>
+        <title>Product Requirements Document</title>
+        <section>Functional Requirements: Game Setup &amp; Management</section>
+        <snippet>
+          *   **FR1.2 - Game Joining:** The system shall allow a user to join an existing game session by entering a valid game code.
+              *   *Acceptance Criteria:* A guest user can successfully join a game using a provided code. The system provides a clear error message for invalid or expired codes.
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/PRD.md</path>
+        <title>Product Requirements Document</title>
+        <section>User Experience Principles: Key Interactions</section>
+        <snippet>
+          Key interactions within "Digital Guess Who" include:
+          *   **Game Creation/Joining:** Users can easily create a new game or join an existing one using a unique code.
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Executive Summary</section>
+        <snippet>
+          "Digital Guess Who" is a real-time, multiplayer web application reimagining the classic board game. The architecture prioritizes simplicity, stability, and developer experience by leveraging a proven **Next.js (App Router)** + **Supabase** stack.
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Decision Summary</section>
+        <snippet>
+          | Category | Decision | Version | Affects Epics | Rationale |
+          | :--- | :--- | :--- | :--- | :--- |
+          | **Project Foundation** | **Vercel Next.js + Supabase Starter** | Latest (Next.js 15+, Supabase JS v2+) | All | Accelerates setup with best-practice configurations for Auth, DB, and Styling. Reduces boilerplate. |
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Project Structure</section>
+        <snippet>
+          The primary components involved will reside within the `app/game-lobby/` feature slice as outlined in the architecture's project structure.
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Epic to Architecture Mapping</section>
+        <snippet>
+          | Epic | Primary Architecture Components | Key Files/Directories |
+          | :--- | :--- | :--- |
+          | **Epic 2: Game Session Management** | Supabase Client, Zustand Store (Lobby), API Routes | `app/game-lobby/`, `lib/supabase/`, `app/api/game/` |
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Technology Stack Details</section>
+        <snippet>
+          Core Technologies: Frontend Framework: Next.js 15+ (App Router), Language: TypeScript 5.x, Database: PostgreSQL (via Supabase), Authentication: Supabase Auth.
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Data Architecture: Core Models</section>
+        <snippet>
+          *   **GameSession:** `id` (UUID), `code` (String), `status` (waiting/active/finished), `host_id` (UUID), `winner_id` (UUID, nullable), `created_at`
+          *   **Player:** `id` (UUID), `user_id` (UUID), `game_id` (UUID), `character_id` (Int, secret), `is_ready` (Bool)
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Security Architecture</section>
+        <snippet>
+          *   **Authentication:** Supabase Auth (Email/Password or Social).
+          *   **Authorization (RLS):** Can only update *their own* moves and game state for games they are part of.
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Implementation Patterns: Naming Patterns</section>
+        <snippet>
+          *   **Files &amp; Folders:** `kebab-case` (e.g., `user-profile.tsx`, `game-session.ts`)
+          *   **Database Tables:** `snake_case` (plural) (e.g., `game_sessions`, `players`)
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/ux-design-specification.md</path>
+        <title>ibe160 UX Design Specification</title>
+        <section>Core User Experience: Core Experience Principles</section>
+        <snippet>
+          *   **Effortless Setup:** Starting and joining a game should be quick, intuitive, and free of friction.
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/ux-design-specification.md</path>
+        <title>ibe160 UX Design Specification</title>
+        <section>User Journey Flows: Journey 1: Starting and Joining a Game</section>
+        <snippet>
+          **Guest Player Flow (Joining):**
+          *   **User sees:** An input field to enter the game code.
+          *   **User does:** Enters the shared game code and clicks "Join".
+          *   **System responds:** Validates the code. Upon success, the guest is taken to the "Game Lobby". An error message is shown for invalid codes.
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/ux-design-specification.md</path>
+        <title>ibe160 UX Design Specification</title>
+        <section>User Journey Flows: Error States and Recovery</section>
+        <snippet>
+          *   **Invalid Code:** An inline error message appears below the input field stating, "Invalid game code. Please check the code and try again."
+          *   **Lobby is Full:** A message is displayed: "This game is already full."
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/ux-design-specification.md</path>
+        <title>ibe160 UX Design Specification</title>
+        <section>Component Library</section>
+        <snippet>
+          *   **Button:** Used for all interactive actions (e.g., "Create Game", "Join", "Ready", "Ask", "Yes/No").
+          *   **Input:** Used for entering the game code and typing questions.
+          *   **AlertDialog / Dialog:** Used for confirmation prompts (e.g., "Make a Guess?").
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/ux-design-specification.md</path>
+        <title>ibe160 UX Design Specification</title>
+        <section>UX Pattern Decisions: Feedback Patterns</section>
+        <snippet>
+          *   **Error Messages:** Displayed directly below the relevant input field for context (e.g., "Invalid game code").
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/epics.md</path>
+        <title>ibe160 - Epic Breakdown</title>
+        <section>Epics Summary</section>
+        <snippet>
+          **Epic 2: Game Session Management**
+          *Goal:* Enable users to create and join game sessions, ensuring two players can successfully connect and prepare to play.
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/epics.md</path>
+        <title>ibe160 - Epic Breakdown</title>
+        <section>Functional Requirements Inventory</section>
+        <snippet>
+          *   **FR1.2 - Game Joining:** The system shall allow a user to join an existing game session by entering a valid game code.
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/epics.md</path>
+        <title>ibe160 - Epic Breakdown</title>
+        <section>Epic 2: Game Session Management</section>
+        <snippet>
+          **Story 2.2: Join Game Functionality**
+          As a Guest,
+          I want to join an existing game using a code,
+          So that I can play with the host.
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Game Session Management</title>
+        <section>Overview</section>
+        <snippet>
+          This technical specification outlines the design and implementation details for Epic 2: Game Session Management... It covers the user journey from the initial lobby screen to the moment the game officially begins, focusing on real-time player synchronization and a frictionless setup process.
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Game Session Management</title>
+        <section>Objectives and Scope</section>
+        <snippet>
+          **In-Scope:**
+          *   **Game Joining:** A second player can use a valid game code to join an existing, waiting game session.
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Game Session Management</title>
+        <section>System Architecture Alignment</section>
+        <snippet>
+          *   **API Routes:** initial game creation and joining may be handled by dedicated **Next.js API Routes** (e.g., `/api/game/create`, `/api/game/join`) to perform server-side validation and protect against unauthorized actions.
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Game Session Management</title>
+        <section>Detailed Design: Services and Modules</section>
+        <snippet>
+          *   **GameSessionService** | `lib/services/game-session.ts` | Handles business logic for creating, joining, and managing game sessions.
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Game Session Management</title>
+        <section>Detailed Design: Data Models and Contracts</section>
+        <snippet>
+          **`game_sessions` Table:** (id, code, status, hostId, difficulty, winnerId, createdAt)
+          **`players` Table:** (id, gameId, userId, isReady)
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Game Session Management</title>
+        <section>Detailed Design: APIs and Interfaces: API Endpoints</section>
+        <snippet>
+          **`POST /api/game/join`**
+          *   **Description:** Allows a player to join an existing game session.
+          *   **Request Body:** `{ "code": "ABC-DEF" }`
+          *   **Response (Success):** `{ "data": { "gameId": "..." } }`
+          *   **Response (Error):** `{ "error": { "message": "Invalid game code." | "Game is full." } }`
+          *   **Security:** Requires an authenticated user session.
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Game Session Management</title>
+        <section>Detailed Design: Workflows and Sequencing: Join Game Flow</section>
+        <snippet>
+          1.  **Guest User** receives a game code from the Host.
+          2.  On the home page, Guest enters the `code` and clicks "Join".
+          3.  **Frontend** sends a `POST` request to `/api/game/join` with the code.
+          4.  **Backend (`/api/game/join`)**: Validates the code, creates `players` record, triggers `player-joined` event.
+          5.  **Guest Frontend** navigates to `/game/[code]`.
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Game Session Management</title>
+        <section>Non-Functional Requirements: Security</section>
+        <snippet>
+          *   **Authentication:** All API endpoints (`/api/game/create`, `/api/game/join`) must be protected and require a valid, authenticated user session.
+          *   **Authorization (RLS):** Users can only `INSERT` a `players` record for themselves.
+          *   **Input Validation:** The `code` parameter must be strictly validated.
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Game Session Management</title>
+        <section>Non-Functional Requirements: Reliability/Availability</section>
+        <snippet>
+          *   **Error States:** The UI must clearly communicate failures (e.g., "Invalid game code," "Game is full").
+          *   **Race Conditions:** The logic for joining a game must be atomic.
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Game Session Management</title>
+        <section>Acceptance Criteria (Authoritative)</section>
+        <snippet>
+          **AC2 (Game Joining):** Given a valid game `code`... When a second authenticated user enters the code and clicks "Join", Then a new `players` record is created... And the user is redirected to the lobby URL.
+          **AC3 (Invalid Join):** Given a user attempts to join with an invalid or expired code... Then the UI displays a clear error message.
+          **AC4 (Full Game):** Given a user attempts to join a game that already has two players... Then the UI displays a clear error message.
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Game Session Management</title>
+        <section>Risks, Assumptions, Open Questions</section>
+        <snippet>
+          *   **Risk:** **Race Conditions.** If not handled correctly...
+              *   **Mitigation:** The `/api/game/create` service will have a retry mechanism.
+        </snippet>
+      </artifact>
+      <artifact>
+        <path>docs/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Game Session Management</title>
+        <section>Test Strategy Summary</section>
+        <snippet>
+          *   **Integration Tests:** Test the API route handlers (`/api/game/create`, `/api/game/join`) by mocking the Supabase client.
+          *   **End-to-End (E2E) Tests:** Test Case 2 (Invalid Code), Test Case 3 (Real-time UI Update).
+        </snippet>
+      </artifact>
+    </docs>
+    <code>
+      <artifact>
+        <path>app/(auth)/page.tsx</path>
+        <kind>frontend-page</kind>
+        <reason>Entry point for the join game form on the home page.</reason>
+      </artifact>
+      <artifact>
+        <path>app/api/game/join/route.ts</path>
+        <kind>backend-api-route</kind>
+        <reason>Implements the POST /api/game/join endpoint logic.</reason>
+      </artifact>
+      <artifact>
+        <path>lib/services/game-session.ts</path>
+        <kind>backend-service</kind>
+        <reason>Encapsulates game session business logic and Supabase interactions for joining.</reason>
+      </artifact>
+      <artifact>
+        <path>db/schema.ts</path>
+        <kind>database-schema</kind>
+        <reason>Defines game_sessions and players table structures.</reason>
+      </artifact>
+      <artifact>
+        <path>lib/supabase/client.ts</path>
+        <kind>supabase-client</kind>
+        <reason>Provides configured Supabase client for database interactions.</reason>
+      </artifact>
+      <artifact>
+        <path>components/ui/button.tsx</path>
+        <kind>ui-component</kind>
+        <reason>Reusable shadcn/ui button component for "Join" button.</reason>
+      </artifact>
+      <artifact>
+        <path>components/ui/input.tsx</path>
+        <kind>ui-component</kind>
+        <reason>Reusable shadcn/ui input component for game code entry.</reason>
+      </artifact>
+    </code>
+    <dependencies>
+      <dependency>
+        <name>@radix-ui/react-checkbox</name>
+        <version>^1.3.1</version>
+      </dependency>
+      <dependency>
+        <name>@radix-ui/react-dropdown-menu</name>
+        <version>^2.1.14</version>
+      </dependency>
+      <dependency>
+        <name>@radix-ui/react-label</name>
+        <version>^2.1.6</version>
+      </dependency>
+      <dependency>
+        <name>@radix-ui/react-slot</name>
+        <version>^1.2.4</version>
+      </dependency>
+      <dependency>
+        <name>@supabase/ssr</name>
+        <version>latest</version>
+      </dependency>
+      <dependency>
+        <name>@supabase/supabase-js</name>
+        <version>latest</version>
+      </dependency>
+      <dependency>
+        <name>class-variance-authority</name>
+        <version>^0.7.1</version>
+      </dependency>
+      <dependency>
+        <name>clsx</name>
+        <version>^2.1.1</version>
+      </dependency>
+      <dependency>
+        <name>lucide-react</name>
+        <version>^0.511.0</version>
+      </dependency>
+      <dependency>
+        <name>next</name>
+        <version>latest</version>
+      </dependency>
+      <dependency>
+        <name>next-themes</name>
+        <version>^0.4.6</version>
+      </dependency>
+      <dependency>
+        <name>react</name>
+        <version>^19.0.0</version>
+      </dependency>
+      <dependency>
+        <name>react-dom</name>
+        <version>^19.0.0</version>
+      </dependency>
+      <dependency>
+        <name>tailwind-merge</name>
+        <version>^3.3.0</version>
+      </dependency>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint>Authentication required for API endpoints.</constraint>
+    <constraint>RLS on `players` table (`INSERT` for self, `SELECT` for participants) as per Epic 2 Tech Spec.</constraint>
+    <constraint>Input validation for game `code` (alphanumeric, 6 chars).</constraint>
+    <constraint>Atomic join logic to prevent race conditions during player joining.</constraint>
+    <constraint>Feature-Sliced Design: `app/game-lobby/` for lobby-related components and `app/(auth)/` for authentication-related pages.</constraint>
+    <constraint>Naming conventions: `kebab-case` for files/folders, `snake_case` for DB tables/columns.</constraint>
+    <constraint>Error message display pattern: inline for validation errors as per UX Spec.</constraint>
+  </constraints>
+  <interfaces>
+    <interface>
+      <name>Join Game API</name>
+      <kind>REST endpoint</kind>
+      <signature>POST /api/game/join Request: { "code": "ABC-DEF" } Response (Success): { "data": { "gameId": "..." } } Response (Error): { "error": { "message": "..." } }</signature>
+      <path>app/api/game/join/route.ts</path>
+    </interface>
+    <interface>
+      <name>game_sessions table</name>
+      <kind>database table</kind>
+      <signature>id (UUID), code (varchar), status (enum), hostId (UUID), difficulty (text), winnerId (UUID), createdAt (timestamp)</signature>
+      <path>db/schema.ts</path>
+    </interface>
+    <interface>
+      <name>players table</name>
+      <kind>database table</kind>
+      <signature>id (UUID), gameId (UUID), userId (UUID), isReady (boolean)</signature>
+      <path>db/schema.ts</path>
+    </interface>
+  </interfaces>
+  <tests>
+    <standards>
+      <standard>Unit tests using Jest and React Testing Library.</standard>
+      <standard>Integration tests using Jest/React Testing Library for API routes.</standard>
+      <standard>End-to-End (E2E) tests using Playwright/Cypress (TBD).</standard>
+    </standards>
+    <locations>
+      <location>digital-guess-who/__tests__ (for component/page tests)</location>
+      <location>app/api/game/join/route.ts (for API integration tests)</location>
+      <location>lib/services/game-session.ts (for service unit tests)</location>
+    </locations>
+    <ideas>
+      <idea>Unit Test: Home page join form for state management, input validation, and submission logic.</idea>
+      <idea>Integration Test: `POST /api/game/join` endpoint for valid code, invalid code, and full game scenarios.</idea>
+      <idea>E2E Test: Simulate a guest user successfully joining a game with a valid code, verifying redirection to lobby.</idea>
+      <idea>E2E Test: Simulate guest attempting to join with an invalid code, verifying error message display.</idea>
+      <idea>E2E Test: Simulate guest attempting to join a full game, verifying error message display.</idea>
+    </ideas>
+  </tests>
+</story-context>
