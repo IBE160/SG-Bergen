@@ -1,7 +1,7 @@
-import { createGameSession } from '@/lib/services/game-session'
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import { Database } from '@/db/types'
+import { createGameSession } from '@/lib/services/game-session'
 
 type Difficulty = Database['public']['Enums']['difficulty_level']
 
@@ -21,11 +21,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid difficulty' }, { status: 400 })
     }
 
+    // createGameSession is an async function that interacts with DB, it should be awaited.
+    // It calls createClient inside, which calls cookies(), which is fine in a Route Handler (POST).
     const session = await createGameSession(user.id, difficulty as Difficulty)
 
     return NextResponse.json({ data: { code: session.code } })
-  } catch (error) {
+  } catch (error: any) {
+    // Log the full error object for debugging
     console.error('Game creation error:', error)
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    
+    const message = error.message || 'Internal Server Error'
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }

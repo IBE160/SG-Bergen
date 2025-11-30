@@ -12,20 +12,68 @@ import { createClient } from "@/lib/supabase/server";
 import { JoinGameForm } from "@/components/join-game-form";
 import { Button } from "@/components/ui/button";
 
-export default async function Home() {
-  let user = null;
-
-  // Only attempt to fetch user if env vars are present to avoid crashing
-  if (hasEnvVars) {
-    try {
-      const supabase = await createClient();
-      const { data } = await supabase.auth.getUser();
-      user = data.user;
-    } catch (error) {
-      console.error("Failed to initialize Supabase client:", error);
-    }
+// Separate component to fetch and display user-specific content
+async function GameOptions() {
+  if (!hasEnvVars) {
+    return (
+      <>
+         <Hero />
+         <main className="flex-1 flex flex-col gap-6 px-4">
+           <h2 className="font-medium text-xl mb-4">Connect Supabase</h2>
+           <ConnectSupabaseSteps />
+         </main>
+      </>
+    );
   }
 
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (user) {
+      return (
+        <div className="flex flex-col gap-8 w-full max-w-md items-center mt-10">
+          <div className="text-center space-y-2">
+             <h1 className="text-3xl font-bold">Welcome!</h1>
+             <p className="text-muted-foreground">Join an existing game or create a new one.</p>
+          </div>
+          
+          <JoinGameForm />
+          
+          <div className="relative w-full">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">Or</span>
+            </div>
+          </div>
+
+          <Button asChild className="w-full" variant="outline">
+             <Link href="/game-lobby">Create New Game</Link>
+          </Button>
+       </div>
+      );
+    }
+
+    // Not logged in
+    return (
+      <>
+        <Hero />
+        <main className="flex-1 flex flex-col gap-6 px-4">
+          <h2 className="font-medium text-xl mb-4">Next steps</h2>
+          <SignUpUserSteps />
+        </main>
+      </>
+    );
+
+  } catch (error) {
+    console.error("Failed to initialize Supabase client:", error);
+    return <p className="text-red-500">Error loading game options. Please check console.</p>;
+  }
+}
+
+export default function Home() {
   return (
     <main className="min-h-screen flex flex-col items-center">
       <div className="flex-1 w-full flex flex-col gap-20 items-center">
@@ -37,7 +85,7 @@ export default async function Home() {
             {!hasEnvVars ? (
               <EnvVarWarning />
             ) : (
-              <Suspense>
+              <Suspense fallback={<div className="flex items-center gap-2">Loading auth...</div>}>
                 <AuthButton />
               </Suspense>
             )}
@@ -45,45 +93,9 @@ export default async function Home() {
         </nav>
 
         <div className="flex-1 flex flex-col gap-20 max-w-5xl p-5 w-full items-center">
-          {!hasEnvVars ? (
-            <>
-               <Hero />
-               <main className="flex-1 flex flex-col gap-6 px-4">
-                 <h2 className="font-medium text-xl mb-4">Connect Supabase</h2>
-                 <ConnectSupabaseSteps />
-               </main>
-            </>
-          ) : user ? (
-             <div className="flex flex-col gap-8 w-full max-w-md items-center mt-10">
-                <div className="text-center space-y-2">
-                   <h1 className="text-3xl font-bold">Welcome!</h1>
-                   <p className="text-muted-foreground">Join an existing game or create a new one.</p>
-                </div>
-                
-                <JoinGameForm />
-                
-                <div className="relative w-full">
-                  <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t" />
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background px-2 text-muted-foreground">Or</span>
-                  </div>
-                </div>
-
-                <Button asChild className="w-full" variant="outline">
-                   <Link href="/game-lobby">Create New Game</Link>
-                </Button>
-             </div>
-          ) : (
-             <>
-                <Hero />
-                <main className="flex-1 flex flex-col gap-6 px-4">
-                  <h2 className="font-medium text-xl mb-4">Next steps</h2>
-                  <SignUpUserSteps />
-                </main>
-             </>
-          )}
+          <Suspense fallback={<div className="p-10 text-center">Loading game options...</div>}>
+            <GameOptions />
+          </Suspense>
         </div>
 
         <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
