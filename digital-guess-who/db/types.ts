@@ -16,127 +16,127 @@ export type Database = {
     Tables: {
       game_sessions: {
         Row: {
-          code: string
-          created_at: string
-          host_id: string
-          id: string
-          status: Database["public"]["Enums"]["game_status"]
-          winner_id: string | null
-          difficulty: Database["public"]["Enums"]["difficulty_level"]
-        }
+          code: string;
+          created_at: string;
+          host_id: string;
+          id: string;
+          status: Database["public"]["Enums"]["game_status"];
+          winner_id: string | null;
+          difficulty: Database["public"]["Enums"]["difficulty_level"];
+        };
         Insert: {
-          code: string
-          created_at?: string
-          host_id: string
-          id?: string
-          status?: Database["public"]["Enums"]["game_status"]
-          winner_id?: string | null
-          difficulty?: Database["public"]["Enums"]["difficulty_level"]
-        }
+          code: string;
+          created_at?: string;
+          host_id: string;
+          id?: string;
+          status?: Database["public"]["Enums"]["game_status"];
+          winner_id?: string | null;
+          difficulty?: Database["public"]["Enums"]["difficulty_level"];
+        };
         Update: {
-          code?: string
-          created_at?: string
-          host_id?: string
-          id?: string
-          status?: Database["public"]["Enums"]["game_status"]
-          winner_id?: string | null
-          difficulty?: Database["public"]["Enums"]["difficulty_level"]
-        }
-        Relationships: []
-      }
+          code?: string;
+          created_at?: string;
+          host_id?: string;
+          id?: string;
+          status?: Database["public"]["Enums"]["game_status"];
+          winner_id?: string | null;
+          difficulty?: Database["public"]["Enums"]["difficulty_level"];
+        };
+        Relationships: [];
+      };
       moves: {
         Row: {
-          action_type: Database["public"]["Enums"]["action_type"]
-          created_at: string
-          details: Json | null
-          game_id: string
-          id: string
-          player_id: string
-        }
+          action_type: Database["public"]["Enums"]["action_type"];
+          created_at: string;
+          details: Json | null;
+          game_id: string;
+          id: string;
+          player_id: string;
+        };
         Insert: {
-          action_type: Database["public"]["Enums"]["action_type"]
-          created_at?: string
-          details?: Json | null
-          game_id: string
-          id?: string
-          player_id: string
-        }
+          action_type: Database["public"]["Enums"]["action_type"];
+          created_at?: string;
+          details?: Json | null;
+          game_id: string;
+          id?: string;
+          player_id: string;
+        };
         Update: {
-          action_type?: Database["public"]["Enums"]["action_type"]
-          created_at?: string
-          details?: Json | null
-          game_id?: string
-          id?: string
-          player_id?: string
-        }
+          action_type?: Database["public"]["Enums"]["action_type"];
+          created_at?: string;
+          details?: Json | null;
+          game_id?: string;
+          id?: string;
+          player_id?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "moves_game_id_fkey"
-            columns: ["game_id"]
-            isOneToOne: false
-            referencedRelation: "game_sessions"
-            referencedColumns: ["id"]
+            foreignKeyName: "moves_game_id_fkey";
+            columns: ["game_id"];
+            isOneToOne: false;
+            referencedRelation: "game_sessions";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "moves_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "players"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+            foreignKeyName: "moves_player_id_fkey";
+            columns: ["player_id"];
+            isOneToOne: false;
+            referencedRelation: "players";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       players: {
         Row: {
-          character_id: number | null
-          created_at: string
-          game_id: string
-          id: string
-          is_ready: boolean
-          user_id: string
-        }
+          character_id: number | null;
+          created_at: string;
+          game_id: string;
+          id: string;
+          is_ready: boolean;
+          user_id: string;
+        };
         Insert: {
-          character_id?: number | null
-          created_at?: string
-          game_id: string
-          id?: string
-          is_ready?: boolean
-          user_id: string
-        }
+          character_id?: number | null;
+          created_at?: string;
+          game_id: string;
+          id?: string;
+          is_ready?: boolean;
+          user_id: string;
+        };
         Update: {
-          character_id?: number | null
-          created_at?: string
-          game_id?: string
-          id?: string
-          is_ready?: boolean
-          user_id?: string
-        }
+          character_id?: number | null;
+          created_at?: string;
+          game_id?: string;
+          id?: string;
+          is_ready?: boolean;
+          user_id?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "players_game_id_fkey"
-            columns: ["game_id"]
-            isOneToOne: false
-            referencedRelation: "game_sessions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-    }
+            foreignKeyName: "players_game_id_fkey";
+            columns: ["game_id"];
+            isOneToOne: false;
+            referencedRelation: "game_sessions";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+    };
     Views: {
       [_ in never]: never
-    }
+    };
     Functions: {
       [_ in never]: never
-    }
+    };
     Enums: {
-      action_type: "question" | "answer" | "guess" | "flip"
-      game_status: "waiting" | "active" | "finished"
-      difficulty_level: "Easy" | "Medium" | "Hard"
-    }
+      action_type: "question" | "answer" | "guess" | "flip";
+      game_status: "waiting" | "active" | "finished";
+      difficulty_level: "Easy" | "Medium" | "Hard";
+    };
     CompositeTypes: {
       [_ in never]: never
-    }
-  }
+    };
+  };
 }
 
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
