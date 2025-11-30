@@ -1,6 +1,6 @@
 # Story 2.1: Lobby UI & Game Creation
 
-Status: ready-for-dev
+Status: drafted
 
 ## Story
 
@@ -10,16 +10,16 @@ So that I can invite a friend to play.
 
 ## Acceptance Criteria
 
-1.  **Given** I am logged in on the Home page, **when** I click "Start a New Game", **then** I am taken to the Game Setup screen.
-2.  **When** I select a Difficulty (Easy/Medium/Hard) and click "Create", **then** a new `game_session` record is created in the DB with `status: 'waiting'`.
-3.  **And** I am redirected to the Lobby screen (`/game/[code]`).
-4.  **And** the unique game code is displayed prominently with a copy button.
+1.  **Given** an authenticated user is on the game setup screen, **when** they select a difficulty ("Easy", "Medium", or "Hard") and click the "Create" button, **then** a `POST` request is sent to the `/api/game/create` endpoint.
+2.  **Given** the game is successfully created via the API, **then** a new `game_sessions` record exists in the database with the correct `host_id`, `difficulty`, `status: 'waiting'`, and a unique 6-character `code`.
+3.  **Given** the game is successfully created, **then** the user is automatically redirected to the lobby URL at `/game/[code]`.
+4.  **Given** the user is on the lobby page, **then** the unique game code is displayed prominently with a "Copy" button.
 
 ## Tasks / Subtasks
 
 - [ ] Task 1: Create Game Setup UI (AC: 1)
   - [ ] Create page `app/game-lobby/page.tsx`.
-  - [ ] Add UI for selecting difficulty (Easy, Medium, Hard) and a "Create" button.
+  - [ ] Add UI for selecting difficulty (Easy, Medium, Hard) and a "Create" button that calls the creation API.
 - [ ] Task 2: Implement Game Creation Logic (AC: 2)
   - [ ] Create an API route `app/api/game/create/route.ts`.
   - [ ] The API will generate a unique code and create a `game_sessions` record in the database.
@@ -28,16 +28,21 @@ So that I can invite a friend to play.
   - [ ] On successful creation, redirect the user to `/game/[code]`.
   - [ ] The lobby page should display the game code prominently.
   - [ ] Add a button to copy the game code to the clipboard.
+- [ ] Task 4: Testing (AC: 1, 2, 3, 4)
+  - [ ] Write a unit test for the Game Setup UI to verify the "Create" button's API call.
+  - [ ] Write an integration test for the `/api/game/create` endpoint to validate database record creation.
+  - [ ] Write an E2E test to simulate the full game creation flow, from clicking "Create" to verifying the lobby page content.
 
 ## Dev Notes
 
-- **Architecture:** The implementation must align with the `tech-spec-epic-2.md`. A dedicated Zustand store (`LobbyStore`) should be created to manage the lobby's client-side state.
+- **Architecture:** The implementation must align with the `tech-spec-epic-2.md`. Specifically, use a dedicated **Zustand** store (`LobbyStore`) for client-side state management and **Supabase Realtime** for instant synchronization of the lobby state, as detailed in the "System Architecture Alignment" section of the tech spec.
 - **Real-time:** The lobby page must subscribe to a Supabase Realtime channel named `game-[gameId]`.
 - **Data Models:** Use the `game_sessions` and `players` table schemas as defined in `tech-spec-epic-2.md`.
 - **Styling:** Components should adhere to the visual foundation in the `ux-design-specification.md`, using `shadcn/ui` components.
 
 ### Project Structure Notes
 
+- **Note:** The `unified-project-structure.md` document has not been created yet. The following notes are based on the tech spec.
 - **Feature Slice:** All components and services for this story should be located within the `app/game-lobby/` directory.
 - **Service Layer:** Business logic for game creation should be in `lib/services/game-session.ts` as per the tech spec.
 - **State Management:** The Zustand store will be at `app/game-lobby/store.ts`.
@@ -67,3 +72,13 @@ So that I can invite a friend to play.
 ### Completion Notes List
 
 ### File List
+
+## Change Log
+
+- **2025-11-30:** Initial draft created.
+- **2025-11-30:** Updated by Scrum Master based on validation report:
+  - Changed status to `drafted`.
+  - Aligned ACs with tech spec and improved atomicity.
+  - Added explicit testing subtasks.
+  - Enhanced specificity in Dev Notes.
+  - Added Change Log section.
