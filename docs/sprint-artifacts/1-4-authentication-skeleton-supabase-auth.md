@@ -1,6 +1,6 @@
 # Story 1.4: Authentication Skeleton (Supabase Auth)
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -19,15 +19,15 @@ So that I can verify user sessions which are required for game creation.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create login page component (AC: 2, 3)
-  - [ ] Create file `app/(auth)/login/page.tsx`.
-  - [ ] Add a simple form with email and password inputs and a submit button.
-- [ ] Task 2: Implement sign-up and sign-in logic (AC: 4)
-  - [ ] Use `@supabase/auth-helpers-nextjs` to handle form submission.
-  - [ ] Implement both sign-up and sign-in functionality.
-- [ ] Task 3: Handle redirection and session management (AC: 5, 6)
-  - [ ] On successful authentication, redirect the user to the home page.
-  - [ ] Verify that the user session is correctly managed by the Supabase Auth Helper.
+- [x] Task 1: Create login page component (AC: 2, 3)
+  - [x] Create file `app/(auth)/login/page.tsx`.
+  - [x] Add a simple form with email and password inputs and a submit button.
+- [x] Task 2: Implement sign-up and sign-in logic (AC: 4)
+  - [x] Use `@supabase/auth-helpers-nextjs` to handle form submission.
+  - [x] Implement both sign-up and sign-in functionality.
+- [x] Task 3: Handle redirection and session management (AC: 5, 6)
+  - [x] On successful authentication, redirect the user to the home page.
+  - [x] Verify that the user session is correctly managed by the Supabase Auth Helper.
 
 ## Dev Notes
 
@@ -64,5 +64,13 @@ So that I can verify user sessions which are required for game creation.
 ### Debug Log References
 
 ### Completion Notes List
+**Completed:** 2025-11-30
+**Definition of Done:** All acceptance criteria met, code reviewed, tests passing
 
 ### File List
+- `digital-guess-who/app/(auth)/login/page.tsx`
+- `digital-guess-who/app/(auth)/sign-up/page.tsx`
+- `digital-guess-who/__tests__/LoginForm.test.tsx`
+- `digital-guess-who/jest.config.js`
+- `digital-guess-who/jest.setup.js`
+- `digital-guess-who/.eslintignore`

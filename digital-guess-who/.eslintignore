@@ -1,0 +1,4 @@
+.next
+jest.config.js
+tailwind.config.ts
+db/types.ts
