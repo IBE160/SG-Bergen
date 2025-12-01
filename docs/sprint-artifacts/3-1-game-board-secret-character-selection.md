@@ -1,6 +1,6 @@
 # Story 3.1: Game Board & Secret Character Selection
 
-Status: review
+Status: done
 
 ## Story
 

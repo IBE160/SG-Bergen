@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, use } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useGameStore } from '../store';
 import { CharacterGrid } from '../components/CharacterGrid';
@@ -8,8 +8,9 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 
-export default function GamePlayPage({ params }: { params: { code: string } }) {
+export default function GamePlayPage({ params }: { params: Promise<{ code: string }> }) {
   const router = useRouter();
+  const { code } = use(params); // Unwrap params
   const supabase = createClient();
   const { 
     mySecretCharacter, 
@@ -39,7 +40,7 @@ export default function GamePlayPage({ params }: { params: { code: string } }) {
       const { data: game } = await supabase
         .from('game_sessions')
         .select('id, status, host_id')
-        .eq('code', params.code)
+        .eq('code', code)
         .single();
 
       if (!game) {
@@ -75,37 +76,51 @@ export default function GamePlayPage({ params }: { params: { code: string } }) {
       setIsLoading(false);
     };
     init();
-  }, [params.code, router, supabase]);
+  }, [code, router, supabase]);
 
   // 2. Realtime: Listen for updates
   useEffect(() => {
     if (!gameId) return;
 
-    const channel = supabase.channel(`game:${gameId}`)
+    console.log("Setting up Realtime subscription for Game ID:", gameId);
+
+    const channel = supabase.channel(`game-play:${gameId}`)
       .on('postgres_changes', {
         event: 'UPDATE',
         schema: 'public',
         table: 'players',
-        filter: `game_id=eq:${gameId}`
+        // Removing filter to test if it helps, filtering manually below
       }, (payload) => {
+        console.log("Received Realtime Event:", payload);
         const newRow = payload.new as any;
+        
+        // Manual filter
+        if (newRow.game_id !== gameId) return;
+
         if (newRow.user_id !== userId) {
+            console.log("Opponent updated (Realtime):", newRow);
             // Opponent update
             if (newRow.has_selected_character) {
+                console.log("Opponent is ready!");
                 setOpponentReady(true);
             }
         }
       })
-      .subscribe();
+      .subscribe((status) => {
+        console.log("Realtime Subscription Status:", status);
+      });
 
     return () => {
+      console.log("Cleaning up Realtime subscription");
       supabase.removeChannel(channel);
     };
   }, [gameId, userId, supabase]);
 
   // 3. Logic: Transition to Playing
   useEffect(() => {
+    console.log("Checking Game Start Conditions:", { isConfirmed, opponentReady, gameState });
     if (isConfirmed && opponentReady && gameState === 'selecting') {
+        console.log("Starting Game!");
         setGameState('playing');
         setMessage("Game Started!");
     }
@@ -152,7 +167,7 @@ export default function GamePlayPage({ params }: { params: { code: string } }) {
   return (
     <div className="container mx-auto p-4 flex flex-col gap-4">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Game Room: {params.code}</h1>
+        <h1 className="text-2xl font-bold">Game Room: {code}</h1>
         <div className="text-lg font-semibold px-4 py-2 bg-secondary/20 rounded-md">
           {message}
         </div>
@@ -175,6 +190,12 @@ export default function GamePlayPage({ params }: { params: { code: string } }) {
             >
                 Confirm Selection
             </Button>
+        </div>
+      )}
+
+      {gameState === 'playing' && (
+        <div className="bg-green-500/10 border border-green-500 text-green-700 p-4 rounded-lg text-center font-bold text-xl">
+            GAME ACTIVE! It is someone's turn.
         </div>
       )}
 
