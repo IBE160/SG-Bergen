@@ -1,0 +1,14 @@
+[
+  { "id": 1, "name": "Alex", "image": "/assets/images/characters/alex.png", "gender": "male", "hat": false, "glasses": false },
+  { "id": 2, "name": "Jordan", "image": "/assets/images/characters/jordan.png", "gender": "female", "hat": true, "glasses": true },
+  { "id": 3, "name": "Casey", "image": "/assets/images/characters/casey.png", "gender": "male", "hat": true, "glasses": false },
+  { "id": 4, "name": "Taylor", "image": "/assets/images/characters/taylor.png", "gender": "female", "hat": false, "glasses": true },
+  { "id": 5, "name": "Morgan", "image": "/assets/images/characters/morgan.png", "gender": "male", "hat": false, "glasses": false },
+  { "id": 6, "name": "Riley", "image": "/assets/images/characters/riley.png", "gender": "female", "hat": true, "glasses": false },
+  { "id": 7, "name": "Avery", "image": "/assets/images/characters/avery.png", "gender": "male", "hat": false, "glasses": true },
+  { "id": 8, "name": "Parker", "image": "/assets/images/characters/parker.png", "gender": "female", "hat": false, "glasses": false },
+  { "id": 9, "name": "Quinn", "image": "/assets/images/characters/quinn.png", "gender": "male", "hat": true, "glasses": true },
+  { "id": 10, "name": "Reese", "image": "/assets/images/characters/reese.png", "gender": "female", "hat": false, "glasses": false },
+  { "id": 11, "name": "Skyler", "image": "/assets/images/characters/skyler.png", "gender": "male", "hat": false, "glasses": false },
+  { "id": 12, "name": "Jamie", "image": "/assets/images/characters/jamie.png", "gender": "female", "hat": true, "glasses": true }
+]
