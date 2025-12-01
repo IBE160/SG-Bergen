@@ -1,12 +1,12 @@
 # Story 2.3: Real-time Lobby & Player Readiness
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
 As a Player (Host or Guest),
 I want to see when my opponent joins and signal when I am ready,
-So that we can start the game at the same time.
+So that we can start the a game at the same time.
 
 ## Acceptance Criteria
 
@@ -29,31 +29,31 @@ So that we can start the game at the same time.
 
 ## Tasks / Subtasks
 
--   [ ] **Backend: Setup Supabase Realtime** (AC: 1, 2)
-    -   [ ] Enable Realtime for the `players` table in the Supabase dashboard.
-    -   [ ] Refine Row Level Security (RLS) policies for the `players` table to allow authenticated users to `UPDATE` their own `is_ready` status and `SELECT` players in their own game.
+-   [x] **Backend: Setup Supabase Realtime** (AC: 1, 2)
+    -   [x] Enable Realtime for the `players` table in the Supabase dashboard.
+    -   [x] Refine Row Level Security (RLS) policies for the `players` table to allow authenticated users to `UPDATE` their own `is_ready` status and `SELECT` players in their own game.
 
--   [ ] **Frontend: Create Lobby Zustand Store** (AC: 1, 2, 3)
-    -   [ ] Create a new store at `app/game-lobby/store.ts`.
-    -   [ ] Define state for `players` list, and game status.
-    -   [ ] Create actions to `setPlayers`, `updatePlayerStatus`, and handle game start.
+-   [x] **Frontend: Create Lobby Zustand Store** (AC: 1, 2, 3)
+    -   [x] Create a new store at `app/game-lobby/store.ts`.
+    -   [x] Define state for `players` list, and game status.
+    -   [x] Create actions to `setPlayers`, `updatePlayerStatus`, and handle game start.
 
--   [ ] **Frontend: Implement Real-time Subscription** (AC: 1, 2, 3)
-    -   [ ] In the `app/game-lobby/[code]/page.tsx` component, subscribe to the `game:[gameId]` channel on mount.
-    -   [ ] Listen for `INSERT` events on the `players` table and update the Zustand store.
-    -   [ ] Listen for `UPDATE` events on the `players` table (for readiness) and update the Zustand store.
-    -   [ ] Implement the `game-starting` event trigger on the Host's client when the store detects both players are ready.
-    -   [ ] Handle the `game-starting` event to navigate both players to the gameplay screen.
-    -   [ ] Ensure the subscription is properly cleaned up on component unmount.
+-   [x] **Frontend: Implement Real-time Subscription** (AC: 1, 2, 3)
+    -   [x] In the `app/game-lobby/[code]/page.tsx` component, subscribe to the `game:[gameId]` channel on mount.
+    -   [x] Listen for `INSERT` events on the `players` table and update the Zustand store.
+    -   [x] Listen for `UPDATE` events on the `players` table (for readiness) and update the Zustand store.
+    -   [x] Implement the `game-starting` event trigger on the Host's client when the store detects both players are ready.
+    -   [x] Handle the `game-starting` event to navigate both players to the gameplay screen.
+    -   [x] Ensure the subscription is properly cleaned up on component unmount.
 
--   [ ] **Frontend: Update Lobby UI** (AC: 2)
-    -   [ ] Add the "I'm Ready" button to the lobby UI.
-    -   [ ] The button's `onClick` handler should call a service function to update the player's `is_ready` status in the database.
-    -   [ ] The button should be disabled and change appearance after being clicked.
-    -   [ ] The UI should visually represent the readiness status of each player.
+-   [x] **Frontend: Update Lobby UI** (AC: 2)
+    -   [x] Add the "I'm Ready" button to the lobby UI.
+    -   [x] The button's `onClick` handler should call a service function to update the player's `is_ready` status in the database.
+    -   [x] The button should be disabled and change appearance after being clicked.
+    -   [x] The UI should visually represent the readiness status of each player.
 
--   [ ] **Testing** (AC: 1, 2, 3)
-    -   [ ] Write unit tests for the `LobbyStore` to verify state transitions.
+-   [x] **Testing** (AC: 1, 2, 3)
+    -   [x] Write unit tests for the `LobbyStore` to verify state transitions.
     -   [ ] Write E2E tests (using Playwright/Cypress) to simulate two users, verify real-time UI updates for joining and readiness, and confirm auto-start navigation.
 
 ## Dev Notes
@@ -93,5 +93,15 @@ gemini-cli-agent/1.0
 ### Debug Log References
 
 ### Completion Notes List
+- Implemented real-time lobby functionality using Supabase Realtime and Zustand.
+- Created RLS policies for the players and game_sessions tables.
+- Created the lobby page, which subscribes to real-time events and updates the UI accordingly.
+- Added a "Ready" button that updates the player's status.
+- Wrote unit tests for the lobby store.
+- E2E tests were not implemented as neither Playwright nor Cypress is set up in the project. This should be addressed in a future story.
 
 ### File List
+- `digital-guess-who/supabase/migrations/20251201100000_refine_player_rls.sql`
+- `digital-guess-who/app/game-lobby/store.ts`
+- `digital-guess-who/app/game-lobby/[code]/page.tsx`
+- `digital-guess-who/__tests__/game-lobby/store.test.ts`

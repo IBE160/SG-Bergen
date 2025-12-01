@@ -1,26 +1,39 @@
-import { create } from 'zustand'
+import { create } from 'zustand';
+import { Database } from '@/db/types';
 
-interface Player {
-  id: string
-  userId: string
-  isReady: boolean
-  username?: string
-}
+export type Player = Database['public']['Tables']['players']['Row'] & { users: { username: string } | null };
 
-interface LobbyState {
-  gameCode: string | null
-  players: Player[]
-  isReady: boolean
-  setGameCode: (code: string) => void
-  setPlayers: (players: Player[]) => void
-  setReady: (isReady: boolean) => void
-}
+type LobbyState = {
+  players: Player[];
+  gameStatus: string;
+  gameId: string | null;
+};
 
-export const useLobbyStore = create<LobbyState>((set) => ({
-  gameCode: null,
+type LobbyActions = {
+  setPlayers: (players: Player[]) => void;
+  addPlayer: (player: Player) => void;
+  updatePlayerStatus: (userId: string, isReady: boolean) => void;
+  setGameStatus: (status: string) => void;
+  setGameId: (gameId: string) => void;
+};
+
+export const useLobbyStore = create<LobbyState & LobbyActions>((set) => ({
   players: [],
-  isReady: false,
-  setGameCode: (code) => set({ gameCode: code }),
+  gameStatus: 'waiting',
+  gameId: null,
   setPlayers: (players) => set({ players }),
-  setReady: (isReady) => set({ isReady }),
-}))
+  addPlayer: (player) => set((state) => {
+    if (state.players.find(p => p.id === player.id)) {
+      return state;
+    }
+    return { players: [...state.players, player] };
+  }),
+  updatePlayerStatus: (userId, isReady) =>
+    set((state) => ({
+      players: state.players.map((p) =>
+        p.user_id === userId ? { ...p, is_ready: isReady } : p
+      ),
+    })),
+  setGameStatus: (status) => set({ gameStatus: status }),
+  setGameId: (gameId) => set({ gameId }),
+}));
