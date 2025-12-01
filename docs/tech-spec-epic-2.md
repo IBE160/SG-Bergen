@@ -298,3 +298,10 @@ The testing strategy for this epic will cover all levels of the testing pyramid 
     -   **Test Case 1 (Happy Path):** A full E2E test simulating two users. User A creates a game, User B joins it, both mark themselves as ready, and verify that both are redirected to the gameplay screen. This is the most critical test for the epic.
     -   **Test Case 2 (Invalid Code):** Simulate a user trying to join with a non-existent game code and assert that the correct error message is shown.
     -   **Test Case 3 (Real-time UI Update):** Use two concurrent browser sessions in the test runner to verify that when User B joins, User A's screen updates automatically without a manual refresh.
+
+## Post-Review Follow-ups
+
+-   **[Story 2.3]** [Low] Refine `Player` type definition in `digital-guess-who/app/game-lobby/store.ts` to explicitly include `users: { username: string } | null` directly in the `Player` type, removing the need for `unknown as` casts in `page.tsx`. (AC #1, #2)
+-   **[Story 2.3]** [Low] Replace `console.error` with a production-grade logging solution in `digital-guess-who/app/game-lobby/[code]/page.tsx` on line 46.
+-   **[Story 2.3]** [Low] Consider adding a unit test case in `digital-guess-who/__tests__/game-lobby/store.test.ts` to simulate both players becoming ready and verify the store's internal state reflects this, even if the broadcast mechanism is tested elsewhere.
+-   **[Story 2.3]** [Low] Implement E2E tests for real-time interactions and auto-start navigation.
