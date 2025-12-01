@@ -1,0 +1,138 @@
+<story-context id=".bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>2</epicId>
+    <storyId>2.3</storyId>
+    <title>Real-time Lobby &amp; Player Readiness</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-01T12:00:00Z</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/2-3-real-time-lobby-player-readiness.md</sourceStoryPath>
+  </metadata>
+  <story>
+    <asA>Player (Host or Guest)</asA>
+    <iWant>to see when my opponent joins and signal when I am ready</iWant>
+    <soThat>we can start the game at the same time</soThat>
+    <tasks>
+      - [ ] **Backend: Setup Supabase Realtime** (AC: 1, 2)
+        - [ ] Enable Realtime for the `players` table in the Supabase dashboard.
+        - [ ] Refine Row Level Security (RLS) policies for the `players` table to allow authenticated users to `UPDATE` their own `is_ready` status and `SELECT` players in their own game.
+      - [ ] **Frontend: Create Lobby Zustand Store** (AC: 1, 2, 3)
+        - [ ] Create a new store at `app/game-lobby/store.ts`.
+        - [ ] Define state for `players` list, and game status.
+        - [ ] Create actions to `setPlayers`, `updatePlayerStatus`, and handle game start.
+      - [ ] **Frontend: Implement Real-time Subscription** (AC: 1, 2, 3)
+        - [ ] In the `app/game-lobby/[code]/page.tsx` component, subscribe to the `game:[gameId]` channel on mount.
+        - [ ] Listen for `INSERT` events on the `players` table and update the Zustand store.
+        - [ ] Listen for `UPDATE` events on the `players` table (for readiness) and update the Zustand store.
+        - [ ] Implement the `game-starting` event trigger on the Host's client when the store detects both players are ready.
+        - [ ] Handle the `game-starting` event to navigate both players to the gameplay screen.
+        - [ ] Ensure the subscription is properly cleaned up on component unmount.
+      - [ ] **Frontend: Update Lobby UI** (AC: 2)
+        - [ ] Add the "I'm Ready" button to the lobby UI.
+        - [ ] The button's `onClick` handler should call a service function to update the player's `is_ready` status in the database.
+        - [ ] The button should be disabled and change appearance after being clicked.
+        - [ ] The UI should visually represent the readiness status of each player.
+      - [ ] **Testing** (AC: 1, 2, 3)
+        - [ ] Write unit tests for the `LobbyStore` to verify state transitions.
+        - [ ] Write E2E tests (using Playwright/Cypress) to simulate two users, verify real-time UI updates for joining and readiness, and confirm auto-start navigation.
+    </tasks>
+  </story>
+  <acceptanceCriteria>
+    1.  **AC1 (Real-time Join Notification):**
+        -   **Given** a host is alone in a lobby,
+        -   **When** a guest successfully joins the game,
+        -   **Then** the host's UI updates in real-time (&lt;500ms) to display the guest's username without requiring a page refresh.
+    2.  **AC2 (Player Readiness):**
+        -   **Given** both players are in the lobby,
+        -   **When** a player clicks the "I'm Ready" button,
+        -   **Then** their `is_ready` status is updated to `true` in the database,
+        -   **And** their status is updated for both players in the UI in real-time (&lt;500ms).
+        -   **And** The "Ready" button becomes disabled/green for the player who clicked it.
+    3.  **AC3 (Game Auto-Start):**
+        -   **Given** one player has a status of `is_ready: true`,
+        -   **When** the second player clicks "I'm Ready",
+        -   **Then** the game automatically transitions to the Gameplay screen for both players.
+  </acceptanceCriteria>
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Game Session Management</title>
+        <section>Real-time Events (Supabase Broadcast)</section>
+        <snippet>
+          - **Channel:** `game-[gameId]`
+          - **Events:** `player-joined`, `player-ready`, `game-starting`
+        </snippet>
+      </doc>
+      <doc>
+        <path>docs/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Game Session Management</title>
+        <section>Services and Modules</section>
+        <snippet>Specifies LobbyStore in `app/game-lobby/store.ts` for client-side state and GameSessionService in `lib/services/game-session.ts`.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Real-time Engine</section>
+        <snippet>Decision to use Supabase Realtime for low-latency game state synchronization.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <file>
+        <path>digital-guess-who/app/game/[code]/page.tsx</path>
+        <kind>component</kind>
+        <symbol>LobbyRoom</symbol>
+        <lines></lines>
+        <reason>This is the main UI component for the lobby that needs to be updated to handle real-time events and display player status.</reason>
+      </file>
+      <file>
+        <path>app/game-lobby/store.ts</path>
+        <kind>state-management</kind>
+        <symbol>LobbyStore</symbol>
+        <lines></lines>
+        <reason>This file needs to be created to manage the client-side state of the lobby using Zustand, as per the tech spec.</reason>
+      </file>
+      <file>
+        <path>lib/services/game-session.ts</path>
+        <kind>service</kind>
+        <symbol>GameSessionService</symbol>
+        <lines></lines>
+        <reason>This file needs to be created to handle the business logic for updating a player's ready status. It was documented in a previous story but does not exist.</reason>
+      </file>
+    </code>
+    <dependencies>
+        <ecosystem>node</ecosystem>
+        <packages>
+            <package name="@supabase/supabase-js" version="latest" />
+            <package name="next" version="latest" />
+            <package name="react" version="^19.0.0" />
+            <package name="zustand" version="Not installed" />
+        </packages>
+    </dependencies>
+  </artifacts>
+  <constraints>
+    <constraint>Must use Supabase Realtime for synchronization.</constraint>
+    <constraint>Client-side state must be managed with Zustand.</constraint>
+    <constraint>Real-time events must be reflected in the UI in under 500ms.</constraint>
+    <constraint>Follow existing project structure, placing lobby-specific code in `app/game-lobby/`.</constraint>
+  </constraints>
+  <interfaces>
+      <interface>
+        <name>Supabase Realtime Channel Subscription</name>
+        <kind>realtime</kind>
+        <signature>supabase.channel('game:[gameId]').on(...).subscribe()</signature>
+        <path>lib/supabase/client.ts</path>
+      </interface>
+  </interfaces>
+  <tests>
+    <standards>Unit tests are written with Jest/React Testing Library. E2E tests are planned with Playwright/Cypress.</standards>
+    <locations>
+        - `__tests__/` at the root or within feature directories.
+    </locations>
+    <ideas>
+        - **Unit Test:** `LobbyStore` state changes correctly when `player-joined` and `player-ready` events are simulated.
+        - **E2E Test:** A full "happy path" test with two browser clients, where one joins, both mark ready, and both are redirected.
+        - **E2E Test:** A real-time UI update test to assert the non-active client's UI updates without a page refresh.
+    </ideas>
+  </tests>
+</story-context>
