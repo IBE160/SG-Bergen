@@ -115,11 +115,19 @@ export default function LobbyPage({ params }: LobbyPageProps) {
     if (players.length === 2 && players.every((p) => p.is_ready)) {
         if (!gameId) return;
         const channel = supabase.channel(`game:${gameId}`);
-        channel.send({
-            type: 'broadcast',
-            event: 'game-starting',
-            payload: {},
+        channel.subscribe((status) => {
+            if (status === 'SUBSCRIBED') {
+                channel.send({
+                    type: 'broadcast',
+                    event: 'game-starting',
+                    payload: {},
+                });
+            }
         });
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
     }
   }, [players, gameId, supabase]);
 

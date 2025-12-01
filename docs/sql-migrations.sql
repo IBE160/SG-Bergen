@@ -1,6 +1,5 @@
--- Refine RLS and introduce player_secrets for security
 
--- 1. Create player_secrets table
+-- 1. Setup tables
 create table if not exists public.player_secrets (
   player_id uuid not null references public.players(id) on delete cascade,
   character_id integer,
@@ -10,13 +9,10 @@ create table if not exists public.player_secrets (
 
 alter table public.player_secrets enable row level security;
 
--- 1b. Add public flag to players
 alter table public.players add column if not exists has_selected_character boolean not null default false;
 
 
--- 2. Helper Function to prevent RLS recursion
--- This function checks if the current user is a member of the given game.
--- It is SECURITY DEFINER to bypass RLS on the 'players' table during the check.
+-- 2. Helper Function
 create or replace function public.is_game_member(_game_id uuid)
 returns boolean
 as $$
@@ -29,8 +25,7 @@ as $$
 $$ language sql security definer set search_path = public;
 
 
--- 3. Policies for player_secrets
--- SELECT: Only owner
+-- 3. Secrets Policies
 drop policy if exists "Allow users to view their own secret" on public.player_secrets;
 create policy "Allow users to view their own secret"
 on public.player_secrets for select
@@ -38,7 +33,6 @@ using (
   auth.uid() = (select user_id from public.players where id = player_secrets.player_id)
 );
 
--- INSERT: Only owner
 drop policy if exists "Allow users to insert their own secret" on public.player_secrets;
 create policy "Allow users to insert their own secret"
 on public.player_secrets for insert
@@ -46,8 +40,18 @@ with check (
    auth.uid() = (select user_id from public.players where id = player_secrets.player_id)
 );
 
--- UPDATE: Only owner
--- Trigger to protect character_id overwrites (Only allow if currently NULL)
+drop policy if exists "Allow users to update their own secret" on public.player_secrets;
+create policy "Allow users to update their own secret"
+on public.player_secrets for update
+using (
+   auth.uid() = (select user_id from public.players where id = player_secrets.player_id)
+)
+with check (
+   auth.uid() = (select user_id from public.players where id = player_secrets.player_id)
+);
+
+
+-- 4. Triggers
 create or replace function public.protect_secret_selection()
 returns trigger as $$
 begin
@@ -65,17 +69,6 @@ create trigger protect_secret_selection_trigger
 before update on public.player_secrets
 for each row execute function public.protect_secret_selection();
 
-drop policy if exists "Allow users to update their own secret" on public.player_secrets;
-create policy "Allow users to update their own secret"
-on public.player_secrets for update
-using (
-   auth.uid() = (select user_id from public.players where id = player_secrets.player_id)
-)
-with check (
-   auth.uid() = (select user_id from public.players where id = player_secrets.player_id)
-);
-
--- Trigger to update players.has_selected_character when secret is set
 create or replace function public.update_player_selection_status()
 returns trigger as $$
 begin
@@ -92,8 +85,7 @@ after insert or update on public.player_secrets
 for each row execute function public.update_player_selection_status();
 
 
--- 4. Policies for players (Public Game State)
--- Drop old policies
+-- 5. Player Policies
 drop policy if exists "Enable all access for players" on public.players;
 drop policy if exists "Allow auth users to select players in their game" on public.players;
 drop policy if exists "Allow auth users to update their own readiness" on public.players;
@@ -104,35 +96,30 @@ drop policy if exists "Allow users to join game" on public.players;
 drop policy if exists "Allow users to view players in their game" on public.players;
 drop policy if exists "Allow users to update own player" on public.players;
 
--- SELECT: Allow everyone in the game to see everyone else (Lobby/Readiness)
--- Uses security definer function to avoid recursion
 create policy "Allow users to view players in their game"
 on public.players for select
 using (
   is_game_member(game_id) 
   OR 
-  user_id = auth.uid() -- Always allow seeing yourself (for initial join check)
+  user_id = auth.uid()
 );
 
--- INSERT: Join game
 create policy "Allow users to join game"
 on public.players for insert
 with check (auth.uid() = user_id);
 
--- UPDATE: Readiness
 create policy "Allow users to update own player"
 on public.players for update
 using (auth.uid() = user_id)
 with check (auth.uid() = user_id);
 
 
--- 5. Game Sessions Policies
+-- 6. Game Session Policies
 drop policy if exists "Enable all access for game_sessions" on public.game_sessions;
 drop policy if exists "Allow auth users to select games they are in" on public.game_sessions;
 drop policy if exists "Allow host to update game status" on public.game_sessions;
 drop policy if exists "Allow authenticated users to create game sessions" on public.game_sessions;
 
--- Use the same function for game sessions
 create policy "Allow auth users to select games they are in"
 on public.game_sessions for select
 using (
