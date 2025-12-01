@@ -1,6 +1,6 @@
 # Story 2.3: Real-time Lobby & Player Readiness
 
-Status: review
+Status: done
 
 ## Story
 
@@ -91,6 +91,10 @@ So that we can start the a game at the same time.
 gemini-cli-agent/1.0
 
 ### Debug Log References
+
+### Completion Notes
+**Completed:** 2025-12-01
+**Definition of Done:** All acceptance criteria met, code reviewed, tests passing
 
 ### Completion Notes List
 - Implemented real-time lobby functionality using Supabase Realtime and Zustand.
