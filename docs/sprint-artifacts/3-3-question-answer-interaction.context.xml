@@ -1,0 +1,153 @@
+<story-context id=".bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>3</storyId>
+    <title>Question & Answer Interaction</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-02</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/3-3-question-answer-interaction.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>Player</asA>
+    <iWant>to ask a yes/no question and receive an answer</iWant>
+    <soThat>I can eliminate characters.</soThat>
+    <tasks>
+-   [ ] **Backend: Database & Real-time** (AC: #1, #2, #3)
+    -   [ ] Define RLS policy for the `moves` table to ensure a player can only insert moves for their own `player_id`.
+    -   [ ] Create a new Supabase Realtime event named `question-asked` to be broadcast on the `game:[game-id]` channel. The payload should contain the question text and the asking player's ID.
+    -   [ ] Create a new Supabase Realtime event named `answer-provided` to be broadcast on the `game:[game-id]` channel. The payload should contain the answer ("yes" or "no").
+-   [ ] **Frontend: State Management (Zustand)** (AC: #1, #2)
+    -   [ ] Add state variables to the game store to manage the current question (`currentQuestion`), its answer (`currentAnswer`), and UI state (e.g., `isAsking`, `isAnswering`).
+    -   [ ] Implement a client-side listener for the `question-asked` event to update the store and display the question to the non-active player.
+    -   [ ] Implement a client-side listener for the `answer-provided` event to update the store and display the answer to the active player.
+-   [ ] **Frontend: UI Implementation** (AC: #1, #2, #4)
+    -   [ ] Create a `QuestionBox` component that is enabled only for the active player. It should contain a text input and an "Ask" button.
+    -   [ ] Create an `AnswerBox` component that is displayed to the non-active player when a question is asked. It should contain "Yes" and "No" buttons.
+    -   [ ] Integrate these components into the main `game-play` page.
+    -   [ ] Ensure the turn indicator visually prompts the active player after an answer is received.
+-   [ ] **Frontend: API/DB Interaction** (AC: #3)
+    -   [ ] Implement the function that inserts a new row into the `moves` table with `action_type: 'question'` when the "Ask" button is clicked.
+    -   [ ] Implement the function that inserts a new row into the `moves` table with `action_type: 'answer'` when "Yes" or "No" is clicked.
+-   [ ] **Testing** (AC: #1, #2, #3, #4)
+    -   [ ] Write a unit test for the Zustand store to verify that `question-asked` and `answer-provided` events update the state correctly.
+    -   [ ] Write an integration test to mock the Realtime events and assert that the `QuestionBox` and `AnswerBox` appear/disappear and are enabled/disabled correctly for each player.
+    -   [ ] Write a unit test to verify that the `moves` table insertion functions for 'question' and 'answer' are called correctly.
+    -   [ ] Write an integration test to assert that the turn indicator visually prompts the active player after an answer is received.
+</tasks>
+  </story>
+
+  <acceptanceCriteria>
+1.  **Given** it is my turn, **when** I type a question into the designated input box and click "Ask", **then** the question text is immediately displayed to my opponent.
+2.  **Given** I am the opponent and have been asked a question, **when** I click the "Yes" or "No" button, **then** my answer is immediately displayed to the active player.
+3.  **And** every question and answer interaction is recorded as a new entry in the `moves` database table.
+4.  **And** after an answer is received, the turn indicator visually prompts the active player to proceed with their next action (character elimination).
+</acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/PRD.md</path>
+        <title>Product Requirements Document</title>
+        <section>FR3.2 - Questioning & Answering</section>
+        <snippet>The system shall allow the active player to ask a yes/no question and the non-active player to provide a "Yes" or "No" answer.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Communication Patterns (Supabase Realtime)</section>
+        <snippet>Channel Naming: `game:[game-id]`, Event Names: `turn-changed`</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Core Models</section>
+        <snippet>Move: `id`, `game_id`, `player_id`, `action_type` (question/guess/flip), `details` (JSON), `created_at`</snippet>
+      </doc>
+      <doc>
+        <path>docs/ux-design-specification.md</path>
+        <title>UX Design Specification</title>
+        <section>Journey 2: Core Gameplay Loop</section>
+        <snippet>Player's Turn (Asking a Question): User sees a "Question Box" UI element...</snippet>
+      </doc>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Epic Breakdown</title>
+        <section>Story 3.3: Question & Answer Interaction</section>
+        <snippet>As a Player, I want to ask a yes/no question and receive an answer, so that I can eliminate characters.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <artifact>
+        <path>app/game-play/store.ts</path>
+        <kind>Zustand Store</kind>
+        <symbol>useGameStore</symbol>
+        <lines>1-33</lines>
+        <reason>This is the core state management for the gameplay. The story will need to add state for the current question and answer to this store.</reason>
+      </artifact>
+      <artifact>
+        <path>db/schema.ts</path>
+        <kind>Database Schema</kind>
+        <symbol>moves</symbol>
+        <lines>32-40</lines>
+        <reason>This file defines the schema for the `moves` table, which is central to logging questions and answers.</reason>
+      </artifact>
+    </code>
+    <dependencies>
+      <dependency>
+        <ecosystem>node</ecosystem>
+        <package>@supabase/supabase-js</package>
+        <version>latest</version>
+      </dependency>
+      <dependency>
+        <ecosystem>node</ecosystem>
+        <package>zustand</package>
+        <version>^5.0.9</version>
+      </dependency>
+      <dependency>
+        <ecosystem>node</ecosystem>
+        <package>next</package>
+        <version>latest</version>
+      </dependency>
+      <dependency>
+        <ecosystem>node</ecosystem>
+        <package>react</package>
+        <version>^19.0.0</version>
+      </dependency>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint>
+      <type>Security</type>
+      <description>RLS policy on the `moves` table is critical to prevent a player from submitting actions on behalf of their opponent.</description>
+    </constraint>
+    <constraint>
+      <type>Architecture</type>
+      <description>The flow is strictly defined: 1. Active Player (Client A) -> Insert `moves` row (`action_type: 'question'`). 2. Database change -> Triggers Realtime `question-asked` event. 3. Opponent (Client B) -> Receives event, UI updates to show question and answer buttons. 4. Opponent (Client B) -> Insert `moves` row (`action_type: 'answer'`). 5. Database change -> Triggers Realtime `answer-provided` event. 6. Active Player (Client A) -> Receives event, UI updates to show the answer.</description>
+    </constraint>
+  </constraints>
+  <interfaces>
+    <interface>
+      <name>moves table</name>
+      <kind>Database Table</kind>
+      <signature>id (uuid), game_id (uuid), player_id (uuid), action_type (public.action_type), details (jsonb), created_at (timestamp with time zone)</signature>
+      <path>db/schema.ts</path>
+    </interface>
+  </interfaces>
+  <tests>
+    <standards>
+      The project uses Jest for unit and integration testing, with React Testing Library for component testing. Tests are co-located in the `__tests__` directory.
+    </standards>
+    <locations>
+      <location>__tests__/</location>
+    </locations>
+    <ideas>
+      <idea for="AC#1, AC#2">Write a unit test for the Zustand store to verify that `question-asked` and `answer-provided` events update the state correctly.</idea>
+      <idea for="AC#1, AC#2">Write an integration test to mock the Realtime events and assert that the `QuestionBox` and `AnswerBox` appear/disappear and are enabled/disabled correctly for each player.</idea>
+      <idea for="AC#3">Write a unit test to verify that the `moves` table insertion functions for 'question' and 'answer' are called correctly.</idea>
+      <idea for="AC#4">Write an integration test to assert that the turn indicator visually prompts the active player after an answer is received.</idea>
+    </ideas>
+  </tests>
+</story-context>
