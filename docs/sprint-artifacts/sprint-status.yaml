@@ -54,7 +54,7 @@ development_status:
   3-2-turn-management-system: ready-for-dev
   3-3-question-answer-interaction: ready-for-dev
   3-4-character-elimination-mechanics: ready-for-dev
-  3-5-winning-losing-the-guess: backlog
+  3-5-winning-losing-the-guess: ready-for-dev
   epic-3-retrospective: optional
 
   epic-4: backlog

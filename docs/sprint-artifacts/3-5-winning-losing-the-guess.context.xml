@@ -1,0 +1,136 @@
+<story-context id="{bmad_folder}/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>5</storyId>
+    <title>Winning/Losing (The Guess)</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-02</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/3-5-winning-losing-the-guess.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>a Player</asA>
+    <iWant>to make a final guess to win the game</iWant>
+    <soThat>the match concludes</soThat>
+    <tasks>
+      <task id="1" ac="1,2">
+        <subtask id="1.1">Create a "Make a Guess" button in the game UI.</subtask>
+        <subtask id="1.2">On button click, present a modal with the character grid for selection.</subtask>
+      </task>
+      <task id="2" ac="3,4,5">
+        <subtask id="2.1">Implement a new API route `/api/game/[id]/guess` that takes a `characterId` in the request body.</subtask>
+        <subtask id="2.2">The API route must be secure, ensuring the guessing player is part of the game and it is their turn.</subtask>
+        <subtask id="2.3">The server-side logic will compare the guessed `characterId` with the opponent's stored `character_id`.</subtask>
+        <subtask id="2.4">Update the `game_sessions` table: set `status` to `finished` and populate the `winner_id` column based on the outcome.</subtask>
+      </task>
+      <task id="3" ac="4,5">
+        <subtask id="3.1">Create a `game-over` event to be broadcast via Supabase Realtime when the game status is updated to `finished`.</subtask>
+        <subtask id="3.2">The client-side game store (Zustand) should listen for this event.</subtask>
+        <subtask id="3.3">On receiving the event, the client should transition to the Game Over screen (to be built in Epic 4).</subtask>
+      </task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+      <criterion id="1">**Given** It is my turn</criterion>
+      <criterion id="2">**When** I click "Make a Guess" and select a character</criterion>
+      <criterion id="3">**Then** The system checks if it matches the opponent's secret character</criterion>
+      <criterion id="4">**If** Correct -> Update game status to `finished`, set `winner_id` to me. I see "You Win!". Opponent sees "You Lose!".</criterion>
+      <criterion id="5">**If** Incorrect -> Update game status to `finished`, set `winner_id` to opponent. I see "You Lose!". Opponent sees "You Win!".</criterion>
+    </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <artifact>
+        <path>docs/PRD.md</path>
+        <title>Product Requirements Document</title>
+        <section>FR3.4 - Guessing &amp; Win/Loss Condition</section>
+        <snippet>The system shall allow the active player to make a guess about the opponent's secret character and determine the winner/loser. A correct guess leads to a win screen; an incorrect guess leads to a loss screen.</snippet>
+      </artifact>
+      <artifact>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Communication Patterns (Supabase Realtime)</section>
+        <snippet>Event Name: `game-over`: Win/Loss condition met.</snippet>
+      </artifact>
+      <artifact>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Data Architecture</section>
+        <snippet>GameSession includes a nullable `winner_id` (UUID) to record the winner.</snippet>
+      </artifact>
+      <artifact>
+        <path>docs/ux-design-specification.md</path>
+        <title>UX Design Specification</title>
+        <section>Journey 3: Winning the Game</section>
+        <snippet>A clear, high-stakes action that leads to a definitive win/loss outcome, followed by options for re-engagement. Involves a "Make a Guess" button, a confirmation, and a "You Win!" or "You Lose!" screen.</snippet>
+      </artifact>
+      <artifact>
+        <path>docs/epics.md</path>
+        <title>Epic Breakdown</title>
+        <section>Story 3.5: Winning/Losing (The Guess)</section>
+        <snippet>As a Player, I want to make a final guess to win the game, so that the match concludes. The system checks the guess and updates game status to finished, setting a winner_id.</snippet>
+      </artifact>
+    </docs>
+    <code>
+      <artifact>
+        <path>app/api/game/[game-id]/guess/route.ts</path>
+        <kind>API Route</kind>
+        <symbol>POST</symbol>
+        <lines>1-35</lines>
+        <reason>New API endpoint to be implemented for securely handling a player's final guess. Currently a placeholder.</reason>
+      </artifact>
+      <artifact>
+        <path>app/game-play/store/game-store.ts</path>
+        <kind>State Management</kind>
+        <symbol>useGameStore</symbol>
+        <lines>20, 37-45, 52</lines>
+        <reason>Existing Zustand store to be updated with logic for `makeGuess` and `setWinner` actions.</reason>
+      </artifact>
+      <artifact>
+        <path>app/game-play/components/</path>
+        <kind>UI Component</kind>
+        <symbol>GuessModal</symbol>
+        <lines>N/A (New file)</lines>
+        <reason>A new modal component needs to be created to allow the user to select a character for their final guess, as per the story tasks.</reason>
+      </artifact>
+    </code>
+    <dependencies>
+      <ecosystem name="Node">
+        <package name="next" version="latest" />
+        <package name="@supabase/supabase-js" version="latest" />
+        <package name="zustand" version="^5.0.9" />
+        <package name="tailwindcss" version="^3.4.1" />
+        <package name="@radix-ui/react-slot" version="^1.2.4" />
+        <package name="react" version="^19.0.0" />
+      </ecosystem>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+      <constraint>The guess validation *must* happen on the server to prevent cheating. The `/api/game/[id]/guess` route is critical for this.</constraint>
+      <constraint>Row Level Security on the `players` table should prevent a user from reading their opponent's `character_id`.</constraint>
+      <constraint>The client's Zustand store will need to manage the "guessing" state to show the modal. It will then react to the `game-over` event from the server to transition the UI.</constraint>
+    </constraints>
+  <interfaces>
+      <interface>
+        <name>/api/game/[id]/guess</name>
+        <kind>REST Endpoint</kind>
+        <signature>POST /api/game/[id]/guess - Body: { "playerId": "...", "guessedCharacterId": "..." }</signature>
+        <path>app/api/game/[game-id]/guess/route.ts</path>
+      </interface>
+    </interfaces>
+  <tests>
+    <standards>The project uses Jest for unit and integration testing, and @testing-library/react for component testing. A crucial testing requirement for this story is an integration test for the `/api/game/[id]/guess` endpoint to ensure the server-side logic is correct and secure. End-to-end (E2E) tests should be written to cover both winning and losing user scenarios.</standards>
+    <locations>
+      <location>digital-guess-who/__tests__/</location>
+    </locations>
+    <ideas>
+      <idea for="AC#4">Write an E2E test where a player makes a correct guess and verifies that the "You Win!" screen is displayed for them and the "You Lose!" screen is displayed for the opponent.</idea>
+      <idea for="AC#5">Write an E2E test where a player makes an incorrect guess and verifies that the "You Lose!" screen is displayed for them and the "You Win!" screen is displayed for the opponent.</idea>
+      <idea for="Task#2.2">Write an integration test for the `/api/game/[id]/guess` endpoint that asserts a non-active player cannot make a guess.</idea>
+      <idea for="Task#2.3">Write a unit test for the server-side comparison logic to ensure it correctly identifies a winning or losing guess.</idea>
+    </ideas>
+  </tests>
+</story-context>
