@@ -1,0 +1,145 @@
+<story-context id="{bmad_folder}/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>4</storyId>
+    <title>Character Elimination Mechanics</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-02</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/3-4-character-elimination-mechanics.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>a Player</asA>
+    <iWant>to flip down characters that don't match the answer</iWant>
+    <soThat>I can narrow down the possibilities.</soThat>
+    <tasks>
+      <task category="Frontend: State Management (Zustand)" ac="4">In `app/game-play/store/game-store.ts`, add a new state variable `eliminatedCharacterIds` (e.g., a `Set<number>`).</task>
+      <task category="Frontend: State Management (Zustand)" ac="4">Create a new action `toggleCharacterElimination(characterId: number)` that adds or removes an ID from the `eliminatedCharacterIds` set.</task>
+      <task category="Frontend: UI Component (`CharacterCard`)" ac="1, 3">In `app/game-play/components/CharacterCard.tsx`, subscribe to the `game-store`.</task>
+      <task category="Frontend: UI Component (`CharacterCard`)" ac="1, 2, 3, 5">Determine if the card is eliminated by checking if its ID is in the `eliminatedCharacterIds` set from the store.</task>
+      <task category="Frontend: UI Component (`CharacterCard`)" ac="2, 5">Implement the visual "Eliminated" state (e.g., `filter: grayscale(1)` and `pointer-events: none` for guess actions, but not for the toggle click itself).</task>
+      <task category="Frontend: UI Component (`CharacterCard`)" ac="1, 3">Add an `onClick` handler to the card that calls the `toggleCharacterElimination` action from the Zustand store.</task>
+      <task category="Frontend: UI Component (`CharacterCard`)">Ensure the hover and focus states from the UX spec are implemented for active cards.</task>
+      <task category="Frontend: UI Integration (`CharacterGrid`)" ac="1">In `app/game-play/components/CharacterGrid.tsx`, ensure it correctly renders the list of `CharacterCard` components.</task>
+      <task category="Frontend: UI Integration (`CharacterGrid`)">The grid itself does not need new logic; it just needs to render the cards which now have their own stateful logic.</task>
+      <task category="Testing" ac="1">Write an integration test to verify that clicking an active character card transitions it to the "Eliminated" state.</task>
+      <task category="Testing" ac="2">Write a visual test (e.g., using Storybook or a similar tool) to confirm that the "Eliminated" state's styling (grayed-out portrait) matches the UX Design Specification.</task>
+      <task category="Testing" ac="3">Enhance the integration test from AC #1 to assert that clicking an "Eliminated" card toggles it back to the "Active" state.</task>
+      <task category="Testing" ac="4">Write a unit test for the Zustand store (`game-store.ts`) to confirm that the `eliminatedCharacterIds` set is correctly updated by the `toggleCharacterElimination` action.</task>
+      <task category="Testing" ac="5">Write a test to ensure that a user cannot initiate a "guess" action by interacting with a character card that is in the "Eliminated" state.</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+      <criterion id="1">**Given** the active player has received a "Yes" or "No" answer, **when** they click on an active character card on their board, **then** the card visually transitions to an "Eliminated" state.</criterion>
+      <criterion id="2">**And** the "Eliminated" state is visually distinct, graying out the character portrait as specified in the UX Design, but keeping the character visible.</criterion>
+      <criterion id="3">**And** clicking an already "Eliminated" character card toggles it back to the "Active" state, allowing the user to correct mistakes.</criterion>
+      <criterion id="4">**And** this grid state (the set of eliminated characters) is preserved locally for the duration of the game session, even between turns.</criterion>
+      <criterion id="5">**And** eliminated cards are not interactable in a way that would trigger a guess (i.e., you cannot "guess" an eliminated character).</criterion>
+    </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/PRD.md</path>
+        <title>Product Requirements Document</title>
+        <section>FR3.3 - Character Elimination</section>
+        <snippet>The system shall allow the active player to visually eliminate characters from their board based on the opponent's answer. An active player can "flip down" or gray out characters on their grid. This state is preserved between turns.</snippet>
+      </doc>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Epic Breakdown</title>
+        <section>Story 3.4: Character Elimination Mechanics</section>
+        <snippet>As a Player, I want to flip down characters that don't match the answer, so that I can narrow down the possibilities. This state is preserved locally (Zustand store).</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>State Management</section>
+        <snippet>State Management: Zustand | Simplifies complex game logic (turns, elimination) compared to Context API. Decouples logic from UI components for better testability.</snippet>
+      </doc>
+      <doc>
+        <path>docs/ux-design-specification.md</path>
+        <title>UX Design Specification</title>
+        <section>Custom Component: Character Card</section>
+        <snippet>On click, the card toggles between its "Active" and "Eliminated" states. In the "Eliminated" state, the character's image is grayed out to maintain visibility, allowing the user to easily see who they have eliminated and potentially undo the action.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic Technical Specification: Core Gameplay Loop</title>
+        <section>Overview</section>
+        <snippet>This epic covers the complete implementation of the core gameplay loop for "Digital Guess Who." It encompasses all functionality required for players to play the game from start to finish, including selecting their secret character, engaging in the turn-based question-and-answer cycle, visually eliminating characters on their board, and making a final guess to determine the winner.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <artifact>
+        <path>app/game-play/store/game-store.ts</path>
+        <kind>store</kind>
+        <symbol>eliminatedCharacterIds</symbol>
+        <lines>N/A</lines>
+        <reason>The Zustand store slice where the set of eliminated character IDs will be stored and managed.</reason>
+      </artifact>
+      <artifact>
+        <path>app/game-play/store/game-store.ts</path>
+        <kind>action</kind>
+        <symbol>toggleCharacterElimination(characterId)</symbol>
+        <lines>N/A</lines>
+        <reason>The action that will be called from the UI to add or remove a character ID from the eliminated set.</reason>
+      </artifact>
+      <artifact>
+        <path>app/game-play/components/CharacterCard.tsx</path>
+        <kind>component</kind>
+        <symbol>CharacterCard</symbol>
+        <lines>N/A</lines>
+        <reason>The primary UI component to be updated. It will subscribe to the game store and handle the click event to toggle elimination status.</reason>
+      </artifact>
+      <artifact>
+        <path>app/game-play/components/CharacterGrid.tsx</path>
+        <kind>component</kind>
+        <symbol>CharacterGrid</symbol>
+        <lines>N/A</lines>
+        <reason>The container component that renders the grid of CharacterCards. It ensures the cards are displayed correctly.</reason>
+      </artifact>
+    </code>
+    <dependencies>
+      <ecosystem type="Node.js">
+        <package name="next" version="latest" type="production" />
+        <package name="react" version="^19.0.0" type="production" />
+        <package name="zustand" version="^5.0.9" type="production" />
+        <package name="@supabase/supabase-js" version="latest" type="production" />
+        <package name="tailwindcss" version="^3.4.1" type="development" />
+        <package name="jest" version="^30.2.0" type="development" />
+        <package name="@testing-library/react" version="^16.3.0" type="development" />
+        <package name="typescript" version="^5" type="development" />
+      </ecosystem>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+      <constraint>Client-side state management for the elimination grid must be handled by Zustand.</constraint>
+      <constraint>All new and modified code for this story should be located within the `app/game-play/` feature slice.</constraint>
+      <constraint>The visual "Eliminated" state must follow the UX specification: grayed out, not hidden, to allow for review and correction.</constraint>
+      <constraint>Users must be able to toggle a character back to the "Active" state to correct mistakes.</constraint>
+      <constraint>The state of eliminated characters is to be kept local to the client and does not need to be synchronized with the opponent or persisted in the database for the MVP.</constraint>
+    </constraints>
+  <interfaces>
+      <interface>
+        <name>toggleCharacterElimination</name>
+        <kind>Zustand Action</kind>
+        <signature>toggleCharacterElimination(characterId: number): void</signature>
+        <path>app/game-play/store/game-store.ts</path>
+      </interface>
+    </interfaces>
+  <tests>
+    <standards>The project uses Jest and React Testing Library for testing. This story requires a mix of unit tests for state management (Zustand store), integration tests for component behavior (toggling card states), and visual tests to verify styling against the UX design, for which a tool like Storybook is recommended.</standards>
+    <locations>Tests are co-located with the source code they cover. For this story, tests will be placed in `digital-guess-who/app/game-play/store/__tests__/` and `digital-guess-who/app/game-play/components/__tests__/`.</locations>
+    <ideas>
+      <idea ac="4">Unit test the Zustand store (`game-store.ts`) to confirm that the `eliminatedCharacterIds` set is correctly updated by the `toggleCharacterElimination` action.</idea>
+      <idea ac="1">Integration test to verify that clicking an active `CharacterCard` component transitions it to the "Eliminated" state.</idea>
+      <idea ac="3">Enhance the integration test to assert that clicking an "Eliminated" card toggles it back to the "Active" state.</idea>
+      <idea ac="5">Write a test to ensure that a user cannot initiate a "guess" action by interacting with a character card that is in the "Eliminated" state.</idea>
+      <idea ac="2">Write a visual test (e.g., using Storybook) to confirm that the "Eliminated" state's styling (grayed-out portrait) matches the UX Design Specification.</idea>
+    </ideas>
+  </tests>
+</story-context>
