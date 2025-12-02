@@ -18,6 +18,7 @@ create table public.game_sessions (
   status public.game_status not null default 'waiting',
   host_id uuid not null references auth.users(id),
   difficulty public.difficulty_level not null default 'Medium',
+  current_turn_player_id uuid references public.players(id),
   winner_id uuid references auth.users(id),
   created_at timestamp with time zone not null default now(),
   constraint game_sessions_pkey primary key (id),

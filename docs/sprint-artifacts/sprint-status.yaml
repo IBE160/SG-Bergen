@@ -51,7 +51,7 @@ development_status:
 
   epic-3: contexted
   3-1-game-board-secret-character-selection: done
-  3-2-turn-management-system: ready-for-dev
+  3-2-turn-management-system: review
   3-3-question-answer-interaction: ready-for-dev
   3-4-character-elimination-mechanics: ready-for-dev
   3-5-winning-losing-the-guess: ready-for-dev

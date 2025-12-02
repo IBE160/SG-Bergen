@@ -121,6 +121,40 @@ export async function joinGameSession(userId: string, code: string) {
   return session
 }
 
+export async function updateCurrentTurnPlayer(gameId: string, currentPlayerId: string) {
+  const supabase = await createClient();
+
+  // Get all players for the game
+  const { data: players, error: playersError } = await supabase
+    .from('players')
+    .select('user_id')
+    .eq('game_id', gameId);
+
+  if (playersError) throw playersError;
+  if (!players || players.length < 2) {
+    throw new Error('Game must have at least two players to manage turns.');
+  }
+
+  // Determine the next player
+  const nextPlayer = players.find(p => p.user_id !== currentPlayerId);
+
+  if (!nextPlayer) {
+    throw new Error('Next player not found.');
+  }
+
+  // Update game_sessions with the next player's ID
+  const { data: updatedSession, error: updateError } = await supabase
+    .from('game_sessions')
+    .update({ current_turn_player_id: nextPlayer.user_id })
+    .eq('id', gameId)
+    .select()
+    .single();
+
+  if (updateError) throw updateError;
+
+  return updatedSession;
+}
+
 function generateGameCode(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
   let result = ''
