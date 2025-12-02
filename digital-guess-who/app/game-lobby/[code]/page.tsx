@@ -61,75 +61,91 @@ export default function LobbyPage({ params }: LobbyPageProps) {
     fetchInitialData();
   }, [params.code, router, setGameId, setPlayers, supabase]);
 
+  // This effect handles all channel events
   useEffect(() => {
     if (!gameId) return;
 
     const channel = supabase.channel(`game:${gameId}`);
 
-    channel
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'players',
-          filter: `game_id=eq:${gameId}`,
-        },
-        async (payload) => {
-            const { data: newPlayer, error } = await supabase
-                .from('players')
-                .select('*, users(username)')
-                .eq('id', payload.new.id)
-                .single();
-            if (error) {
-                console.error(error);
-                return;
-            }
-          addPlayer(newPlayer as unknown as Player);
+    // Listen for new players joining
+    channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'players', filter: `game_id=eq:${gameId}` }, async (payload) => {
+        console.log('[Lobby] New player inserted, fetching details...');
+        const { data: newPlayer, error } = await supabase
+            .from('players')
+            .select('*, users(username)')
+            .eq('id', payload.new.id)
+            .single();
+        if (error) {
+            console.error('[Lobby] Error fetching new player details:', error);
+            return;
         }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'players',
-          filter: `game_id=eq:${gameId}`,
-        },
-        (payload) => {
-          const updatedPlayer = payload.new as Player;
-          updatePlayerStatus(updatedPlayer.user_id, updatedPlayer.is_ready);
-        }
-      )
-      .on('broadcast', { event: 'game-starting' }, () => {
+        addPlayer(newPlayer as unknown as Player);
+    });
+
+    // Listen for players updating their ready status
+    channel.on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'players', filter: `game_id=eq:${gameId}` }, (payload) => {
+        console.log('[Lobby] Player updated:', payload.new);
+        const updatedPlayer = payload.new as Player;
+        updatePlayerStatus(updatedPlayer.user_id, updatedPlayer.is_ready);
+    });
+    
+    // Listen for the explicit "game-started" event sent by the host
+    channel.on('broadcast', { event: 'game-started' }, () => {
+        console.log(`[Lobby] Received game-started broadcast. Navigating to game...`);
         router.push(`/game-play/${params.code}`);
-      })
-      .subscribe();
+    });
+
+    channel.subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+            console.log(`[Lobby] Subscribed to channel game:${gameId}`);
+        }
+    });
 
     return () => {
-      supabase.removeChannel(channel);
+        console.log(`[Lobby] Unsubscribing from channel game:${gameId}`);
+        supabase.removeChannel(channel);
     };
   }, [gameId, params.code, router, addPlayer, updatePlayerStatus, supabase]);
-  
-  useEffect(() => {
-    if (players.length === 2 && players.every((p) => p.is_ready)) {
-        if (!gameId) return;
-        const channel = supabase.channel(`game:${gameId}`);
-        channel.subscribe((status) => {
-            if (status === 'SUBSCRIBED') {
-                channel.send({
-                    type: 'broadcast',
-                    event: 'game-starting',
-                    payload: {},
-                });
-            }
-        });
 
-        return () => {
-            supabase.removeChannel(channel);
-        };
-    }
-  }, [players, gameId, supabase]);
+
+  // This effect ONLY tries to start the game, and only the host runs it
+  useEffect(() => {
+    const tryToStartGame = async () => {
+        console.log(`[Lobby] tryToStartGame check: user: ${!!user}, gameId: ${!!gameId}, players: ${players.length}`);
+        
+        if (!user || !gameId || players.length < 2) return;
+
+        const isHost = players[0].user_id === user.id;
+
+        // Conditions to start: I am the host, there are 2 players, and both are ready.
+        if (isHost && players.length === 2 && players.every((p) => p.is_ready)) {
+            console.log('[Lobby Host] Conditions met. Attempting to start game...');
+
+            // 1. Update DB to set turn and status
+            const { error } = await supabase
+              .from('game_sessions')
+              .update({ current_turn_player_id: players[0].user_id, status: 'active' })
+              .eq('id', gameId);
+
+            if (error) {
+                console.error('[Lobby Host] Failed to update session to start game:', error);
+                return;
+            }
+            
+            console.log('[Lobby Host] DB updated. Broadcasting "game-started" event.');
+
+            // 2. Broadcast the start event to all clients (including self)
+            const channel = supabase.channel(`game:${gameId}`);
+            await channel.send({
+                type: 'broadcast',
+                event: 'game-started',
+                payload: {},
+            });
+        }
+    };
+
+    tryToStartGame();
+  }, [players, gameId, user, supabase]);
 
   const handleReady = async () => {
     if (!user || !gameId) return;

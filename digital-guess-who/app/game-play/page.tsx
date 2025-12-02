@@ -26,7 +26,30 @@ export default function GamePlayPage({ params }: { params: { 'game-id': string }
   useEffect(() => {
     if (!gameId) return;
 
-    const channel = supabase.channel(`game-${gameId}`);
+    console.log('[GamePlay] Mounting. Game ID:', gameId);
+
+    const fetchInitialGameState = async () => {
+      console.log('[GamePlay] Fetching initial game state...');
+      const { data, error } = await supabase
+        .from('game_sessions')
+        .select('current_turn_player_id')
+        .eq('id', gameId)
+        .single();
+      
+      if (error) {
+        console.error('[GamePlay] Error fetching initial game state:', error);
+        return;
+      }
+      
+      console.log('[GamePlay] Initial game state fetched:', data);
+      if (data) {
+        setCurrentTurnPlayerId(data.current_turn_player_id);
+      }
+    };
+
+    fetchInitialGameState();
+
+    const channel = supabase.channel(`game:${gameId}`);
 
     channel
       .on<any>(
@@ -38,19 +61,26 @@ export default function GamePlayPage({ params }: { params: { 'game-id': string }
           filter: `id=eq.${gameId}`,
         },
         (payload) => {
-          if (payload.new.current_turn_player_id) {
+          console.log('[GamePlay] Received Realtime payload:', payload);
+          if (payload.new.hasOwnProperty('current_turn_player_id')) {
+            console.log('[GamePlay] Updating turn player ID in store:', payload.new.current_turn_player_id);
             setCurrentTurnPlayerId(payload.new.current_turn_player_id);
           }
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log(`[GamePlay] Realtime channel subscription status: ${status}`);
+      });
 
     return () => {
+      console.log('[GamePlay] Unmounting, removing channel subscription.');
       supabase.removeChannel(channel);
     };
   }, [gameId, supabase, setCurrentTurnPlayerId]);
 
   const isMyTurn = currentUser && currentTurnPlayerId === currentUser.id;
+
+  console.log(`[GamePlay] Render. Current Turn Player ID: ${currentTurnPlayerId}, Is My Turn: ${isMyTurn}`);
 
   // Placeholder for action buttons
   const ActionButton = ({ text, disabled, onClick }: { text: string; disabled: boolean; onClick?: () => void }) => (

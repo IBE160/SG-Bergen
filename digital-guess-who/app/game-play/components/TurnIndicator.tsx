@@ -24,11 +24,15 @@ export default function TurnIndicator({}: TurnIndicatorProps) {
   }, [supabase]);
 
 
-  const isMyTurn = currentUser && currentTurnPlayerId === currentUser.id;
-
   if (!currentTurnPlayerId) {
-    return null; // Or a loading indicator if needed
+    return (
+      <div className="p-2 rounded-md bg-gray-500 text-white">
+        Waiting for turn...
+      </div>
+    );
   }
+
+  const isMyTurn = currentUser && currentTurnPlayerId === currentUser.id;
 
   return (
     <div className={`p-2 rounded-md ${isMyTurn ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>
