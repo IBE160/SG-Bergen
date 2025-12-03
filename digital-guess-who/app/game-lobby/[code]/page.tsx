@@ -22,6 +22,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
   } = useLobbyStore();
   const supabase = createClient();
   const [user, setUser] = useState<User | null>(null);
+  const [hostId, setHostId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -35,7 +36,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
     const fetchInitialData = async () => {
       const { data: gameSession, error } = await supabase
         .from('game_sessions')
-        .select('id, status')
+        .select('id, status, host_id')
         .eq('code', params.code)
         .single();
 
@@ -45,10 +46,11 @@ export default function LobbyPage({ params }: LobbyPageProps) {
       }
 
       setGameId(gameSession.id);
+      setHostId(gameSession.host_id);
 
       const { data: initialPlayers, error: playersError } = await supabase
         .from('players')
-        .select('*, users(username)')
+        .select('*, profiles(username)')
         .eq('game_id', gameSession.id);
 
       if (playersError) {
@@ -68,11 +70,11 @@ export default function LobbyPage({ params }: LobbyPageProps) {
     const channel = supabase.channel(`game:${gameId}`);
 
     // Listen for new players joining
-    channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'players', filter: `game_id=eq:${gameId}` }, async (payload) => {
+    channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'players', filter: `game_id=eq.${gameId}` }, async (payload) => {
         console.log('[Lobby] New player inserted, fetching details...');
         const { data: newPlayer, error } = await supabase
             .from('players')
-            .select('*, users(username)')
+            .select('*, profiles(username)')
             .eq('id', payload.new.id)
             .single();
         if (error) {
@@ -83,10 +85,19 @@ export default function LobbyPage({ params }: LobbyPageProps) {
     });
 
     // Listen for players updating their ready status
-    channel.on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'players', filter: `game_id=eq:${gameId}` }, (payload) => {
+    channel.on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'players', filter: `game_id=eq.${gameId}` }, (payload) => {
         console.log('[Lobby] Player updated:', payload.new);
         const updatedPlayer = payload.new as Player;
         updatePlayerStatus(updatedPlayer.user_id, updatedPlayer.is_ready);
+    });
+
+    // Listen for game status updates (backup for broadcast)
+    channel.on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'game_sessions', filter: `id=eq.${gameId}` }, (payload) => {
+        console.log('[Lobby] Game session updated:', payload.new);
+        if (payload.new.status === 'active') {
+            console.log('[Lobby] Game is now active. Redirecting...');
+            router.push(`/game-play/${params.code}`);
+        }
     });
     
     // Listen for the explicit "game-started" event sent by the host
@@ -113,9 +124,9 @@ export default function LobbyPage({ params }: LobbyPageProps) {
     const tryToStartGame = async () => {
         console.log(`[Lobby] tryToStartGame check: user: ${!!user}, gameId: ${!!gameId}, players: ${players.length}`);
         
-        if (!user || !gameId || players.length < 2) return;
+        if (!user || !gameId || !hostId || players.length < 2) return;
 
-        const isHost = players[0].user_id === user.id;
+        const isHost = hostId === user.id;
 
         // Conditions to start: I am the host, there are 2 players, and both are ready.
         if (isHost && players.length === 2 && players.every((p) => p.is_ready)) {
@@ -145,7 +156,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
     };
 
     tryToStartGame();
-  }, [players, gameId, user, supabase]);
+  }, [players, gameId, user, hostId, supabase]);
 
   const handleReady = async () => {
     if (!user || !gameId) return;
@@ -171,7 +182,7 @@ export default function LobbyPage({ params }: LobbyPageProps) {
         <ul className="mt-4 space-y-2">
           {players.map((player) => (
             <li key={player.id} className="flex justify-center items-center space-x-4">
-              <span>{player.users?.username ?? '...'}</span>
+              <span>{player.profiles?.username ?? '...'}</span>
               <span className={`px-2 py-1 rounded text-white ${player.is_ready ? 'bg-green-500' : 'bg-red-500'}`}>
                 {player.is_ready ? 'Ready' : 'Not Ready'}
               </span>

@@ -1,46 +1,22 @@
 'use client';
 
-import { useEffect } from "react";
-import { useGameStore } from "../store";
-import { CharacterCard } from "./CharacterCard";
-import { Character } from "../types";
+import { CHARACTERS, Character } from '@/lib/game-logic/characters';
+import CharacterCard from './CharacterCard';
 
-export function CharacterGrid() {
-  const { characters, setCharacters, mySecretCharacter, setMySecretCharacter, eliminatedCharacterIds, toggleEliminated, gameState } = useGameStore();
+interface CharacterGridProps {
+  onCharacterClick?: (character: Character) => void;
+  selectedCharacterId?: number | null;
+}
 
-  useEffect(() => {
-    async function loadCharacters() {
-      try {
-        const res = await fetch('/assets/data/characters.json');
-        if (!res.ok) throw new Error('Failed to load characters');
-        const data = await res.json();
-        setCharacters(data);
-      } catch (error) {
-        console.error("Error loading characters:", error);
-      }
-    }
-    if (characters.length === 0) {
-        loadCharacters();
-    }
-  }, [setCharacters, characters.length]);
-
-  const handleCardClick = (character: Character) => {
-    if (gameState === 'selecting') {
-      setMySecretCharacter(character);
-    } else if (gameState === 'playing') {
-      toggleEliminated(character.id);
-    }
-  };
-
+export default function CharacterGrid({ onCharacterClick, selectedCharacterId }: CharacterGridProps) {
   return (
-    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4 p-4">
-      {characters.map((char) => (
-        <CharacterCard
-          key={char.id}
-          character={char}
-          isSelected={mySecretCharacter?.id === char.id}
-          isEliminated={eliminatedCharacterIds.includes(char.id)}
-          onClick={() => handleCardClick(char)}
+    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4 p-4 bg-gray-100/50 rounded-xl border border-gray-200 dark:bg-gray-800/50 dark:border-gray-700">
+      {CHARACTERS.map((char) => (
+        <CharacterCard 
+          key={char.id} 
+          character={char} 
+          onClick={onCharacterClick}
+          isSelected={selectedCharacterId === char.id}
         />
       ))}
     </div>

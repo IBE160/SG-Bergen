@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { Database } from '@/db/types';
 
-export type Player = Database['public']['Tables']['players']['Row'] & { users?: { username: string } | null };
+export type Player = Database['public']['Tables']['players']['Row'] & { profiles?: { username: string | null } | null };
 
 type LobbyState = {
   players: Player[];

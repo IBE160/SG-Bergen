@@ -52,12 +52,12 @@ development_status:
   epic-3: contexted
   3-1-game-board-secret-character-selection: done
   3-2-turn-management-system: review
-  3-3-question-answer-interaction: ready-for-dev
-  3-4-character-elimination-mechanics: ready-for-dev
-  3-5-winning-losing-the-guess: ready-for-dev
-  epic-3-retrospective: optional
+  3-3-question-answer-interaction: review
+  3-4-character-elimination-mechanics: review
+  3-5-winning-losing-the-guess: review
+  epic-3-retrospective: ready
 
-  epic-4: backlog
+  epic-4: contexted
   4-1-game-over-screens: backlog
   4-2-play-again-functionality: backlog
   4-3-return-to-main-menu: backlog

@@ -1,6 +1,6 @@
 # Story 3.5: Winning/Losing (The Guess)
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -18,18 +18,18 @@ so that the match concludes.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1 (AC: #1, #2)
-  - [ ] Subtask 1.1: Create a "Make a Guess" button in the game UI.
-  - [ ] Subtask 1.2: On button click, present a modal with the character grid for selection.
-- [ ] Task 2 (AC: #3, #4, #5)
-  - [ ] Subtask 2.1: Implement a new API route `/api/game/[id]/guess` that takes a `characterId` in the request body.
-  - [ ] Subtask 2.2: The API route must be secure, ensuring the guessing player is part of the game and it is their turn.
-  - [ ] Subtask 2.3: The server-side logic will compare the guessed `characterId` with the opponent's stored `character_id`.
-  - [ ] Subtask 2.4: Update the `game_sessions` table: set `status` to `finished` and populate the `winner_id` column based on the outcome.
-- [ ] Task 3 (AC: #4, #5)
-    - [ ] Subtask 3.1: Create a `game-over` event to be broadcast via Supabase Realtime when the game status is updated to `finished`.
-    - [ ] Subtask 3.2: The client-side game store (Zustand) should listen for this event.
-    - [ ] Subtask 3.3: On receiving the event, the client should transition to the Game Over screen (to be built in Epic 4).
+- [x] Task 1 (AC: #1, #2)
+  - [x] Subtask 1.1: Create a "Make a Guess" button in the game UI.
+  - [x] Subtask 1.2: On button click, present a modal with the character grid for selection.
+- [x] Task 2 (AC: #3, #4, #5)
+  - [x] Subtask 2.1: Implement a new API route `/api/game/[id]/guess` that takes a `characterId` in the request body.
+  - [x] Subtask 2.2: The API route must be secure, ensuring the guessing player is part of the game and it is their turn.
+  - [x] Subtask 2.3: The server-side logic will compare the guessed `characterId` with the opponent's stored `character_id`.
+  - [x] Subtask 2.4: Update the `game_sessions` table: set `status` to `finished` and populate the `winner_id` column based on the outcome.
+- [x] Task 3 (AC: #4, #5)
+    - [x] Subtask 3.1: Create a `game-over` event to be broadcast via Supabase Realtime when the game status is updated to `finished`. (Handled via standard `postgres_changes` on `game_sessions` table).
+    - [x] Subtask 3.2: The client-side game store (Zustand) should listen for this event. (Handled in `GamePlayPage` via local state + Realtime).
+    - [x] Subtask 3.3: On receiving the event, the client should transition to the Game Over screen.
 
 ## Dev Notes
 
@@ -53,7 +53,7 @@ so that the match concludes.
 
 ## Change Log
 
-- (initial draft)
+- 2025-12-03: Implemented full guessing flow: Modal, API Route, Realtime updates, and Game Over screen. Added tests.
 
 ## Dev Agent Record
 
@@ -66,7 +66,29 @@ so that the match concludes.
 {{agent_model_name_version}}
 
 ### Debug Log References
+- **Task: Frontend: UI**
+  - **Plan:** Created `GuessModal.tsx`.
+  - **Plan:** Installed `shadcn/ui dialog`.
+  - **Plan:** Added "Make Final Guess" button to `GamePlayPage`.
+- **Task: Backend: API**
+  - **Plan:** Created `app/api/game/[game-id]/guess/route.ts`.
+- **Task: Integration**
+  - **Plan:** Wired up API call in `GamePlayPage`.
+  - **Plan:** Added Game Over screen logic based on `gameStatus` from Realtime.
 
 ### Completion Notes List
+- **Date:** 2025-12-03
+  - **Summary:** Completed Story 3.5.
+  - **Key Changes:**
+    - Added `GuessModal` component.
+    - Added backend route for secure guess verification.
+    - Implemented win/loss logic.
+  - **File List:**
+    - digital-guess-who/app/game-play/store/game-store.ts
+    - digital-guess-who/app/game-play/components/GuessModal.tsx
+    - digital-guess-who/app/api/game/[game-id]/guess/route.ts
+    - digital-guess-who/app/game-play/page.tsx
+    - digital-guess-who/__tests__/game-play/GuessModal.test.tsx
+    - digital-guess-who/__tests__/api/game/guess.test.ts
 
 ### File List

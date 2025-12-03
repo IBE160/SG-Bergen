@@ -3,7 +3,7 @@
 import { useEffect, useState, use } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useGameStore } from '../store';
-import { CharacterGrid } from '../components/CharacterGrid';
+import CharacterGrid from '../components/CharacterGrid';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';

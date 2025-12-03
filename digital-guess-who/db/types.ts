@@ -23,6 +23,7 @@ export type Database = {
           status: Database["public"]["Enums"]["game_status"];
           winner_id: string | null;
           difficulty: Database["public"]["Enums"]["difficulty_level"];
+          current_turn_player_id: string | null;
         };
         Insert: {
           code: string;
@@ -32,6 +33,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["game_status"];
           winner_id?: string | null;
           difficulty?: Database["public"]["Enums"]["difficulty_level"];
+          current_turn_player_id?: string | null;
         };
         Update: {
           code?: string;
@@ -41,6 +43,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["game_status"];
           winner_id?: string | null;
           difficulty?: Database["public"]["Enums"]["difficulty_level"];
+          current_turn_player_id?: string | null;
         };
         Relationships: [];
       };
@@ -86,6 +89,64 @@ export type Database = {
           }
         ];
       };
+      player_secrets: {
+        Row: {
+          character_id: number | null;
+          created_at: string;
+          player_id: string;
+        };
+        Insert: {
+          character_id?: number | null;
+          created_at?: string;
+          player_id: string;
+        };
+        Update: {
+          character_id?: number | null;
+          created_at?: string;
+          player_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "player_secrets_player_id_fkey";
+            columns: ["player_id"];
+            isOneToOne: true;
+            referencedRelation: "players";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      profiles: {
+        Row: {
+          avatar_url: string | null;
+          id: string;
+          updated_at: string | null;
+          username: string | null;
+          website: string | null;
+        };
+        Insert: {
+          avatar_url?: string | null;
+          id: string;
+          updated_at?: string | null;
+          username?: string | null;
+          website?: string | null;
+        };
+        Update: {
+          avatar_url?: string | null;
+          id?: string;
+          updated_at?: string | null;
+          username?: string | null;
+          website?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey";
+            columns: ["id"];
+            isOneToOne: true;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       players: {
         Row: {
           character_id: number | null;
@@ -94,6 +155,7 @@ export type Database = {
           id: string;
           is_ready: boolean;
           user_id: string;
+          has_selected_character: boolean;
         };
         Insert: {
           character_id?: number | null;
@@ -102,6 +164,7 @@ export type Database = {
           id?: string;
           is_ready?: boolean;
           user_id: string;
+          has_selected_character?: boolean;
         };
         Update: {
           character_id?: number | null;
@@ -110,6 +173,7 @@ export type Database = {
           id?: string;
           is_ready?: boolean;
           user_id?: string;
+          has_selected_character?: boolean;
         };
         Relationships: [
           {
