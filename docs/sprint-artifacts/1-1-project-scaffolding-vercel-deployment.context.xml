@@ -1,0 +1,124 @@
+<story-context id="docs/sprint-artifacts/1-1-project-scaffolding-vercel-deployment.context.xml" v="1.0">
+  <metadata>
+    <epicId>epic-1</epicId>
+    <storyId>1-1</storyId>
+    <title>Project Scaffolding & Vercel Deployment</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-05</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/1-1-project-scaffolding-vercel-deployment.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>to initialize the Next.js + Supabase project and deploy it to Vercel</iWant>
+    <soThat>we have a live URL and a production-ready environment from day one</soThat>
+    <tasks>
+- [ ] **Project Initialization** (AC: 1, 2, 3, 6)
+  - [ ] Execute `npx create-next-app -e with-supabase digital-guess-who`.
+  - [ ] Configure the Supabase project (create new project on Supabase, get API keys).
+  - [ ] Push the initialized project to GitHub.
+- [ ] **Vercel Deployment Setup** (AC: 4, 5)
+  - [ ] Connect the GitHub repository to a new Vercel project.
+  - [ ] Configure Vercel environment variables (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`) with values from Supabase.
+  - [ ] Verify successful build and deployment to a production URL.
+- [ ] **Verification**
+  - [ ] **(AC: 3)** Verify a new Next.js 15+ (App Router) project with TypeScript is created locally.
+  - [ ] **(AC: 4)** Verify in Vercel dashboard that the project is connected to the GitHub repository.
+  - [ ] **(AC: 5)** Access the deployed production URL and verify the landing page loads without errors.
+  - [ ] **(AC: 6)** Verify the repository is pushed to GitHub with the initial project scaffolding.
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+1.  **Given** I have the necessary Vercel and Supabase credentials
+2.  **When** I run the initialization command `npx create-next-app -e with-supabase`
+3.  **Then** A new Next.js 15+ (App Router) project is created with TypeScript
+4.  **And** The project is connected to a Vercel project
+5.  **And** A successful build is deployed to a production URL (e.g., `digital-guess-who.vercel.app`)
+6.  **And** The repository is pushed to GitHub
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/PRD.md</path>
+        <title>Product Requirements Document</title>
+        <section>Executive Summary</section>
+        <snippet>The project's core magic lies in this shared social experience. As a school project, the focus is on delivering a high-quality, stable, and intuitive web application that demonstrates professional development practices.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Project Initialization</section>
+        <snippet>The project will be initialized using the official Vercel Next.js + Supabase starter template. Execute: `npx create-next-app -e with-supabase digital-guess-who`.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Technology Stack Details</section>
+        <snippet>Frontend Framework: Next.js 15+ (App Router). Database: PostgreSQL (via Supabase). Authentication: Supabase Auth. Styling: Tailwind CSS 4.x.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-1.md</path>
+        <title>Epic Technical Specification</title>
+        <section>Detailed Design - Services and Modules</section>
+        <snippet>Epic 1 primarily focuses on establishing the foundational services: Next.js Application Core, Supabase Integration, Database Schema, UI Library (shadcn/ui), Global Styles.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-1.md</path>
+        <title>Epic Technical Specification</title>
+        <section>Workflows and Sequencing</section>
+        <snippet>1. Project Scaffolding: Initialize Next.js project using `create-next-app` with Supabase integration. Configure basic repository and Vercel deployment.</snippet>
+      </doc>
+      <doc>
+        <path>docs/ux-design-specification.md</path>
+        <title>UX Design Specification</title>
+        <section>Design System Foundation</section>
+        <snippet>Chosen Design System: shadcn/ui. Rationale: Unstyled, customizable components built on Radix UI and integrated with Tailwind.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <!-- Greenfield project: No existing code artifacts -->
+    </code>
+    <dependencies>
+      <item>Next.js (App Router)</item>
+      <item>Supabase</item>
+      <item>Tailwind CSS</item>
+      <item>shadcn/ui</item>
+      <item>TypeScript</item>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <item>Must use `npx create-next-app -e with-supabase` for initialization</item>
+    <item>Must support Next.js 15+ (App Router)</item>
+    <item>Must use TypeScript in Strict mode</item>
+    <item>API keys must be managed via `.env.local` and never committed</item>
+    <item>Deployment must be automated via Vercel on push to main</item>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>Supabase Client</name>
+      <kind>Library</kind>
+      <signature>@supabase/supabase-js</signature>
+      <path>lib/supabase/client.ts (Planned)</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      Verify successful project deployment to Vercel. Confirm basic navigation to landing page. Visual inspection of global styles. Verify generated types match schema.
+    </standards>
+    <locations>
+      <path>tests/</path>
+    </locations>
+    <ideas>
+      <idea>Verify `package.json` is created and contains `next`, `supabase-js`, `tailwindcss`</idea>
+      <idea>Verify `.env.local` exists (locally) and has Supabase keys</idea>
+      <idea>Verify `app/layout.tsx` exists</idea>
+      <idea>Check HTTP 200 OK on Vercel deployment URL</idea>
+    </ideas>
+  </tests>
+</story-context>

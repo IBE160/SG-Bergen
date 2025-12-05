@@ -1,6 +1,6 @@
 # Story 1.1: Project Scaffolding & Vercel Deployment
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -58,7 +58,7 @@ As a developer, I want to initialize the Next.js + Supabase project and deploy i
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- docs/sprint-artifacts/1-1-project-scaffolding-vercel-deployment.context.xml
 
 ### Agent Model Used
 
