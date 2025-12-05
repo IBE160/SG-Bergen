@@ -1,0 +1,120 @@
+<story-context id="docs/sprint-artifacts/1-2-database-schema-type-generation.context.xml" v="1.0">
+  <metadata>
+    <epicId>epic-1</epicId>
+    <storyId>1.2</storyId>
+    <title>Database Schema &amp; Type Generation</title>
+    <status>drafted</status>
+    <generatedAt>fredag 5. desember 2025</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/1-2-database-schema-type-generation.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>to define the initial Supabase database schema and generate TypeScript types</iWant>
+    <soThat>we can interact with the database using type-safe methods</soThat>
+    <tasks>
+- [ ] Define the initial Supabase database schema in `db/schema.ts` for `users`, `game_sessions`, `players`, and `moves` tables. (AC: 1)
+  - [ ] Implement `game_sessions` table with `id` (UUID), `code` (text), `status` (enum), `host_id` (UUID), `winner_id` (UUID, nullable), `created_at` (timestamp).
+  - [ ] Implement `players` table with `id` (UUID), `user_id` (UUID), `game_id` (UUID), `character_id` (integer), `is_ready` (boolean).
+  - [ ] Implement `moves` table with `id` (UUID), `game_id` (UUID), `player_id` (UUID), `action_type` (enum), `details` (JSONB), `created_at` (timestamp).
+  - [ ] Implement `users` table with `id` (UUID), `username` (text), `avatar_url` (text).
+- [ ] Run `supabase gen types typescript` to generate `database.types.ts`. (AC: 2)
+- [ ] Verify that `database.types.ts` accurately reflects the created schema. (AC: 3)
+  - [ ] Check `game_sessions` type for `code`, `status`, `host_id`.
+  - [ ] Check `players` type for `game_id`, `user_id`, `character_id`, `is_ready`.
+  - [ ] Check `moves` type for `game_id`, `player_id`, `action_type`, `details`.
+  - [ ] Check `users` type for `username`, `avatar_url`.
+- [ ] Enable RLS (Row Level Security) on new tables, initially permissive for MVP.
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+1. **Given** The Supabase project is active
+   **When** I run the SQL migration script defined in Architecture
+   **Then** Tables for `users`, `game_sessions`, `players`, and `moves` are created in the public schema
+2. **And** I can run `supabase gen types typescript` to generate `database.types.ts`
+3. **And** The generated types accurately reflect the schema (e.g., `game_sessions` has `code`, `status`, `host_id`)
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture - Data Architecture</title>
+        <section>Data Architecture</section>
+        <snippet>Core Models: User, GameSession, Player, Move. Database: PostgreSQL (via Supabase). Naming Patterns: snake_case for tables/columns.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture - Project Structure</title>
+        <section>Project Structure</section>
+        <snippet>db/ folder contains schema.ts and types.ts.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-1.md</path>
+        <title>Epic 1 Technical Specification</title>
+        <section>Detailed Design - Data Models</section>
+        <snippet>Defines specific fields for GameSession (id, code, status, host_id, winner_id, created_at), Player (id, user_id, game_id, character_id, is_ready), Move (id, game_id, player_id, action_type, details, created_at).</snippet>
+      </doc>
+      <doc>
+        <path>docs/PRD.md</path>
+        <title>Product Requirements Document</title>
+        <section>Functional Requirements</section>
+        <snippet>Defines the functional needs that drive the schema: Game Creation, Joining, Player Readiness, Moves.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <item>
+        <path>digital-guess-who/package.json</path>
+        <kind>config</kind>
+        <symbol>dependencies</symbol>
+        <reason>Confirm @supabase/supabase-js is installed.</reason>
+      </item>
+      <item>
+        <path>digital-guess-who/lib/supabase/client.ts</path>
+        <kind>source</kind>
+        <symbol>createClient</symbol>
+        <reason>Client-side Supabase client initialization. Will need to be updated to use generated Database types.</reason>
+      </item>
+      <item>
+        <path>digital-guess-who/lib/supabase/server.ts</path>
+        <kind>source</kind>
+        <symbol>createClient</symbol>
+        <reason>Server-side Supabase client initialization. Will need to be updated to use generated Database types.</reason>
+      </item>
+    </code>
+    <dependencies>
+      <package name="@supabase/supabase-js" version="latest" />
+      <package name="typescript" version="^5" />
+      <tool name="supabase-cli" description="Required for type generation" />
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint>Supabase (PostgreSQL) is the chosen database.</constraint>
+    <constraint>Schema definition must reside in `db/schema.ts`.</constraint>
+    <constraint>Generated types must be in `db/types.ts`.</constraint>
+    <constraint>RLS must be enabled but permissive for MVP.</constraint>
+    <constraint>Table names must be plural snake_case (e.g., `game_sessions`).</constraint>
+    <constraint>Column names must be snake_case.</constraint>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>Supabase Database</name>
+      <kind>PostgreSQL</kind>
+      <signature>public schema</signature>
+      <path>db/schema.ts</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>Basic unit/integration tests to verify generated types match schema. Basic CRUD operations against mock Supabase client or a test database.</standards>
+    <locations>tests/unit/db</locations>
+    <ideas>
+      <idea>Verify table creation logic (if using migration scripts).</idea>
+      <idea>Type-check a mock object against the generated TypeScript interfaces to ensure compatibility.</idea>
+    </ideas>
+  </tests>
+</story-context>

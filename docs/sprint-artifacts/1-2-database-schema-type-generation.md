@@ -1,6 +1,6 @@
 # Story 1.2: Database Schema & Type Generation
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -76,6 +76,8 @@ So that we can interact with the database using type-safe methods.
 ## Dev Agent Record
 
 ### Context Reference
+
+- docs/sprint-artifacts/1-2-database-schema-type-generation.context.xml
 
 ### Agent Model Used
 
