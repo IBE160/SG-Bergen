@@ -1,0 +1,61 @@
+# generated: 2025-12-05
+# project: ibe160
+# project_key: ibe160
+# tracking_system: file-system
+# story_location: C:\Users\Akbar\OneDrive\Desktop\VS\ghuess who\SG-Bergen\docs\sprint-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic exists in epic file but not contexted
+#   - contexted: Epic tech context created (required before drafting stories)
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - drafted: Story file created in stories folder
+#   - ready-for-dev: Draft approved and story context created
+#   - in-progress: Developer actively working on implementation
+#   - review: Under SM review (via code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - completed: Retrospective has been done
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epics should be 'contexted' before stories can be 'drafted'
+# - Stories can be worked in parallel if team capacity allows
+# - SM typically drafts next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', SM reviews, then Dev moves to 'done'
+
+generated: 2025-12-05
+project: ibe160
+project_key: ibe160
+tracking_system: file-system
+story_location: "C:\\Users\\Akbar\\OneDrive\\Desktop\\VS\\ghuess who\\SG-Bergen\\docs\\sprint-artifacts"
+
+development_status:
+  epic-1: backlog
+  1-1-project-scaffolding-vercel-deployment: backlog
+  1-2-database-schema-type-generation: backlog
+  1-3-ui-library-global-styles-setup: backlog
+  1-4-authentication-skeleton-supabase-auth: backlog
+  epic-1-retrospective: optional
+  epic-2: backlog
+  2-1-lobby-ui-game-creation: backlog
+  2-2-join-game-functionality: backlog
+  2-3-real-time-lobby-player-readiness: backlog
+  epic-2-retrospective: optional
+  epic-3: backlog
+  3-1-game-board-secret-character-selection: backlog
+  3-2-turn-management-system: backlog
+  3-3-question-answer-interaction: backlog
+  3-4-character-elimination-mechanics: backlog
+  3-5-winning-losing-the-guess: backlog
+  epic-3-retrospective: optional
+  epic-4: backlog
+  4-1-game-over-screens: backlog
+  4-2-play-again-functionality: backlog
+  4-3-return-to-main-menu: backlog
+  epic-4-retrospective: optional
