@@ -1,4 +1,4 @@
-import { getNextPlayerId, isGameWon } from '../../lib/game-logic/turn-manager';
+import { getNextPlayerId, isGameWon } from 'lib/game-logic/turn-manager';
 
 describe('Turn Manager Logic', () => {
   const playerIds = ['player1', 'player2'];

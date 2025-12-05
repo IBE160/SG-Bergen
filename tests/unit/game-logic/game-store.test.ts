@@ -1,4 +1,4 @@
-import { useGameStore } from '../../../app/game-play/store/game-store';
+import { useGameStore } from '@/app/game-play/store/game-store';
 import { act } from 'react-dom/test-utils'; // For Zustand testing
 
 // Mock Supabase Realtime for unit tests
