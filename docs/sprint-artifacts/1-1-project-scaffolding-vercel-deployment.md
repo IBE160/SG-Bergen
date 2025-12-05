@@ -40,8 +40,8 @@ As a developer, I want to initialize the Next.js + Supabase project and deploy i
 
 ## Tasks / Subtasks
 
-- [ ] **Project Initialization** (AC: 1, 2, 3, 6)
-  - [ ] Execute `npx create-next-app -e with-supabase digital-guess-who`.
+- [x] **Project Initialization** (AC: 1, 2, 3, 6)
+  - [x] Execute `npx create-next-app -e with-supabase digital-guess-who`.
   - [ ] Configure the Supabase project (create new project on Supabase, get API keys).
   - [ ] Push the initialized project to GitHub.
 - [ ] **Vercel Deployment Setup** (AC: 4, 5)
@@ -66,8 +66,12 @@ As a developer, I want to initialize the Next.js + Supabase project and deploy i
 
 ### Debug Log References
 
+- **2025-12-05**: Executed `npx create-next-app` successfully. Created `digital-guess-who` directory. Next.js 15+ and Tailwind confirmed in `package.json`. Created `.env.local` with placeholders.
+
 ### Completion Notes List
 
 ### File List
+
+- digital-guess-who/
 
 ## Change Log
