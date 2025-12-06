@@ -13,6 +13,7 @@
       <action>Try to fuzzy match for files similar to the input document name or if user did not provide the document. If document not
         provided or unsure, ask user: "Which document should I validate?"</action>
       <action>Load both the checklist and document</action>
+      <action>If document is XML and contains a <sourceStoryPath>, load that file as an ancillary document</action>
     </step>
 
     <step n="2" title="Validate" critical="true">
