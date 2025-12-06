@@ -1,6 +1,6 @@
 # Story 1.3: UI Library & Global Styles Setup
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -19,20 +19,20 @@ so that all UI components built are consistent and adhere to the established vis
 
 ## Tasks / Subtasks
 
-- [ ] **Install `shadcn/ui` and configure `tailwind.config.ts`** (AC: 1)
-  - [ ] Run `npx shadcn-ui@latest init` within the `digital-guess-who` directory.
-  - [ ] Update `digital-guess-who/tailwind.config.ts` to include the color palette (Primary: `#4299E1`, Secondary: `#48BB78`, Destructive: `#E53E3E`, Background: `#1A202C`, Card/Panel Background: `#2D3748`).
-  - [ ] Verify dark mode is the default appearance in `tailwind.config.ts`.
-- [ ] **Configure global styles and font** (AC: 3)
-  - [ ] Update `digital-guess-who/app/globals.css` to import Tailwind base styles and set `Inter` as the global font.
-  - [ ] Verify `Inter` font is applied to the application.
-- [ ] **Integrate and verify a basic `shadcn/ui` Button component** (AC: 2)
-  - [ ] Add a basic `Button` component using `npx shadcn-ui@latest add button`.
-  - [ ] Import and use the `Button` component in a test page or a temporary component to verify its functionality and styling.
-  - [ ] Ensure the `Button` component correctly applies the primary accent color (`#4299E1`).
-- [ ] **Testing**
-  - [ ] Manually verify that color utility classes (e.g., `bg-primary`, `text-destructive`) are available and apply the correct colors in a temporary test component.
-  - [ ] Manually verify that the `shadcn/ui` `Button` component is rendered with the correct styling and font.
+- [x] **Install `shadcn/ui` and configure `tailwind.config.ts`** (AC: 1)
+  - [x] Run `npx shadcn-ui@latest init` within the `digital-guess-who` directory.
+  - [x] Update `digital-guess-who/tailwind.config.ts` to include the color palette (Primary: `#4299E1`, Secondary: `#48BB78`, Destructive: `#E53E3E`, Background: `#1A202C`, Card/Panel Background: `#2D3748`).
+  - [x] Verify dark mode is the default appearance in `tailwind.config.ts`.
+- [x] **Configure global styles and font** (AC: 3)
+  - [x] Update `digital-guess-who/app/globals.css` to import Tailwind base styles and set `Inter` as the global font.
+  - [x] Verify `Inter` font is applied to the application.
+- [x] **Integrate and verify a basic `shadcn/ui` Button component** (AC: 2)
+  - [x] Add a basic `Button` component using `npx shadcn-ui@latest add button`.
+  - [x] Import and use the `Button` component in a test page or a temporary component to verify its functionality and styling.
+  - [x] Ensure the `Button` component correctly applies the primary accent color (`#4299E1`).
+- [x] **Testing**
+  - [x] Manually verify that color utility classes (e.g., `bg-primary`, `text-destructive`) are available and apply the correct colors in a temporary test component.
+  - [x] Manually verify that the `shadcn/ui` `Button` component is rendered with the correct styling and font.
 
 ## Dev Notes
 
@@ -86,7 +86,7 @@ so that all UI components built are consistent and adhere to the established vis
 
 ### Agent Model Used
 
-gemini-1.5-flash
+gemini-2.5-flash
 
 ### Debug Log References
 
@@ -94,28 +94,25 @@ gemini-1.5-flash
 
 ### Completion Notes List
 
-- Story 1.2: Database Schema & Type Generation (Status: in-progress) highlights:
-    - New Files Created: `digital-guess-who/db/schema.ts`, `digital-guess-who/db/types.ts`, `tests/unit/db/types.test.ts`
-    - Modified Files: `digital-guess-who/jest.config.ts`, `digital-guess-who/package.json`, `digital-guess-who/tsconfig.json`
-    - Architectural Decisions: Supabase (PostgreSQL) is the chosen database, type generation is critical for type-safety, RLS needs to be enabled (permissive for MVP).
-    - Technical Debt:
-        - AC2 Missing Implementation: Manual type creation instead of `supabase gen types typescript`.
-        - AC1 Partial Implementation: Schema defined but not yet applied to the Supabase DB.
-        - Test Generation Dependency: Reliance on manual `db/types.ts` update.
-    - Warnings/Recommendations:
-        - Project Test Coverage Gap: Other existing tests (`game-store.test.ts`, `turn-manager.test.ts`) were temporarily excluded from Jest runs. This needs to be addressed for overall project health.
-        - False Task Completion: AC2 was marked complete in the previous story despite the agent stating it was not executed. This highlights a process integrity issue.
-    - Pending Review Items / Actionable Items for Future Stories:
-        - User needs to apply SQL DDL from `digital-guess-who/db/schema.ts` to Supabase project.
-        - User needs to run `npx supabase gen types typescript` after schema application.
-        - Address and re-enable the excluded tests (`game-store.test.ts`, `turn-manager.test.ts`).
+- Story 1.3: UI Library & Global Styles Setup (Status: review) highlights:
+    - Implemented `shadcn/ui` and Tailwind CSS setup.
+    - Configured custom color palette in `globals.css` (dark mode default) and verified `tailwind.config.ts` integration.
+    - Set up `Inter` font in `layout.tsx` and configured `defaultTheme="dark"`.
+    - Added `Button` component via CLI.
+    - Created `digital-guess-who/app/ui-test/page.tsx` for visual verification of components and colors.
+    - Successfully built the application (`npm run build`).
+    - Note on Previous Story Learnings: Attempted to enable `game-store.test.ts` but it fails due to module resolution issues (`@/app/game-play/...` not found in `digital-guess-who`). `turn-manager.test.ts` passes. Reverted `jest.config.ts` to avoid regression/noise, but this technical debt remains.
 
 ### File List
 
 - digital-guess-who/tailwind.config.ts (modified)
 - digital-guess-who/app/globals.css (modified)
-- digital-guess-who/components/ui/button.tsx (new/modified by `shadcn/ui` integration)
+- digital-guess-who/components/ui/button.tsx (new)
+- digital-guess-who/app/layout.tsx (modified)
+- digital-guess-who/app/ui-test/page.tsx (new)
+- digital-guess-who/components.json (verified)
 
 ## Change Log
 
 - **lørdag 6. desember 2025**: Initial draft created.
+- **lørdag 6. desember 2025**: Implementation complete. Updated status to review.
