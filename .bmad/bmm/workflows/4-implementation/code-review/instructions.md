@@ -107,6 +107,7 @@
 
   <step n="3" goal="Detect tech stack and establish best-practice reference set">
     <action>Detect primary ecosystem(s) by scanning for manifests (e.g., package.json, pyproject.toml, go.mod, Dockerfile). Record key frameworks (e.g., Node/Express, React/Vue, Python/FastAPI, etc.).</action>
+    <action>Perform external verification: Use `google_web_search` (query: "[stack] security best practices 2025") or `get-library-docs` to validate current standards and known vulnerabilities.</action>
     <action>Synthesize a concise "Best-Practices and References" note capturing any updates or considerations that should influence the review (cite links and versions if available).</action>
   </step>
 
