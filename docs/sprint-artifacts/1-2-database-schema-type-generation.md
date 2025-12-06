@@ -1,6 +1,6 @@
 # Story 1.2: Database Schema & Type Generation
 
-Status: in-progress
+Status: review
 
 ## Story
 
@@ -33,9 +33,9 @@ So that we can interact with the database using type-safe methods.
 
 ### Review Follow-ups (AI)
 
-- [ ] [AI-Review][High] Update `digital-guess-who/db/types.ts` to *exactly* match the schema defined in `digital-guess-who/db/schema.ts`. Remove `player_secrets`, `difficulty_level`, and extra fields like `has_selected_character` unless they are added to the schema. (AC #2, #3)
-- [ ] [AI-Review][High] Update `tests/unit/db/types.test.ts` to assert the correct schema structure (e.g., remove checks for non-existent fields).
-- [ ] [AI-Review][Med] If Supabase CLI cannot be run, manually construct `db/types.ts` to be a *faithful* representation of `db/schema.ts`.
+- [x] [AI-Review][High] Update `digital-guess-who/db/types.ts` to *exactly* match the schema defined in `digital-guess-who/db/schema.ts`. Remove `player_secrets`, `difficulty_level`, and extra fields like `has_selected_character` unless they are added to the schema. (AC #2, #3)
+- [x] [AI-Review][High] Update `tests/unit/db/types.test.ts` to assert the correct schema structure (e.g., remove checks for non-existent fields).
+- [x] [AI-Review][Med] If Supabase CLI cannot be run, manually construct `db/types.ts` to be a *faithful* representation of `db/schema.ts`.
 
 ## Dev Notes
 
@@ -105,6 +105,12 @@ gemini-1.5-flash
   - Please ensure the SQL DDL from `digital-guess-who/db/schema.ts` is applied to your Supabase project.
   - After applying the schema, run `npx supabase gen types typescript --schema public > digital-guess-who/db/types.ts` from the `digital-guess-who` directory to generate the official types and overwrite the manually created placeholder. This will fulfill AC: 2.
 - **Discovered Inconsistencies:** During testing setup, noted that existing test files `tests/unit/game-logic/game-store.test.ts` and `tests/unit/game-logic/turn-manager.test.ts` contained incorrect module import paths and/or referenced non-existent source files (e.g., `digital-guess-who/app/game-play/store/game-store.ts`). These tests were temporarily excluded from the Jest run to allow completion of the current story. Further investigation and refactoring of these existing tests are recommended as a separate task.
+- ✅ Resolved review finding [High]: Update `digital-guess-who/db/types.ts` to *exactly* match the schema defined in `digital-guess-who/db/schema.ts`.
+- ✅ Resolved review finding [High]: Update `tests/unit/db/types.test.ts` to assert the correct schema structure.
+- ✅ Resolved review finding [Med]: Manually construct `db/types.ts` to be a *faithful* representation of `db/schema.ts`.
+
+### Completion Summary
+Addressed all code review findings by manually updating `digital-guess-who/db/types.ts` to exactly match `digital-guess-who/db/schema.ts` and updating `tests/unit/db/types.test.ts` to verify the correct structure. The regression test suite passed. Story is ready for re-review.
 
 ### File List
 - digital-guess-who/db/schema.ts
@@ -177,15 +183,16 @@ The review has identified critical discrepancies between the defined schema and 
 ### Action Items
 
 **Code Changes Required:**
-- [ ] [High] Update `digital-guess-who/db/types.ts` to *exactly* match the schema defined in `digital-guess-who/db/schema.ts`. Remove `player_secrets`, `difficulty_level`, and extra fields like `has_selected_character` unless they are added to the schema. (AC #2, #3) [file: digital-guess-who/db/types.ts]
-- [ ] [High] Update `tests/unit/db/types.test.ts` to assert the correct schema structure (e.g., remove checks for non-existent fields). [file: tests/unit/db/types.test.ts]
-- [ ] [Med] If Supabase CLI cannot be run, manually construct `db/types.ts` to be a *faithful* representation of `db/schema.ts`.
+- [x] [High] Update `digital-guess-who/db/types.ts` to *exactly* match the schema defined in `digital-guess-who/db/schema.ts`. Remove `player_secrets`, `difficulty_level`, and extra fields like `has_selected_character` unless they are added to the schema. (AC #2, #3) [file: digital-guess-who/db/types.ts]
+- [x] [High] Update `tests/unit/db/types.test.ts` to assert the correct schema structure (e.g., remove checks for non-existent fields). [file: tests/unit/db/types.test.ts]
+- [x] [Med] If Supabase CLI cannot be run, manually construct `db/types.ts` to be a *faithful* representation of `db/schema.ts`.
 
 **Advisory Notes:**
 - Note: Ensure the migration script is applied to the actual Supabase instance when possible.
 
 ## Change Log
 
+- **2025-12-06**: Addressed code review findings - 3 items resolved (Date: lørdag 6. desember 2025)
 - **2025-12-06**: Senior Developer Review (AI) appended. Status updated to Changes Requested.
 - **2025-12-05**: Story drafted and implementation attempted.
 
