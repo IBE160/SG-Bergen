@@ -39,7 +39,7 @@ development_status:
   epic-1: contexted
   1-1-project-scaffolding-vercel-deployment: done
   1-2-database-schema-type-generation: done
-  1-3-ui-library-global-styles-setup: backlog
+  1-3-ui-library-global-styles-setup: drafted
   1-4-authentication-skeleton-supabase-auth: backlog
   epic-1-retrospective: optional
   epic-2: backlog
