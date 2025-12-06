@@ -1,0 +1,202 @@
+<story-context id="1-4-authentication-skeleton-supabase-auth" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>4</storyId>
+    <title>Authentication Skeleton (Supabase Auth)</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-06</generatedAt>
+    <generator>BMad Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/1-4-authentication-skeleton-supabase-auth.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>Developer</asA>
+    <iWant>to implement basic authentication pages and session handling</iWant>
+    <soThat>I can verify user sessions which are required for game creation and subsequent game session management</soThat>
+    <tasks>
+- [ ] **Setup Supabase Auth Utilities** (AC: 5)
+  - [ ] Verify or create `lib/supabase/client.ts` using `@supabase/ssr` `createBrowserClient`.
+  - [ ] Verify or create `lib/supabase/server.ts` using `@supabase/ssr` `createServerClient`.
+  - [ ] Create `app/auth/callback/route.ts` to handle OAuth/Magic Link redirects (code exchange) for robust session setting.
+- [ ] **Install required UI components** (AC: 1)
+  - [ ] Run `npx shadcn-ui@latest add input label card`.
+  - [ ] Verify components are added to `components/ui`.
+- [ ] **Implement Login Page and Form** (AC: 1, 2, 3, 4)
+  - [ ] Create `app/login/page.tsx` (Server Component) as the entry point (or `app/(auth)/login/page.tsx` per Architecture).
+  - [ ] Create `components/auth/login-form.tsx` (Client Component) containing the form logic.
+  - [ ] Implement `signIn` and `signUp` functions using `supabase.auth.signInWithPassword` and `supabase.auth.signUp`.
+  - [ ] Handle loading states and display error messages using shadcn/ui components.
+  - [ ] Implement redirect logic to `/` upon success.
+- [ ] **Testing** (AC: 1, 2, 3, 4, 5)
+  - [ ] Manually verify basic login form elements are present at `/login`. (AC: 1)
+  - [ ] Manually verify Sign Up flow creates a new user in Supabase and authenticates. (AC: 2, 3)
+  - [ ] Manually verify Sign In flow authenticates an existing user. (AC: 3)
+  - [ ] Manually verify successful authentication redirects to the home page (`/`). (AC: 4)
+  - [ ] Verify session persistence across page reloads. (AC: 5)
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+1.  **Given** the Supabase Auth service is enabled
+    **When** I visit `/login`
+    **Then** I see a basic login form containing Email and Password fields.
+2.  **When** I provide valid credentials for sign-up,
+    **Then** a new user is created in Supabase.
+3.  **When** I provide valid credentials for sign-in or sign-up,
+    **Then** I am authenticated.
+4.  **When** I am successfully authenticated,
+    **Then** I am redirected to the home page (`/`).
+5.  **And** my session is persisted across page reloads (handled by Supabase Auth Helpers/@supabase/ssr).
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/PRD.md</path>
+        <title>Security Requirements</title>
+        <section>Non-Functional Requirements > Security</section>
+        <snippet>
+*   **Criteria:**
+    *   User authentication (via Supabase) shall be secure.
+    *   Game session data shall be protected from unauthorized access or manipulation.
+        </snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture - Project Structure</title>
+        <section>Project Structure</section>
+        <snippet>
+│   ├── (auth)/                        # Authentication routes
+│   │   └── login/
+│   │       └── page.tsx               # Login page
+...
+├── lib/                               # Shared Utilities & Services
+│   └── supabase/                      # Supabase configuration
+│       ├── client.ts                  # Client-side instance
+│       └── server.ts                  # Server-side instance (if needed)
+        </snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture - Security</title>
+        <section>Security Architecture</section>
+        <snippet>
+*   **Authentication:** Supabase Auth (Email/Password or Social).
+*   **Authorization (RLS):**
+    *   **Public:** Read-only access to specific public game data.
+    *   **Authenticated:** Can create games.
+        </snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-1.md</path>
+        <title>Tech Spec - Auth Module</title>
+        <section>Services and Modules</section>
+        <snippet>
+*   **Authentication Module (`app/(auth)/`):** Provides the basic user authentication flows (login, signup) using Supabase Auth, establishing user sessions. This involves routes like `app/(auth)/login/page.tsx`.
+        </snippet>
+      </doc>
+      <doc>
+        <path>docs/ux-design-specification.md</path>
+        <title>UX Design - Visual Foundation</title>
+        <section>Visual Foundation</section>
+        <snippet>
+*   **Primary Accent (Blue):** `#4299E1`
+*   **Background:** `#1A202C`
+*   **Card/Panel Background:** `#2D3748`
+*   **Text:** `#FFFFFF`
+        </snippet>
+      </doc>
+    </docs>
+    <code>
+      <file>
+        <path>digital-guess-who/app/auth/login/page.tsx</path>
+        <kind>page</kind>
+        <reason>Existing login page (starter code) that needs to be reviewed/refactored to match Architecture.</reason>
+      </file>
+      <file>
+        <path>digital-guess-who/components/login-form.tsx</path>
+        <kind>component</kind>
+        <symbol>LoginForm</symbol>
+        <reason>Existing login form logic. Needs to be checked for Sign Up integration or linking, and redirect logic.</reason>
+      </file>
+      <file>
+        <path>digital-guess-who/lib/supabase/client.ts</path>
+        <kind>utility</kind>
+        <symbol>createClient</symbol>
+        <reason>Supabase client creation logic using @supabase/ssr.</reason>
+      </file>
+       <file>
+        <path>digital-guess-who/lib/supabase/server.ts</path>
+        <kind>utility</kind>
+        <symbol>createClient</symbol>
+        <reason>Supabase server client logic.</reason>
+      </file>
+      <file>
+        <path>digital-guess-who/components/ui/button.tsx</path>
+        <kind>component</kind>
+        <symbol>Button</symbol>
+        <reason>Reusable Button component.</reason>
+      </file>
+      <file>
+        <path>digital-guess-who/components/ui/input.tsx</path>
+        <kind>component</kind>
+        <symbol>Input</symbol>
+        <reason>Reusable Input component.</reason>
+      </file>
+       <file>
+        <path>digital-guess-who/components/ui/card.tsx</path>
+        <kind>component</kind>
+        <symbol>Card</symbol>
+        <reason>Reusable Card component.</reason>
+      </file>
+    </code>
+    <dependencies>
+      <package name="@supabase/ssr" />
+      <package name="@supabase/supabase-js" />
+      <package name="next" />
+      <package name="react" />
+      <package name="tailwindcss" />
+      <package name="lucide-react" />
+      <package name="class-variance-authority" />
+      <package name="clsx" />
+      <package name="tailwind-merge" />
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint>Use `@supabase/ssr` for Next.js App Router authentication.</constraint>
+    <constraint>Follow the **Feature-Sliced** structure: Auth page in `app/(auth)/login/` or `app/login/`. Architecture suggests `app/(auth)/login/page.tsx`. Note that current starter code is in `app/auth/login/`.</constraint>
+    <constraint>Use `shadcn/ui` components (`Card`, `Input`, `Label`, `Button`) for the form to maintain visual consistency.</constraint>
+    <constraint>Ensure `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are loaded correctly.</constraint>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>supabase.auth.signInWithPassword</name>
+      <kind>function signature</kind>
+      <signature>signInWithPassword(credentials: SignInWithPasswordCredentials): Promise&lt;AuthResponse&gt;</signature>
+      <path>@supabase/supabase-js</path>
+    </interface>
+    <interface>
+      <name>supabase.auth.signUp</name>
+      <kind>function signature</kind>
+      <signature>signUp(credentials: SignUpWithPasswordCredentials): Promise&lt;AuthResponse&gt;</signature>
+      <path>@supabase/supabase-js</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      Manual verification of the auth flow is sufficient for this skeleton story. Ensure no sensitive info is logged to console.
+    </standards>
+    <locations>
+      <path>digital-guess-who/app/ui-test/page.tsx</path>
+    </locations>
+    <ideas>
+      <idea ac="1">Visit /login and check for Email/Password inputs and Login button.</idea>
+      <idea ac="2">Use Sign Up form/link to create a new user. Verify in Supabase Dashboard (if possible) or by successful login.</idea>
+      <idea ac="4">Login with valid credentials and verify redirect to /.</idea>
+      <idea ac="5">Reload page after login and verify session persists (user remains logged in).</idea>
+    </ideas>
+  </tests>
+</story-context>

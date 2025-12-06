@@ -1,6 +1,6 @@
 # Story 1.4: Authentication Skeleton (Supabase Auth)
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -88,7 +88,7 @@ so that I can verify user sessions which are required for game creation and subs
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- docs/sprint-artifacts/1-4-authentication-skeleton-supabase-auth.context.xml
 
 ### Agent Model Used
 
