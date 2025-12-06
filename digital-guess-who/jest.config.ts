@@ -1,7 +1,7 @@
 import type { Config } from 'jest';
 
 const config: Config = {
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
   rootDir: "../", // Set rootDir to SG-Bergen
   roots: [
     "<rootDir>/digital-guess-who",

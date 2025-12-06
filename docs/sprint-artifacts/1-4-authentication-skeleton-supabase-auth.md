@@ -1,6 +1,6 @@
 # Story 1.4: Authentication Skeleton (Supabase Auth)
 
-Status: review
+Status: in-progress
 
 ## Story
 
@@ -43,6 +43,9 @@ so that I can verify user sessions which are required for game creation and subs
   - [x] Manually verify Sign In flow authenticates an existing user. (AC: 3)
   - [x] Manually verify successful authentication redirects to the home page (`/`). (AC: 4)
   - [x] Verify session persistence across page reloads. (AC: 5)
+
+### Review Follow-ups (AI)
+- [ ] [AI-Review][Medium] Update `testEnvironment` in `digital-guess-who/jest.config.ts` from `node` to `jsdom` to enable proper testing of client-side React components.
 
 ## Dev Notes
 
@@ -115,4 +118,56 @@ gemini-2.5-flash
 - digital-guess-who/components/auth/forgot-password-form.tsx
 - digital-guess-who/app/ui-test/page.tsx
 - digital-guess-who/jest.config.ts
+
+## Senior Developer Review (AI)
+
+**Reviewer**: Amelia
+**Date**: lørdag 6. desember 2025
+**Outcome**: Changes Requested (Identified a Medium severity issue in `jest.config.ts` that needs to be addressed for proper UI component testing.)
+
+### Summary
+The core functionality of the authentication skeleton is well-implemented, and all Acceptance Criteria are met. However, a Medium severity issue was identified in the `jest.config.ts` regarding the `testEnvironment` setting. This configuration is critical for accurate testing of UI components, and its current `node` setting could lead to silent failures or incorrect test results if client-side rendering components are tested. Addressing this will ensure the testing infrastructure is robust and aligns with best practices for Next.js applications.
+
+### Key Findings
+- **Medium Severity:** `jest.config.ts` `testEnvironment` setting.
+    - **Description:** The `testEnvironment` in `digital-guess-who/jest.config.ts` is set to `node`. For Next.js projects, especially when testing client-side React components that rely on browser APIs (e.g., DOM manipulation), the `testEnvironment` should typically be set to `jsdom`. Using `node` can lead to tests not accurately reflecting browser behavior or failing due to missing browser globals.
+    - **Rationale:** This misconfiguration can hinder effective unit/integration testing of UI components, leading to potential bugs in the client-side application that are not caught by tests.
+    - **Suggested Owner:** Developer
+
+### Acceptance Criteria Coverage
+- AC1: IMPLEMENTED. Evidence: `digital-guess-who/components/auth/login-form.tsx` lines 42-69.
+- AC2: IMPLEMENTED. Evidence: `digital-guess-who/components/auth/sign-up-form.tsx` lines 30-50 and 64-98.
+- AC3: IMPLEMENTED. Evidence: `digital-guess-who/components/auth/login-form.tsx` lines 30-36, `digital-guess-who/components/auth/sign-up-form.tsx` lines 30-50.
+- AC4: IMPLEMENTED. Evidence: `digital-guess-who/components/auth/login-form.tsx` line 34, `digital-guess-who/components/auth/sign-up-form.tsx` line 46.
+- AC5: IMPLEMENTED. Evidence: `digital-guess-who/lib/supabase/client.ts` lines 1-5, `digital-guess-who/lib/supabase/server.ts` lines 1-26, `digital-guess-who/app/auth/callback/route.ts` lines 1-28.
+- **Summary:** 5 of 5 acceptance criteria fully implemented.
+
+### Task Completion Validation
+All tasks marked complete in the story (`1-4-authentication-skeleton-supabase-auth.md`) have been verified as **VERIFIED COMPLETE**.
+
+### Test Coverage and Gaps
+Manual tests for authentication flows are specified. The current `jest.config.ts` configuration may present a gap for automated UI component testing.
+
+### Architectural Alignment
+All architecture constraints and technical notes from Epic 1 were adhered to. No violations.
+
+### Security Notes
+The `forgot-password-form.tsx` has a minor point regarding the `redirectTo` URL validation (possible open redirect if not configured carefully in Supabase dashboard), but this is acceptable for an MVP. For production, consider explicit allowlisting of redirect URLs within the Supabase dashboard.
+
+### Best-Practices and References
+Next.js and Supabase security best practices.
+
+### Action Items
+
+**Code Changes Required:**
+- [ ] [Medium] Update `testEnvironment` in `digital-guess-who/jest.config.ts` from `node` to `jsdom` to enable proper testing of client-side React components. [file: digital-guess-who/jest.config.ts]
+
+**Advisory Notes:**
+- Note: For production deployments, ensure all `redirectTo` URLs in Supabase are explicitly allowlisted in the Supabase dashboard to prevent potential open redirect vulnerabilities. [file: digital-guess-who/components/auth/forgot-password-form.tsx]
+
+---
+
+**Change Log**
+
+- **lørdag 6. desember 2025**: Senior Developer Review notes appended.
 
