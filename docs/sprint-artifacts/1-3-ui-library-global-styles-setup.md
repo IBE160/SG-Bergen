@@ -1,6 +1,6 @@
 # Story 1.3: UI Library & Global Styles Setup
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
