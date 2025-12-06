@@ -8,7 +8,8 @@ const config: Config = {
     "<rootDir>"
   ],
   testMatch: [
-    "<rootDir>/tests/unit/db/types.test.ts" // Temporarily focus on our test
+    "<rootDir>/tests/**/*.test.ts",
+    "<rootDir>/digital-guess-who/**/*.test.ts"
   ],
   moduleDirectories: ["node_modules", "<rootDir>/digital-guess-who/node_modules"], // Search in both places
   moduleNameMapper: {

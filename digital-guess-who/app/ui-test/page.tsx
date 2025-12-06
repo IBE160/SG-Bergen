@@ -1,4 +1,6 @@
 import { Button } from "@/components/ui/button";
+import { LoginForm } from "@/components/auth/login-form";
+import { SignUpForm } from "@/components/auth/sign-up-form";
 
 export default function UITestPage() {
   return (
@@ -28,6 +30,20 @@ export default function UITestPage() {
           <div className="h-24 rounded flex items-center justify-center bg-muted text-muted-foreground font-bold">Muted</div>
           <div className="h-24 rounded flex items-center justify-center bg-accent text-accent-foreground font-bold">Accent</div>
           <div className="h-24 rounded flex items-center justify-center bg-popover text-popover-foreground border font-bold">Popover</div>
+        </div>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold">Auth Forms</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl">
+           <div>
+             <h3 className="mb-4 text-xl">Login Form</h3>
+             <LoginForm />
+           </div>
+           <div>
+             <h3 className="mb-4 text-xl">Sign Up Form</h3>
+             <SignUpForm />
+           </div>
         </div>
       </section>
     </div>
