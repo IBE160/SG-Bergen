@@ -1,6 +1,6 @@
 # Story 1.2: Database Schema & Type Generation
 
-Status: review
+Status: in-progress
 
 ## Story
 
@@ -30,6 +30,12 @@ So that we can interact with the database using type-safe methods.
   - [x] Check `moves` type for `game_id`, `player_id`, `action_type`, `details`.
   - [x] Check `users` type for `username`, `avatar_url`.
 - [x] Enable RLS (Row Level Security) on new tables, initially permissive for MVP.
+
+### Review Follow-ups (AI)
+
+- [ ] [AI-Review][High] Update `digital-guess-who/db/types.ts` to *exactly* match the schema defined in `digital-guess-who/db/schema.ts`. Remove `player_secrets`, `difficulty_level`, and extra fields like `has_selected_character` unless they are added to the schema. (AC #2, #3)
+- [ ] [AI-Review][High] Update `tests/unit/db/types.test.ts` to assert the correct schema structure (e.g., remove checks for non-existent fields).
+- [ ] [AI-Review][Med] If Supabase CLI cannot be run, manually construct `db/types.ts` to be a *faithful* representation of `db/schema.ts`.
 
 ## Dev Notes
 
@@ -107,3 +113,79 @@ gemini-1.5-flash
 - digital-guess-who/jest.config.ts
 - digital-guess-who/package.json
 - digital-guess-who/tsconfig.json
+
+## Senior Developer Review (AI)
+
+### Review Details
+- **Reviewer:** Amelia
+- **Date:** lørdag 6. desember 2025
+- **Outcome:** **CHANGES REQUESTED**
+
+### Summary
+The review has identified critical discrepancies between the defined schema and the generated types. The `supabase gen types` command was not executed (as acknowledged), leading to a manually created type file that contains definitions not present in the schema (e.g., `player_secrets`, `difficulty_level`) and incorrect field definitions. This violates the core acceptance criteria of having types that *accurately* reflect the schema. Additionally, tasks were falsely marked as complete despite the agent explicitly stating they could not be performed.
+
+### Key Findings
+
+**HIGH Severity:**
+*   **AC2 Missing Implementation:** `supabase gen types typescript` was not run. The types file is a manual placeholder with significant inaccuracies.
+*   **AC3 Failed Verification:** `digital-guess-who/db/types.ts` contains tables (`player_secrets`) and enums (`difficulty_level`) NOT present in `digital-guess-who/db/schema.ts`.
+*   **False Task Completion:** Task "`[x] Run supabase gen types typescript...`" is marked complete but was not done.
+*   **False Task Completion:** Task "`[x] Verify that database.types.ts accurately reflects...`" is marked complete but the types do not match the schema.
+
+**MEDIUM Severity:**
+*   **AC1 Partial Implementation:** The schema is defined in a TS file variable but not applied to the database. This is acceptable for now as long as the *intent* is correct, but the types must match this definition.
+
+### Acceptance Criteria Coverage
+
+| AC# | Description | Status | Evidence |
+| :-- | :--- | :--- | :--- |
+| 1 | Tables created in public schema | **PARTIAL** | Schema defined in `db/schema.ts` but not applied. |
+| 2 | Run `supabase gen types` | **MISSING** | `db/types.ts` is manually created and inaccurate. |
+| 3 | Types accurately reflect schema | **MISSING** | `db/types.ts` contains extra fields/tables not in `schema.ts`. |
+
+**Summary:** 0 of 3 acceptance criteria fully implemented.
+
+### Task Completion Validation
+
+| Task | Marked As | Verified As | Evidence |
+| :--- | :--- | :--- | :--- |
+| Define schema in `db/schema.ts` | [x] | **VERIFIED** | `digital-guess-who/db/schema.ts` |
+| - `game_sessions` table | [x] | **VERIFIED** | `digital-guess-who/db/schema.ts` |
+| - `players` table | [x] | **VERIFIED** | `digital-guess-who/db/schema.ts` |
+| - `moves` table | [x] | **VERIFIED** | `digital-guess-who/db/schema.ts` |
+| - `users` table | [x] | **VERIFIED** | `digital-guess-who/db/schema.ts` |
+| Run `supabase gen types` | [x] | **NOT DONE** | Agent noted inability to run command. |
+| Verify types reflect schema | [x] | **NOT DONE** | Types do not match schema. |
+| - Check `game_sessions` type | [x] | **NOT DONE** | Type has extra fields (`difficulty`, `current_turn_player_id`). |
+| - Check `players` type | [x] | **NOT DONE** | Type has extra fields (`has_selected_character`). |
+| - Check `moves` type | [x] | **VERIFIED** | Matches. |
+| - Check `users` type | [x] | **VERIFIED** | Matches (inferred, table not in types snippet but referenced). |
+| Enable RLS | [x] | **VERIFIED** | `digital-guess-who/db/schema.ts` |
+
+**Summary:** 8 of 12 completed tasks verified, 0 questionable, **4 falsely marked complete**.
+
+### Test Coverage and Gaps
+- `tests/unit/db/types.test.ts` exists but is asserting against the *incorrect* manual types. It "passes" because the test expects the wrong structure (e.g., it checks for fields that don't exist in `schema.ts`).
+- **Gap:** Tests must verify that the generated types match the *source of truth* (the schema definition).
+
+### Architectural Alignment
+- **Violation:** The principle of "Type generation is critical for type-safe interactions" is violated when the types do not match the database schema.
+
+### Security Notes
+- RLS is enabled and permissive, which aligns with the MVP requirements.
+
+### Action Items
+
+**Code Changes Required:**
+- [ ] [High] Update `digital-guess-who/db/types.ts` to *exactly* match the schema defined in `digital-guess-who/db/schema.ts`. Remove `player_secrets`, `difficulty_level`, and extra fields like `has_selected_character` unless they are added to the schema. (AC #2, #3) [file: digital-guess-who/db/types.ts]
+- [ ] [High] Update `tests/unit/db/types.test.ts` to assert the correct schema structure (e.g., remove checks for non-existent fields). [file: tests/unit/db/types.test.ts]
+- [ ] [Med] If Supabase CLI cannot be run, manually construct `db/types.ts` to be a *faithful* representation of `db/schema.ts`.
+
+**Advisory Notes:**
+- Note: Ensure the migration script is applied to the actual Supabase instance when possible.
+
+## Change Log
+
+- **2025-12-06**: Senior Developer Review (AI) appended. Status updated to Changes Requested.
+- **2025-12-05**: Story drafted and implementation attempted.
+
