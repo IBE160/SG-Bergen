@@ -16,22 +16,33 @@
     <critical>MUST read COMPLETE {sprint-status} file to discover next epic</critical>
     <action>Read ALL development_status entries</action>
     <action>Find all epics with status "backlog" (not yet contexted)</action>
-    <action>Identify the FIRST backlog epic as the suggested default</action>
-
+    
     <check if="backlog epics found">
-      <output>📋 **Next Epic Suggested:** Epic {{suggested_epic_id}}: {{suggested_epic_title}}</output>
-      <ask>Use this epic?
-- [y] Yes, use {{suggested_epic_id}}
-- [n] No, let me specify a different epic_id
+      <action>List all backlog epics to the user</action>
+      <output>📋 **Backlog Epics:**
+{{list_of_backlog_epics}}
+      </output>
+      
+      <action>Identify the FIRST backlog epic as the suggested default</action>
+      <output>👉 **Suggested Epic:** Epic {{suggested_epic_id}}</output>
+      
+      <ask>Select an option:
+- [y] Use suggested Epic {{suggested_epic_id}}
+- [list] Type one of the epic IDs from the list above (e.g., '2', '3')
+- [n] Enter a different epic ID manually
       </ask>
+
+      <check if="user selects 'y'">
+        <action>Use {{suggested_epic_id}} as {{epic_id}}</action>
+      </check>
+      
+      <check if="user enters an ID from list">
+        <action>Store user-provided epic_id as {{epic_id}}</action>
+      </check>
 
       <check if="user selects 'n'">
         <ask>Enter the epic_id you want to context</ask>
         <action>Store user-provided epic_id as {{epic_id}}</action>
-      </check>
-
-      <check if="user selects 'y'">
-        <action>Use {{suggested_epic_id}} as {{epic_id}}</action>
       </check>
     </check>
 
