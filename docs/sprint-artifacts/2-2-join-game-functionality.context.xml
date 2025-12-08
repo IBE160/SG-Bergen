@@ -1,0 +1,268 @@
+<story-context id=".bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>2</epicId>
+    <storyId>2</storyId>
+    <title>Join Game Functionality</title>
+    <status>drafted</status>
+    <generatedAt>mandag 8. desember 2025</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>C:\Users\Akbar\OneDrive\Desktop\VS\ghuess who\SG-Bergen/docs/sprint-artifacts/2-2-join-game-functionality.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>As a Guest</asA>
+    <iWant>I want to join an existing game using a code,</iWant>
+    <soThat>so that I can play with the host.</soThat>
+    <tasks>
+      - Implement Join Game Backend Logic (AC: 1, 2, 3)
+        - Create a Next.js API route `digital-guess-who/app/api/game/join/route.ts`.
+        - In the API route:
+          - Validate request body contains `code`.
+          - Query `game_sessions` by `code` to find `id` and check `status` is 'waiting'.
+          - Count existing `players` for this game. If >= 2, return 409 Conflict ("Game is full").
+          - If valid, insert new record into `players` (`user_id`, `game_id`, `is_ready=false`).
+          - Return `{ gameId, playerId }` on success.
+      - Implement Join Game UI (AC: 1, 4, 5)
+        - Update `digital-guess-who/app/page.tsx` (Home Page) to include a "Join Game" section.
+        - Add an Input field for "Game Code" and a "Join" button (`shadcn/ui` components).
+        - Implement client-side logic to call `/api/game/join`.
+        - Handle success: Redirect to `/game-lobby/[code]` (reuse existing lobby page from Story 2.1).
+        - Handle error: Display toast notification (`shadcn/ui` toast) with error message.
+      - Testing & Verification
+        - Unit Test: Test the validation logic in the API route (mocking DB).
+        - Integration Test: Simulate a Host creating a game, then a Guest joining it. Verify DB state (2 players).
+        - UI Test: Test the Home page interaction (entering code, clicking join, mocking API response). **Critical**: Ensure `global.fetch` is properly mocked per learnings from Story 2.1.
+        - Manual Test: Open two browsers/incognito. Host creates game. Guest enters code. Verify Guest enters lobby. Verify error when entering invalid code.
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    1.  **Given** I have a valid game code
+        **When** I enter the code on the Home page and click "Join"
+        **Then** The system validates the code exists and the game status is 'waiting'. (Tech Spec: AC2.2.1, FR1.2).
+    2.  **Given** the game code is valid
+        **Then** The system checks if the game is full (less than 2 players). (Tech Spec: Logic).
+    3.  **Given** the game is valid and not full
+        **Then** A `players` record is created for me linked to that game. (Tech Spec: AC2.2.1, Arch: `players` table).
+    4.  **Given** I have successfully joined
+        **Then** I am redirected to the Lobby screen (`/game/[code]`). (Tech Spec: AC2.2.1).
+    5.  **Given** the game code is invalid (does not exist, expired, or game is full)
+        **Then** I see an error message (e.g., "Game not found" or "Game is full") and remain on the Home page. (Tech Spec: AC2.2.2).
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/PRD.md</path>
+        <title>ibe160 - Product Requirements Document</title>
+        <section>Functional Requirements: FR1.2 - Game Joining</section>
+        <snippet>The system shall allow a user to join an existing game session by entering a valid game code. A guest user can successfully join a game using a provided code. The system provides a clear error message for invalid or expired codes.</snippet>
+      </doc>
+      <doc>
+        <path>docs/PRD.md</path>
+        <title>ibe160 - Product Requirements Document</title>
+        <section>User Journey Flows: Journey 1: Starting and Joining a Game - Guest Player Flow</section>
+        <snippet>User enters the shared game code and clicks 'Join'. System validates the code. Upon success, the guest is taken to the 'Game Lobby'. An error message is shown for invalid codes.</snippet>
+      </doc>
+      <doc>
+        <path>docs/PRD.md</path>
+        <title>ibe160 - Product Requirements Document</title>
+        <section>User Journey Flows: Journey 1: Starting and Joining a Game - Error States and Recovery</section>
+        <snippet>Invalid Code: An inline error message appears below the input field stating, 'Invalid game code. Please check the code and try again.' Lobby is Full: A message is displayed: 'This game is already full.'</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-2.md</path>
+        <title>Tech Spec: Epic 2 - Game Session Management</title>
+        <section>2. Detailed Design -> APIs & Interfaces -> 2. Join Game</section>
+        <snippet>Method: POST /api/game/join. Request: { code: 'ABCD' }. Response: { gameId: '...', playerId: '...' }. Logic: Find session by code -> Check if full (max 2 players) -> Check if status is waiting -> Insert guest into players.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-2.md</path>
+        <title>Tech Spec: Epic 2 - Game Session Management</title>
+        <section>5. Acceptance Criteria & Traceability -> AC2.2.1</section>
+        <snippet>Guest can join with valid code. Guest enters code -> redirected to lobby -> 2 players in DB.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-2.md</path>
+        <title>Tech Spec: Epic 2 - Game Session Management</title>
+        <section>5. Acceptance Criteria & Traceability -> AC2.2.2</section>
+        <snippet>Error shown for invalid/full game code. Enter "INVALID" -> See error toast "Game not found".</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Epic to Architecture Mapping -> Epic 2: Game Session Management</section>
+        <snippet>Key Files/Directories: app/game-lobby/, lib/supabase/, app/api/game/.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Implementation Patterns -> API Routes</section>
+        <snippet>API Routes: kebab-case resource names (e.g., /api/games/[id]/join)</snippet>
+      </doc>
+      <doc>
+        <path>docs/backend-architecture.md</path>
+        <title>Backend Architecture</title>
+        <section>API Structure</section>
+        <snippet>/api/game/[id]/join [POST] - Join existing game</snippet>
+      </doc>
+      <doc>
+        <path>docs/ux-design-specification.md</path>
+        <title>ibe160 UX Design Specification</title>
+        <section>2.2 Core Experience Principles</section>
+        <snippet>Effortless Setup: Starting and joining a game should be quick, intuitive, and free of friction.</snippet>
+      </doc>
+      <doc>
+        <path>docs/ux-design-specification.md</path>
+        <title>ibe160 UX Design Specification</title>
+        <section>5.1 Critical User Paths -> Journey 1: Starting and Joining a Game -> Guest Player Flow (Joining)</section>
+        <snippet>Guest enters the shared game code and clicks 'Join'. System validates the code. Upon success, the guest is taken to the 'Game Lobby'. An error message is shown for invalid codes.</snippet>
+      </doc>
+      <doc>
+        <path>docs/ux-design-specification.md</path>
+        <title>ibe160 UX Design Specification</title>
+        <section>5.1 Critical User Paths -> Journey 1: Starting and Joining a Game -> Error States and Recovery</section>
+        <snippet>Invalid Code: An inline error message appears below the input field stating, 'Invalid game code. Please check the code and try again.' Lobby is Full: A message is displayed: 'This game is already full.'</snippet>
+      </doc>
+      <doc>
+        <path>docs/ux-design-specification.md</path>
+        <title>ibe160 UX Design Specification</title>
+        <section>7.1 Consistency Rules -> Feedback Patterns</section>
+        <snippet>Error Messages: Displayed directly below the relevant input field for context (e.g., "Invalid game code").</snippet>
+      </doc>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>ibe160 - Epic Breakdown</title>
+        <section>Epics Summary -> Epic 2: Game Session Management</section>
+        <snippet>Goal: Enable users to create and join game sessions... Scope: ... game joining logic...</snippet>
+      </doc>
+    </docs>
+    <code>
+      <artifact>
+        <path>digital-guess-who/app/api/game/join/route.ts</path>
+        <kind>API Route</kind>
+        <symbol>New API route for joining a game</symbol>
+        <reason>New endpoint to handle game joining logic.</reason>
+      </artifact>
+      <artifact>
+        <path>digital-guess-who/app/page.tsx</path>
+        <kind>UI Page</kind>
+        <reason>Needs update to include "Join Game" section.</reason>
+      </artifact>
+      <artifact>
+        <path>digital-guess-who/components/home/join-game-form.tsx</path>
+        <kind>UI Component</kind>
+        <symbol>New JoinGameForm component</symbol>
+        <reason>Recommended new component to encapsulate the join game form UI and logic.</reason>
+      </artifact>
+      <artifact>
+        <path>digital-guess-who/app/game-lobby/[code]/page.tsx</path>
+        <kind>UI Page</kind>
+        <reason>Existing lobby page where guest will be redirected after joining.</reason>
+      </artifact>
+      <artifact>
+        <path>lib/game/service.ts</path>
+        <kind>Service</kind>
+        <symbol>GameService</symbol>
+        <reason>Proposed new service to wrap Supabase calls for creating/joining games.</reason>
+      </artifact>
+      <artifact>
+        <path>lib/store/lobby.ts</path>
+        <kind>Zustand Store</kind>
+        <symbol>useLobbyStore</symbol>
+        <reason>Proposed new store to manage local UI state for the lobby (players list, ready status).</reason>
+      </artifact>
+      <artifact>
+        <path>digital-guess-who/lib/utils.ts</path>
+        <kind>Utility</kind>
+        <symbol>generateGameCode</symbol>
+        <reason>Contains helper function for game code generation, might be reused or guide new code for join logic.</reason>
+      </artifact>
+    </code>
+    <dependencies>
+      <ecosystem name="Node.js/npm">
+        <package name="@radix-ui/react-checkbox" version="^1.3.1" />
+        <package name="@radix-ui/react-dropdown-menu" version="^2.1.14" />
+        <package name="@radix-ui/react-label" version="^2.1.6" />
+        <package name="@radix-ui/react-slot" version="^1.2.4" />
+        <package name="@supabase/ssr" version="latest" />
+        <package name="@supabase/supabase-js" version="latest" />
+        <package name="class-variance-authority" version="^0.7.1" />
+        <package name="clsx" version="^2.1.1" />
+        <package name="lucide-react" version="^0.511.0" />
+        <package name="next" version="latest" />
+        <package name="next-themes" version="^0.4.6" />
+        <package name="react" version="^19.0.0" />
+        <package name="react-dom" version="^19.0.0" />
+        <package name="tailwind-merge" version="^3.3.0" />
+        <package name="typescript" version="^5" type="dev" />
+        <package name="tailwindcss" version="^3.4.1" type="dev" />
+        <package name="jest" version="^30.2.0" type="dev" />
+        <package name="react-hook-form" version="N/A (to be added)" />
+        <package name="zod" version="N/A (to be added)" />
+        <package name="zustand" version="N/A (to be added)" />
+      </ecosystem>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint>
+      <type>Architectural</type>
+      <description>Use /api/game/join for API encapsulation.</description>
+    </constraint>
+    <constraint>
+      <type>Concurrency</type>
+      <description>Small race condition risk if two guests join simultaneously; simple check-then-insert is acceptable for MVP.</description>
+    </constraint>
+    <constraint>
+      <type>Security</type>
+      <description>Ensure user_id is obtained from the authenticated session (Supabase Auth). RLS policies for game_sessions (Public read, Authenticated create) and players (Public read, Authenticated update only own record).</description>
+    </constraint>
+    <constraint>
+      <type>Reusability</type>
+      <description>Lobby Page (digital-guess-who/app/game-lobby/[code]/page.tsx) already exists and should be reused.</description>
+    </constraint>
+    <constraint>
+      <type>Coding Standards</type>
+      <description>Adhere to project coding standards outlined in docs/coding-standards.md. Naming: kebab-case for files/folders, PascalCase for React components, camelCase for functions/variables, snake_case for DB. Feature-Sliced Design. Consistent API Responses (JSON envelope), ISO 8601 for dates. Logging: [Level] [Context] Message { metadata }. Error Messages: non-technical and actionable.</description>
+    </constraint>
+    <constraint>
+      <type>Reliability</type>
+      <description>Game code generation must handle collisions (retry logic) to ensure uniqueness.</description>
+    </constraint>
+  </constraints>
+  <interfaces>
+    <interface>
+      <name>Join Game API</name>
+      <kind>REST endpoint</kind>
+      <signature>POST /api/game/join</signature>
+      <path>digital-guess-who/app/api/game/join/route.ts</path>
+    </interface>
+    <interface>
+      <name>Update Player Status API</name>
+      <kind>Supabase Direct Update</kind>
+      <signature>PATCH /players/[id] (for is_ready)</signature>
+      <path>N/A (Supabase RLS)</path>
+    </interface>
+  </interfaces>
+  <tests>
+    <standards>
+      Testing will involve Unit, Integration, UI, and Manual tests. Unit tests will focus on API logic with mocked databases. Integration tests will simulate full user flows. UI tests will cover component interactions and API responses, with special attention to `global.fetch` mocking. Manual testing will use a "Split Brain" approach with multiple browser windows. Accessibility testing will include automated tools like axe-core and manual verification with keyboard navigation and screen readers. Jest and React Testing Library are the primary frameworks.
+    </standards>
+    <locations>
+      <location>digital-guess-who/tests/unit/</location>
+      <location>digital-guess-who/tests/integration/</location>
+      <location>digital-guess-who/tests/ui/</location>
+      <location>digital-guess-who/tests/ui/home.test.tsx</location>
+    </locations>
+    <ideas>
+      <idea ac_id="AC2.2.1">Unit Test: Test the validation logic in the API route (mocking DB).</idea>
+      <idea ac_id="AC2.2.1">Integration Test: Simulate a Host creating a game, then a Guest joining it. Verify DB state (2 players).</idea>
+      <idea ac_id="AC2.2.1">UI Test: Test the Home page interaction (entering code, clicking join, mocking API response). Ensure `global.fetch` is properly mocked.</idea>
+      <idea ac_id="AC2.2.1">Manual Test: Open two browsers/incognito. Host creates game. Guest enters code. Verify Guest enters lobby.</idea>
+      <idea ac_id="AC2.2.2">UI Test: Verify error message display when entering an invalid game code.</idea>
+      <idea ac_id="AC2.2.2">Manual Test: Verify error message display when entering an invalid game code.</idea>
+      <idea ac_id="AC2.2.2">Unit Test: Test API route's handling of full game sessions (return 409 Conflict).</idea>
+    </ideas>
+  </tests>
+</story-context>

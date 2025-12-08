@@ -1,6 +1,6 @@
 # Story 2.2: Join Game Functionality
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -88,7 +88,7 @@ so that I can play with the host.
 ## Dev Agent Record
 
 ### Context Reference
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- `C:\Users\Akbar\OneDrive\Desktop\VS\ghuess who\SG-Bergen/docs/sprint-artifacts/2-2-join-game-functionality.context.xml`
 
 ### Agent Model Used
 gemini-2.5-flash
