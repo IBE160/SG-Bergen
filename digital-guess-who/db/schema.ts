@@ -1,6 +1,7 @@
 export const schema = `
 -- Create enums
 create type public.game_status as enum ('waiting', 'active', 'finished');
+create type public.game_difficulty as enum ('easy', 'medium', 'hard');
 create type public.action_type as enum ('question', 'answer', 'guess', 'flip');
 
 -- Create tables
@@ -16,6 +17,7 @@ create table public.game_sessions (
   status public.game_status default 'waiting'::public.game_status not null,
   host_id uuid references public.users(id) not null,
   winner_id uuid references public.users(id),
+  difficulty public.game_difficulty,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
@@ -47,4 +49,21 @@ create policy "Enable all access for all users" on public.users for all using (t
 create policy "Enable all access for all users" on public.game_sessions for all using (true) with check (true);
 create policy "Enable all access for all users" on public.players for all using (true) with check (true);
 create policy "Enable all access for all users" on public.moves for all using (true) with check (true);
+
+-- Function and trigger to create a public.users entry for each new auth.users
+create function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  insert into public.users (id)
+  values (new.id);
+  return new;
+end;
+$$;
+
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
 `;

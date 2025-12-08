@@ -1,6 +1,6 @@
 # Story 2.1: Lobby UI & Game Creation
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -23,31 +23,30 @@ so that a friend can join and we can prepare for gameplay.
 
 ## Tasks / Subtasks
 
-- [ ] **Implement Game Setup UI (AC: 1)**
-  - [ ] Create `digital-guess-who/app/game-lobby/create/page.tsx` for the game setup screen. (Arch: Feature-Sliced)
-  - [ ] Design/implement difficulty selection (Easy, Medium, Hard) using `shadcn/ui` radio buttons or segmented control. (UX: Journey 1, Component Strategy)
-  - [ ] Add a "Create Game" button (`shadcn/ui` Button, Primary Accent color). (UX: Button Hierarchy)
-  - [ ] Implement client-side navigation from Home page to this setup screen.
-- [ ] **Implement Game Creation Backend Logic (AC: 2, 3)**
-  - [ ] Create a Next.js API route `digital-guess-who/app/api/game/create/route.ts` to handle game creation. (Arch: API Routes)
-  - [ ] In the API route:
-    - [ ] Generate a unique, human-readable game code. (AC: 3)
-    - [ ] Insert a new record into the `game_sessions` table (`id`, `code`, `status='waiting'`, `host_id`, `difficulty_setting`). (Arch: Data Architecture)
-    - [ ] Insert a new record into the `players` table for the host (`user_id`, `game_id`). (Arch: Data Architecture)
-    - [ ] Implement basic error handling for database operations.
+- [x] **Implement Game Setup UI (AC: 1)**
+  - [x] Create `digital-guess-who/app/game-lobby/create/page.tsx` for the game setup screen. (Arch: Feature-Sliced)
+  - [x] Design/implement difficulty selection (Easy, Medium, Hard) using `shadcn/ui` radio buttons or segmented control. (UX: Journey 1, Component Strategy)
+  - [x] Add a "Create Game" button (`shadcn/ui` Button, Primary Accent color). (UX: Button Hierarchy)
+  - [x] Implement client-side navigation from Home page to this setup screen.
+- [x] **Implement Game Creation Backend Logic (AC: 2, 3)**
+  - [x] Create a Next.js API route `digital-guess-who/app/api/game/create/route.ts` to handle game creation. (Arch: API Routes)
+  - [x] In the API route:
+    - [x] Generate a unique, human-readable game code. (AC: 3)
+    - [x] Insert a new record into the `game_sessions` table (`id`, `code`, `status='waiting'`, `host_id`, `difficulty_setting`). (Arch: Data Architecture)
+    - [x] Insert a new record into the `players` table for the host (`user_id`, `game_id`). (Arch: Data Architecture)
+    - [x] Implement basic error handling for database operations.
   - [ ] Ensure Supabase RLS allows authenticated users to create game sessions and player records.
-- [ ] **Implement Lobby UI & Game Code Display (AC: 4)**
-  - [ ] Create `digital-guess-who/app/game-lobby/[code]/page.tsx` for the game lobby, displaying the unique `game_code`. (Arch: Feature-Sliced, Location Patterns)
-  - [ ] Display the game code prominently with a copy-to-clipboard button. (UX: Journey 1)
-  - [ ] Implement client-side navigation from the Game Setup screen to the Lobby screen (`/game/[code]`).
-- [ ] **Integrate Difficulty Setting (AC: 2)**
-  - [ ] Pass the selected difficulty from the UI to the game creation API.
-  - [ ] Store the difficulty in the `game_sessions` table.
-- [ ] **Testing & Verification**
-  - [ ] **Unit Test**: Test the game code generation logic (if separated).
-  - [ ] **Integration Test**: Write a test to simulate creating a game and verify the `game_sessions` and `players` tables are updated correctly.
-  - [ ] **Manual Test**: Log in, navigate to "Start a New Game", select difficulty, click "Create", verify unique code is displayed, and verify database entries.
-  - [ ] **UI Test**: Verify button styling, navigation, and display of game code conform to UX Spec. (Ref: previous story's jest.config.ts `testEnvironment` issue for client-side tests).
+- [x] **Implement Lobby UI & Game Code Display (AC: 4)**
+  - [x] Create `digital-guess-who/app/game-lobby/[code]/page.tsx` for the game lobby, displaying the unique `game_code`. (Arch: Feature-Sliced, Location Patterns)
+  - [x] Display the game code prominently with a copy-to-clipboard button. (UX: Journey 1)
+  - [x] Implement client-side navigation from the Game Setup screen to the Lobby screen (`/game/[code]`).
+- [x] **Integrate Difficulty Setting (AC: 2)**
+  - [x] Pass the selected difficulty from the UI to the game creation API.
+  - [x] Store the difficulty in the `game_sessions` table.- [x] **Testing & Verification**
+  - [x] **Unit Test**: Test the game code generation logic (if separated).
+  - [x] **Integration Test**: Write a test to simulate creating a game and verify the `game_sessions` and `players` tables are updated correctly.
+  - [x] **Manual Test**: Log in, navigate to "Start a New Game", select difficulty, click "Create", verify unique code is displayed, and verify database entries.
+  - [x] **UI Test**: Verify button styling, navigation, and display of game code conform to UX Spec. (Ref: previous story's jest.config.ts `testEnvironment` issue for client-side tests).
 
 ## Requirements Context Summary
 
@@ -135,9 +134,22 @@ gemini-2.5-flash (Scrum Master persona)
 ### Completion Notes List
 - Initial story draft generation by BMAD.
 - Validation and refinement by Scrum Master agent.
+- Implemented Game Setup UI with difficulty selection and navigation from Home page.
+- Implemented Game Creation Backend Logic with unique code generation and database inserts.
+- Implemented Lobby UI to display game code with copy-to-clipboard.
+- Integrated difficulty setting from UI to API.
+- Created unit, integration, and UI tests for game creation and lobby.
 
 ### File List
 - docs/sprint-artifacts/2-1-lobby-ui-game-creation.md
+- digital-guess-who/app/game-lobby/create/page.tsx
+- digital-guess-who/app/api/game/create/route.ts
+- digital-guess-who/app/game-lobby/[code]/page.tsx
+- digital-guess-who/app/page.tsx (MODIFIED)
+- digital-guess-who/lib/utils.ts (MODIFIED)
+- digital-guess-who/tests/unit/generateGameCode.test.ts
+- digital-guess-who/tests/integration/createGame.test.ts
+- digital-guess-who/tests/ui/gameLobby.test.tsx
 
 ## Change Log
 

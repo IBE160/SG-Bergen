@@ -43,7 +43,7 @@ development_status:
   1-4-authentication-skeleton-supabase-auth: done
   epic-1-retrospective: done
   epic-2: contexted
-  2-1-lobby-ui-game-creation: ready-for-dev
+  2-1-lobby-ui-game-creation: review
   2-2-join-game-functionality: backlog
   2-3-real-time-lobby-player-readiness: backlog
   epic-2-retrospective: optional
