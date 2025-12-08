@@ -28,15 +28,15 @@ so that a friend can join and we can prepare for gameplay.
   - [ ] Design/implement difficulty selection (Easy, Medium, Hard) using `shadcn/ui` radio buttons or segmented control. (UX: Journey 1, Component Strategy)
   - [ ] Add a "Create Game" button (`shadcn/ui` Button, Primary Accent color). (UX: Button Hierarchy)
   - [ ] Implement client-side navigation from Home page to this setup screen.
-- [ ] **Implement Game Creation Backend Logic (AC: 2)**
+- [ ] **Implement Game Creation Backend Logic (AC: 2, 3)**
   - [ ] Create a Next.js API route `digital-guess-who/app/api/game/create/route.ts` to handle game creation. (Arch: API Routes)
   - [ ] In the API route:
-    - [ ] Generate a unique, human-readable game code.
+    - [ ] Generate a unique, human-readable game code. (AC: 3)
     - [ ] Insert a new record into the `game_sessions` table (`id`, `code`, `status='waiting'`, `host_id`, `difficulty_setting`). (Arch: Data Architecture)
     - [ ] Insert a new record into the `players` table for the host (`user_id`, `game_id`). (Arch: Data Architecture)
     - [ ] Implement basic error handling for database operations.
   - [ ] Ensure Supabase RLS allows authenticated users to create game sessions and player records.
-- [ ] **Implement Lobby UI & Game Code Display (AC: 2)**
+- [ ] **Implement Lobby UI & Game Code Display (AC: 4)**
   - [ ] Create `digital-guess-who/app/game-lobby/[code]/page.tsx` for the game lobby, displaying the unique `game_code`. (Arch: Feature-Sliced, Location Patterns)
   - [ ] Display the game code prominently with a copy-to-clipboard button. (UX: Journey 1)
   - [ ] Implement client-side navigation from the Game Setup screen to the Lobby screen (`/game/[code]`).
