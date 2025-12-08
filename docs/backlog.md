@@ -11,3 +11,6 @@ Routing guidance:
 | Date | Story | Epic | Type | Severity | Owner | Status | Notes |
 | ---- | ----- | ---- | ---- | -------- | ----- | ------ | ----- |
 | 2025-12-06 | 1.2 | 1 | Bug | High | TBD | Open | Update `digital-guess-who/db/types.ts` to exactly match schema and fix associated tests. |
+| 2025-12-08 | 2.1 | 2 | Bug | Medium | Amelia | Done | Fix invalid fetch mocking in UI tests for game lobby. |
+| 2025-12-08 | 2.1 | 2 | Tech Debt | Low | TBD | Open | Wrap game/player creation in Supabase RPC to prevent orphaned sessions. |
+| 2025-12-08 | 2.1 | 2 | Enhancement | Low | TBD | Open | Add collision check or database constraint for game code uniqueness. |

@@ -3,8 +3,6 @@ import '@testing-library/jest-dom';
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import CreateGamePage from '@/app/game-lobby/create/page';
 import GameLobbyPage from '@/app/game-lobby/[code]/page';
-import { NextRequest, NextResponse } from 'next/server';
-import { POST } from '@/app/api/game/create/route';
 
 // Mock useRouter and useParams from next/navigation
 const mockPush = jest.fn();
@@ -17,11 +15,6 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
-// Mock the API route for game creation
-jest.mock('@/app/api/game/create/route', () => ({
-  POST: jest.fn(),
-}));
-
 // Mock clipboard API
 Object.assign(navigator, {
   clipboard: {
@@ -32,7 +25,7 @@ Object.assign(navigator, {
 describe('CreateGamePage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (POST as jest.Mock).mockResolvedValue(NextResponse.json({ gameId: 'mock-game-id', code: 'TESTCODE' }, { status: 201 }));
+    global.fetch = jest.fn();
   });
 
   it('renders without crashing', () => {
@@ -42,12 +35,17 @@ describe('CreateGamePage', () => {
 
   it('allows selecting a difficulty', () => {
     render(<CreateGamePage />);
-    const hardRadio = screen.getByLabelText('Hard');
+    const hardRadio = screen.getByLabelText(/Hard/i);
     fireEvent.click(hardRadio);
-    expect(hardRadio.closest('div')).toHaveAttribute('data-state', 'checked');
+    expect(hardRadio).toHaveAttribute('aria-checked', 'true');
   });
 
   it('calls the create game API and navigates to lobby on button click', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ gameId: 'mock-game-id', code: 'TESTCODE' }),
+    });
+
     render(<CreateGamePage />);
     const createButton = screen.getByRole('button', { name: /Create Game/i });
 
@@ -55,12 +53,22 @@ describe('CreateGamePage', () => {
       fireEvent.click(createButton);
     });
 
-    expect(POST).toHaveBeenCalledTimes(1);
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(global.fetch).toHaveBeenCalledWith('/api/game/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ difficulty: 'medium' }), // Default value is medium
+    });
     expect(mockPush).toHaveBeenCalledWith('/game-lobby/TESTCODE');
   });
 
   it('shows an alert if API call fails', async () => {
-    (POST as jest.Mock).mockResolvedValue(NextResponse.json({ error: 'Test API Error' }, { status: 500 }));
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: false,
+      json: async () => ({ error: 'Test API Error' }),
+    });
     const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {}); // Mock window.alert
 
     render(<CreateGamePage />);

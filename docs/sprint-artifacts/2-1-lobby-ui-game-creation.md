@@ -48,6 +48,9 @@ so that a friend can join and we can prepare for gameplay.
   - [x] **Manual Test**: Log in, navigate to "Start a New Game", select difficulty, click "Create", verify unique code is displayed, and verify database entries.
   - [x] **UI Test**: Verify button styling, navigation, and display of game code conform to UX Spec. (Ref: previous story's jest.config.ts `testEnvironment` issue for client-side tests).
 
+### Review Follow-ups (AI)
+- [x] [AI-Review][Medium] Fix `digital-guess-who/tests/ui/gameLobby.test.tsx` to properly mock `global.fetch` instead of the route handler import. (AC: 4)
+
 ## Requirements Context Summary
 
 ### Derived from Epics (`epics.md`)
@@ -154,6 +157,76 @@ gemini-2.5-flash (Scrum Master persona)
 ## Change Log
 
 - **2025-12-08**: Story drafted by BMAD.
+- **2025-12-08**: Senior Developer Review notes appended.
+- **2025-12-08**: Addressed code review findings - 1 item resolved. Fixed UI test mocking strategy and installed missing test environment dependencies.
+
+## Senior Developer Review (AI)
+
+### Review Details
+- **Reviewer:** Amelia
+- **Date:** mandag 8. desember 2025
+- **Outcome:** Changes Requested
+
+### Summary
+The implementation covers all functional requirements: game creation, difficulty selection, and lobby display. The architecture follows the specified Next.js + Supabase patterns. However, there are significant concerns regarding the validity of the UI tests and a minor data integrity risk in the backend logic.
+
+### Key Findings
+
+#### Medium Severity
+1.  **Invalid Test Mocking Strategy in `gameLobby.test.tsx`**: The UI test mocks the server-side route handler module (`@/app/api/game/create/route`) but the component uses `client-side fetch`. In a standard JSDOM environment, mocking the import of the route handler does not intercept the `fetch` call. The test expectations (checking if `POST` was called) are likely to fail or give false positives if `fetch` isn't actually mocked to trigger that function. The test should mock `global.fetch` to verify the request payload and response handling.
+
+#### Low Severity
+1.  **Potential Orphaned Data**: In `route.ts`, the `game_sessions` record is created before the `players` record. If the `players` insert fails, the game session remains without a host. Consider using a Supabase RPC or adding a cleanup step (delete game session) in the error block.
+2.  **Game Code Uniqueness**: The `generateGameCode` function produces a random 4-character string without checking for collisions in the database. While the collision probability is low for an MVP, a collision would cause a duplicate key error (if constrained) or logic errors.
+
+### Acceptance Criteria Coverage
+
+| AC# | Description | Status | Evidence |
+| :-- | :--- | :--- | :--- |
+| 1 | Start Game navigation | **IMPLEMENTED** | `app/page.tsx` links to `/game-lobby/create`. |
+| 2 | Create Game + DB Record | **IMPLEMENTED** | `app/game-lobby/create/page.tsx` calls API; `route.ts` inserts `game_sessions`. |
+| 3 | Unique Game Code | **PARTIAL** | Code generated, but uniqueness not guaranteed/checked. |
+| 4 | Lobby Redirect & Display | **IMPLEMENTED** | Redirects to `/game-lobby/[code]`; displays code with copy button. |
+
+**Summary:** 3 of 4 ACs fully implemented. AC3 is implemented but lacks robustness (collision check).
+
+### Task Completion Validation
+
+| Task | Marked As | Verified As | Evidence |
+| :--- | :--- | :--- | :--- |
+| Implement Game Setup UI | [x] | **VERIFIED** | `app/game-lobby/create/page.tsx` exists and functions. |
+| Implement Backend Logic | [x] | **VERIFIED** | `app/api/game/create/route.ts` handles creation. |
+| Implement Lobby UI | [x] | **VERIFIED** | `app/game-lobby/[code]/page.tsx` exists. |
+| Integrate Difficulty | [x] | **VERIFIED** | Passed to API and stored in DB. |
+| Unit Test | [x] | **VERIFIED** | `generateGameCode` tested. |
+| Integration Test | [x] | **VERIFIED** | `createGame.test.ts` verifies API logic. |
+| Manual Test | [x] | **ACCEPTED** | (Agent report accepted). |
+| UI Test | [x] | **QUESTIONABLE** | Mocking strategy in `gameLobby.test.tsx` is invalid for `fetch`. |
+
+**Summary:** 7 of 8 tasks verified. 1 questionable (UI Test).
+
+### Test Coverage and Gaps
+- **Unit:** Good coverage of utility functions.
+- **Integration:** API route is well-tested with mocks.
+- **UI:** `createGamePage` and `GameLobbyPage` are tested, but the interaction test relies on faulty mocking.
+- **Gap:** No verification that `fetch` calls are constructed correctly in the UI component.
+
+### Architectural Alignment
+- **Feature-Sliced Design:** Followed (`app/game-lobby`).
+- **Tech Spec:** Fields match schema. API route usage aligns with requirements.
+
+### Security Notes
+- **Auth:** API route correctly checks for `user` session.
+- **Input Validation:** Difficulty input is validated against allowlist.
+
+### Action Items
+
+**Code Changes Required:**
+- [x] [Medium] Fix `digital-guess-who/tests/ui/gameLobby.test.tsx` to properly mock `global.fetch` instead of the route handler import. The test must verify that `fetch` is called with the correct URL and body. (AC: 4) [file: digital-guess-who/tests/ui/gameLobby.test.tsx]
+
+**Advisory Notes:**
+- Note: Consider wrapping the game/player creation in a Supabase RPC or adding error cleanup to prevent orphaned game sessions. (AC: 2)
+- Note: Add a collision check loop or database constraint for `game_sessions.code` to ensure true uniqueness. (AC: 3)
 
 
 
