@@ -51,12 +51,26 @@ so that I can play with the host.
   - **Concurrency**: There is a small race condition risk if two guests join simultaneously. For MVP, a simple check-then-insert is acceptable. If `players` table has a constraint or trigger, that's better, but application-level check is sufficient for now.
   - **Security**: Ensure `user_id` is obtained from the authenticated session (Supabase Auth).
   - **Reusability**: The Lobby Page (`/game-lobby/[code]`) already exists (Story 2.1). We are just routing the Guest to it.
+  - **Coding Standards**: Adhere to project coding standards outlined in [Source: docs/coding-standards.md].
 - **Source tree components to touch:**
   - `digital-guess-who/app/api/game/join/route.ts` (New)
   - `digital-guess-who/app/page.tsx` (Update)
   - `digital-guess-who/components/home/join-game-form.tsx` (New - recommended to extract form)
 - **Testing standards summary:**
   - Fix: In `digital-guess-who/tests/ui/home.test.tsx` (or new file), ensure `global.fetch` is mocked correctly to intercept the API call, fixing the issue seen in Story 2.1.
+
+### Learnings from Previous Story 2.1: Lobby UI & Game Creation
+
+**From Story 2.1: Lobby UI & Game Creation (Status: review)**
+
+- **New Patterns/Services Created**: `game-lobby` feature slice under `app/game-lobby/`, API route `app/api/game/create/route.ts`, and component for game lobby display `app/game-lobby/[code]/page.tsx`.
+- **Architectural Deviations or Decisions Made**: Feature-sliced design confirmed. Use of `shadcn/ui` components for UI elements.
+- **Technical Debt**: The UI test mocking strategy in `gameLobby.test.tsx` was identified as invalid for `fetch`. This was a `Medium` severity issue that was addressed in the review process of the previous story.
+- **Warnings or Recommendations for Next Story**: Consider using Supabase RPC or adding error cleanup for game/player creation to prevent orphaned game sessions. Also, implement a collision check loop or database constraint for `game_sessions.code` for true uniqueness.
+- **Files Created (NEW)**: `digital-guess-who/app/game-lobby/create/page.tsx`, `digital-guess-who/app/api/game/create/route.ts`, `digital-guess-who/app/game-lobby/[code]/page.tsx`.
+- **Files Modified (MODIFIED)**: `digital-guess-who/app/page.tsx`, `digital-guess-who/lib/utils.ts`.
+
+[Source: docs/sprint-artifacts/2-1-lobby-ui-game-creation.md]
 
 ### Project Structure Notes
 
@@ -68,7 +82,8 @@ so that I can play with the host.
 
 - [Source: docs/sprint-artifacts/tech-spec-epic-2.md#APIs-&-Interfaces] - API definition for Join Game.
 - [Source: docs/epics.md#Story-2.2:-Join-Game-Functionality] - Original Story Definition.
-- [Source: docs/sprint-artifacts/2-1-lobby-ui-game-creation.md] - Previous Story (Lobby UI).
+- [Source: docs/sprint-artifacts/2-1-lobby-ui-game-creation.md#Dev-Agent-Record] - Previous Story (Lobby UI).
+- [Source: docs/architecture.md] - Overall project architecture.
 
 ## Dev Agent Record
 
