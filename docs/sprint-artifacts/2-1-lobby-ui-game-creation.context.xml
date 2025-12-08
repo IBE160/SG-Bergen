@@ -1,0 +1,145 @@
+<story-context id="2-1-lobby-ui-game-creation" v="1.0">
+  <metadata>
+    <epicId>2</epicId>
+    <storyId>2.1</storyId>
+    <title>Lobby UI & Game Creation</title>
+    <status>drafted</status>
+    <generatedAt>Monday, December 8, 2025</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/2-1-lobby-ui-game-creation.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>Host</asA>
+    <iWant>initiate a new game session and share a unique game code</iWant>
+    <soThat>a friend can join and we can prepare for gameplay</soThat>
+    <tasks>
+      - Implement Game Setup UI (digital-guess-who/app/game-lobby/create/page.tsx)
+      - Design/implement difficulty selection (Easy/Medium/Hard)
+      - Implement Game Creation Backend Logic (digital-guess-who/app/api/game/create/route.ts)
+      - Generate unique game code and insert into game_sessions
+      - Implement Lobby UI & Game Code Display (digital-guess-who/app/game-lobby/[code]/page.tsx)
+      - Integrate Difficulty Setting
+      - Testing & Verification (Unit, Integration, Manual, UI)
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    1. Given I am logged in on the Home page, When I click "Start a New Game", Then I am taken to the Game Setup screen.
+    2. Given I am on the Game Setup screen, When I select a Difficulty and click "Create", Then A new game_session record is created in the DB with status 'waiting'.
+    3. Given a new game_session has been created, Then A unique game code is generated.
+    4. Given a unique game code has been generated, Then I am redirected to the Lobby screen (/game/[code]) and the unique game code is displayed prominently.
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-2.md</path>
+        <title>Tech Spec: Epic 2 - Game Session Management</title>
+        <section>Detailed Design</section>
+        <snippet>Defines Data Models (game_sessions, players), APIs (Create Game), and Workflows for Host starting a game.</snippet>
+      </doc>
+      <doc>
+        <path>docs/ux-design-specification.md</path>
+        <title>UX Design Specification</title>
+        <section>Journey 1: Starting and Joining a Game</section>
+        <snippet>Host Player Flow: Select difficulty, generate code, display code. Component Strategy: Button for 'Create Game', Input for code.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Epic 2: Game Session Management</section>
+        <snippet>Primary Components: Supabase Client, API Routes. Data Persistence: game_sessions table. Structure: Feature-Sliced Design (app/game-lobby/).</snippet>
+      </doc>
+      <doc>
+        <path>docs/PRD.md</path>
+        <title>Product Requirements Document</title>
+        <section>FR1.1 - Game Creation</section>
+        <snippet>The system shall allow a user to create a new game session, generating a unique game code.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <item>
+        <path>digital-guess-who/app/game-lobby/create/page.tsx</path>
+        <kind>component</kind>
+        <symbol>Page</symbol>
+        <reason>New page for Game Setup screen.</reason>
+      </item>
+      <item>
+        <path>digital-guess-who/app/game-lobby/[code]/page.tsx</path>
+        <kind>component</kind>
+        <symbol>Page</symbol>
+        <reason>New page for Lobby screen displaying game code.</reason>
+      </item>
+      <item>
+        <path>digital-guess-who/app/api/game/create/route.ts</path>
+        <kind>api-route</kind>
+        <symbol>POST</symbol>
+        <reason>Backend logic to create game session and host player record.</reason>
+      </item>
+      <item>
+        <path>digital-guess-who/db/schema.ts</path>
+        <kind>schema</kind>
+        <symbol>game_sessions</symbol>
+        <reason>Define table schema for game sessions including difficulty.</reason>
+      </item>
+      <item>
+        <path>digital-guess-who/lib/supabase/client.ts</path>
+        <kind>utility</kind>
+        <symbol>createClient</symbol>
+        <reason>Existing Supabase client for DB interactions.</reason>
+      </item>
+    </code>
+    <dependencies>
+      <ecosystem name="npm">
+        <package name="@supabase/supabase-js" />
+        <package name="lucide-react" />
+        <package name="zod" />
+        <package name="react-hook-form" />
+        <package name="shadcn-ui components" />
+      </ecosystem>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    - Architecture: Use Feature-Sliced Design (app/game-lobby/).
+    - Backend: Use Next.js API Routes for sensitive logic if needed, or direct Supabase calls if RLS permits. Tech Spec suggests API route for creation.
+    - Database: Use `game_sessions` table with `difficulty` field.
+    - UX: Follow "Journey 1" flow and use `shadcn/ui` components styled with Tailwind.
+    - Security: Ensure `host_id` is set from authenticated user session.
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>Create Game API</name>
+      <kind>REST</kind>
+      <signature>POST /api/game/create { difficulty: 'easy' | 'medium' | 'hard' } -> { gameId: string, code: string }</signature>
+      <path>digital-guess-who/app/api/game/create/route.ts</path>
+    </interface>
+    <interface>
+      <name>game_sessions Table</name>
+      <kind>Database Table</kind>
+      <signature>id (uuid), code (text), status (enum), host_id (uuid), difficulty (enum)</signature>
+      <path>digital-guess-who/db/schema.ts</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      - Unit Tests: Test game code generation utility.
+      - Integration Tests: Verify API creates DB records correctly.
+      - UI Tests: Verify rendering of Create Game button and Difficulty selection.
+      - Manual: Verify full flow from creation to lobby display.
+    </standards>
+    <locations>
+      - digital-guess-who/tests/unit
+      - digital-guess-who/tests/integration
+    </locations>
+    <ideas>
+      - Test AC1: Click "Start" navigates to Setup.
+      - Test AC2: Create Game with difficulty 'Hard' saves 'hard' to DB.
+      - Test AC3: Code generation produces unique 4-char string.
+      - Test AC4: Redirects to /game/[code] on success.
+    </ideas>
+  </tests>
+</story-context>

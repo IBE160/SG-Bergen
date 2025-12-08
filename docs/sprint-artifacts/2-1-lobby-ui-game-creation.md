@@ -1,6 +1,6 @@
 # Story 2.1: Lobby UI & Game Creation
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -124,6 +124,7 @@ so that a friend can join and we can prepare for gameplay.
 
 ### Context Reference
 - Story 2.1 - Lobby UI & Game Creation (as of 2025-12-08)
+- docs/sprint-artifacts/2-1-lobby-ui-game-creation.context.xml
 
 ### Agent Model Used
 gemini-2.5-flash (Scrum Master persona)
