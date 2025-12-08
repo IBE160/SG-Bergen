@@ -7,7 +7,46 @@ const joinGameSchema = z.object({
   code: z.string().min(1, "Game code is required"),
 });
 
+// Simple in-memory rate limiter
+// Note: In a serverless environment (like Vercel), this cache is per-lambda instance 
+// and not shared. For production, use a distributed store like Redis/Upstash.
+const rateLimitMap = new Map<string, { count: number; lastReset: number }>();
+const WINDOW_SIZE = 60 * 1000; // 1 minute
+const MAX_REQUESTS = 10; // 10 requests per minute
+
+function isRateLimited(ip: string) {
+  const now = Date.now();
+  const record = rateLimitMap.get(ip);
+
+  if (!record) {
+    rateLimitMap.set(ip, { count: 1, lastReset: now });
+    return false;
+  }
+
+  if (now - record.lastReset > WINDOW_SIZE) {
+    record.count = 1;
+    record.lastReset = now;
+    return false;
+  }
+
+  if (record.count >= MAX_REQUESTS) {
+    return true;
+  }
+
+  record.count += 1;
+  return false;
+}
+
 export async function POST(request: NextRequest) {
+  // 0. Rate Limiting
+  const ip = request.ip ?? request.headers.get('x-forwarded-for') ?? 'unknown';
+  if (isRateLimited(ip)) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again later.' },
+      { status: 429 }
+    );
+  }
+
   const supabase = await createClient();
 
   // 1. Authenticate User
