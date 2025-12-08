@@ -12,12 +12,14 @@ so that a friend can join and we can prepare for gameplay.
 
 1.  **Given** I am logged in on the Home page
     **When** I click "Start a New Game"
-    **Then** I am taken to the Game Setup screen (UX: See "Journey 1: Starting and Joining a Game" in UX Spec)
-2.  **When** I select a Difficulty (Easy/Medium/Hard) and click "Create"
-    **Then** A new `game_session` record is created in the DB with `status: 'waiting'` (Arch: `GameSession` model, Supabase Client/API)
-    **And** I am redirected to the Lobby screen (`/game/[code]`)
-    **And** The unique game code is displayed prominently (UX: Large text, copy button)
-    **And** The selected difficulty is stored (Arch: `game_session` metadata, FR4.1)
+    **Then** I am taken to the Game Setup screen (UX: See "Journey 1: Starting and Joining a Game" in UX Spec).
+2.  **Given** I am on the Game Setup screen
+    **When** I select a Difficulty (Easy/Medium/Hard) and click "Create"
+    **Then** A new `game_session` record is created in the DB with the selected difficulty and `status: 'waiting'`. (Tech Spec: AC2.1.1, Arch: `GameSession` model, FR4.1).
+3.  **Given** a new `game_session` has been created
+    **Then** A unique game code is generated. (Tech Spec: AC2.1.2).
+4.  **Given** a unique game code has been generated
+    **Then** I am redirected to the Lobby screen (`/game/[code]`) and the unique game code is displayed prominently with a copy-to-clipboard button. (Tech Spec: AC2.1.2, UX: Journey 1).
 
 ## Tasks / Subtasks
 
@@ -111,11 +113,30 @@ so that a friend can join and we can prepare for gameplay.
 
 ### References
 
+- [Source: docs/sprint-artifacts/tech-spec-epic-2.md] - Technical Specification for Epic 2: Game Session Management.
 - [Source: docs/PRD.md#FR1.1---Game-Creation] - Functional Requirement 1.1: Game Creation.
 - [Source: docs/PRD.md#FR4.1---Difficulty-Settings] - Functional Requirement 4.1: Difficulty Settings.
 - [Source: docs/architecture.md#Epic-2:-Game-Session-Management] - Architecture details for Game Session Management.
 - [Source: docs/ux-design-specification.md#Journey-1:-Starting-and-Joining-a-Game] - UX Flow for Game Creation.
 - [Source: docs/epics.md#Story-2.1:-Lobby-UI-&-Game-Creation] - Original Story Definition.
+
+## Dev Agent Record
+
+### Context Reference
+- Story 2.1 - Lobby UI & Game Creation (as of 2025-12-08)
+
+### Agent Model Used
+gemini-2.5-flash (Scrum Master persona)
+
+### Debug Log References
+- [Link to Gemini conversation log if available]
+
+### Completion Notes List
+- Initial story draft generation by BMAD.
+- Validation and refinement by Scrum Master agent.
+
+### File List
+- docs/sprint-artifacts/2-1-lobby-ui-game-creation.md
 
 ## Change Log
 
