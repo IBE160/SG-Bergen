@@ -9,6 +9,7 @@ import { hasEnvVars } from "@/lib/utils";
 import Link from "next/link";
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button"; // Import Button component
+import { JoinGameForm } from "@/components/home/join-game-form";
 
 export default function Home() {
   return (
@@ -39,6 +40,13 @@ export default function Home() {
               Start a New Game
             </Button>
           </Link>
+
+          <div className="w-full flex items-center justify-center">
+             <span className="text-muted-foreground bg-background px-2">OR</span>
+          </div>
+
+          <JoinGameForm />
+
           <main className="flex-1 flex flex-col gap-6 px-4">
             <h2 className="font-medium text-xl mb-4">Next steps</h2>
             {hasEnvVars ? <SignUpUserSteps /> : <ConnectSupabaseSteps />}

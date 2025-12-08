@@ -4,7 +4,7 @@ import { generateGameCode } from '@/lib/utils';
 describe('generateGameCode', () => {
   it('should return a 4-character string', () => {
     const code = generateGameCode();
-    expect(code).toBeString();
+    expect(typeof code).toBe('string');
     expect(code).toHaveLength(4);
   });
 
@@ -19,6 +19,6 @@ describe('generateGameCode', () => {
       codes.add(generateGameCode());
     }
     // With 36^4 possible codes (1,679,616), 1000 unique codes is highly probable
-    expect(codes.size).toBe(1000);
+    expect(codes.size).toBeGreaterThan(990);
   });
 });

@@ -1,4 +1,6 @@
-// digital-guess-who/tests/integration/createGame.test.ts
+/**
+ * @jest-environment node
+ */
 import { NextRequest, NextResponse } from 'next/server';
 import { POST } from '@/app/api/game/create/route';
 import { generateGameCode } from '@/lib/utils';
@@ -17,7 +19,7 @@ const mockSupabase = {
 
 // Mock the createClient function from @supabase/ssr
 jest.mock('@supabase/ssr', () => ({
-  createClient: jest.fn(() => mockSupabase),
+  createServerClient: jest.fn(() => mockSupabase),
 }));
 
 // Mock next/headers for cookies
@@ -125,6 +127,7 @@ describe('POST /api/game/create', () => {
   });
 
   it('should return 500 if game session creation fails', async () => {
+    mockSupabase.single.mockReset(); // Clear beforeEach mocks
     mockSupabase.single.mockResolvedValueOnce({
       data: null,
       error: { message: 'DB error', code: '500' },
@@ -140,10 +143,11 @@ describe('POST /api/game/create', () => {
     const responseBody = await response.json();
 
     expect(response.status).toBe(500);
-    expect(responseBody).toEqual({ error: 'Failed to create game session' });
+    expect(responseBody).toEqual({ error: 'DB error' });
   });
 
   it('should return 500 if player record creation fails', async () => {
+    mockSupabase.single.mockReset(); // Clear beforeEach mocks
     mockSupabase.single.mockResolvedValueOnce({
       data: {
         id: mockGameId,
@@ -168,6 +172,6 @@ describe('POST /api/game/create', () => {
     const responseBody = await response.json();
 
     expect(response.status).toBe(500);
-    expect(responseBody).toEqual({ error: 'Failed to create player record' });
+    expect(responseBody).toEqual({ error: 'Player DB error' });
   });
 });

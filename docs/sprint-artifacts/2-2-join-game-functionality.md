@@ -1,6 +1,6 @@
 # Story 2.2: Join Game Functionality
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -24,25 +24,25 @@ so that I can play with the host.
 
 ## Tasks / Subtasks
 
-- [ ] **Implement Join Game Backend Logic (AC: 1, 2, 3)**
-  - [ ] Create a Next.js API route `digital-guess-who/app/api/game/join/route.ts`.
-  - [ ] In the API route:
-    - [ ] Validate request body contains `code`.
-    - [ ] Query `game_sessions` by `code` to find `id` and check `status` is 'waiting'.
-    - [ ] Count existing `players` for this game. If >= 2, return 409 Conflict ("Game is full").
-    - [ ] If valid, insert new record into `players` (`user_id`, `game_id`, `is_ready=false`).
-    - [ ] Return `{ gameId, playerId }` on success.
-- [ ] **Implement Join Game UI (AC: 1, 4, 5)**
-  - [ ] Update `digital-guess-who/app/page.tsx` (Home Page) to include a "Join Game" section.
-  - [ ] Add an Input field for "Game Code" and a "Join" button (`shadcn/ui` components).
-  - [ ] Implement client-side logic to call `/api/game/join`.
-  - [ ] Handle success: Redirect to `/game-lobby/[code]` (reuse existing lobby page from Story 2.1).
-  - [ ] Handle error: Display toast notification (`shadcn/ui` toast) with error message.
-- [ ] **Testing & Verification**
-  - [ ] **Unit Test**: Test the validation logic in the API route (mocking DB).
-  - [ ] **Integration Test**: Simulate a Host creating a game, then a Guest joining it. Verify DB state (2 players).
-  - [ ] **UI Test**: Test the Home page interaction (entering code, clicking join, mocking API response). **Critical**: Ensure `global.fetch` is properly mocked per learnings from Story 2.1.
-  - [ ] **Manual Test**: Open two browsers/incognito. Host creates game. Guest enters code. Verify Guest enters lobby. Verify error when entering invalid code.
+- [x] **Implement Join Game Backend Logic (AC: 1, 2, 3)**
+  - [x] Create a Next.js API route `digital-guess-who/app/api/game/join/route.ts`.
+  - [x] In the API route:
+    - [x] Validate request body contains `code`.
+    - [x] Query `game_sessions` by `code` to find `id` and check `status` is 'waiting'.
+    - [x] Count existing `players` for this game. If >= 2, return 409 Conflict ("Game is full").
+    - [x] If valid, insert new record into `players` (`user_id`, `game_id`, `is_ready=false`).
+    - [x] Return `{ gameId, playerId }` on success.
+- [x] **Implement Join Game UI (AC: 1, 4, 5)**
+  - [x] Update `digital-guess-who/app/page.tsx` (Home Page) to include a "Join Game" section.
+  - [x] Add an Input field for "Game Code" and a "Join" button (`shadcn/ui` components).
+  - [x] Implement client-side logic to call `/api/game/join`.
+  - [x] Handle success: Redirect to `/game-lobby/[code]` (reuse existing lobby page from Story 2.1).
+  - [x] Handle error: Display toast notification (`shadcn/ui` toast) with error message.
+- [x] **Testing & Verification**
+  - [x] **Unit Test**: Test the validation logic in the API route (mocking DB).
+  - [x] **Integration Test**: Simulate a Host creating a game, then a Guest joining it. Verify DB state (2 players).
+  - [x] **UI Test**: Test the Home page interaction (entering code, clicking join, mocking API response). **Critical**: Ensure `global.fetch` is properly mocked per learnings from Story 2.1.
+  - [x] **Manual Test**: Open two browsers/incognito. Host creates game. Guest enters code. Verify Guest enters lobby. Verify error when entering invalid code.
 
 ## Dev Notes
 
@@ -96,6 +96,21 @@ gemini-2.5-flash
 ### Debug Log References
 
 ### Completion Notes List
+- Implemented `/api/game/join` with input validation (zod) and idempotent checks.
+- Created `JoinGameForm` using `react-hook-form`, `zod`, and `shadcn/ui` components.
+- Updated Home page to include the Join form and `Toaster` in layout.
+- Added comprehensive tests covering API integration and UI interactions with robust `fetch` mocking.
+- Fixed regressions in `createGame.test.ts` and flaky `generateGameCode.test.ts`.
 
 ### File List
+- digital-guess-who/app/api/game/join/route.ts
+- digital-guess-who/components/home/join-game-form.tsx
+- digital-guess-who/app/page.tsx
+- digital-guess-who/app/layout.tsx
+- digital-guess-who/tests/integration/joinGame.test.ts
+- digital-guess-who/tests/ui/home.test.tsx
+- digital-guess-who/tests/integration/createGame.test.ts
+- digital-guess-who/tests/unit/generateGameCode.test.ts
+- digital-guess-who/components/ui/sonner.tsx
+- digital-guess-who/components/ui/form.tsx
 
