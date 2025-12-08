@@ -22,6 +22,7 @@ describe('Database Types', () => {
         status: 'waiting' | 'active' | 'finished';
         host_id: string;
         winner_id: string | null;
+        difficulty: 'easy' | 'medium' | 'hard' | null;
         created_at: string;
     }> = true;
     expect(gameSessionCheck).toBe(true);
