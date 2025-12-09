@@ -45,7 +45,7 @@ development_status:
   epic-2: contexted
   2-1-lobby-ui-game-creation: done
   2-2-join-game-functionality: done
-  2-3-real-time-lobby-player-readiness: backlog
+  2-3-real-time-lobby-player-readiness: drafted
   epic-2-retrospective: optional
   epic-3: backlog
   3-1-game-board-secret-character-selection: backlog
