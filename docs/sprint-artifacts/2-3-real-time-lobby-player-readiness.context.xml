@@ -1,0 +1,127 @@
+<story-context id=".bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>2</epicId>
+    <storyId>3</storyId>
+    <title>Real-time Lobby &amp; Player Readiness</title>
+    <status>drafted</status>
+    <generatedAt>tirsdag 9. desember 2025</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/2-3-real-time-lobby-player-readiness.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>Player (Host or Guest)</asA>
+    <iWant>see when my opponent joins and signal when I am ready</iWant>
+    <soThat>we can start the game at the same time</soThat>
+    <tasks><![CDATA[
+- [ ] **Implement Client-Side State & Realtime Logic (AC: 1)**
+  - [ ] Install `zustand` dependency (missing in package.json).
+  - [ ] Create `useLobbyStore` (Zustand) to manage player list and readiness.
+  - [ ] Create `useGameSubscription` hook to subscribe to `game:[id]` channel.
+  - [ ] Handle `INSERT` events on `players` table (new player joined).
+  - [ ] Handle `DELETE` events or status updates for player leaving/disconnecting.
+  - [ ] Update UI avatar/list instantly upon events.
+- [ ] **Implement Player Readiness Interaction (AC: 2)**
+  - [ ] Add "I'm Ready" button to Lobby UI.
+  - [ ] Implement `toggleReady` function calling Supabase (update `players` set `is_ready = true`).
+  - [ ] Disable button and show green state upon success.
+- [ ] **Implement Game Start Transition (AC: 3)**
+  - [ ] In `useGameSubscription`, listen for `UPDATE` on `players`.
+  - [ ] Logic: If `players.length == 2` AND `all(p.is_ready)`, trigger navigation.
+  - [ ] Redirect both users to `/game-play/[code]`.
+- [ ] **Testing & Verification**
+  - [ ] **Unit Test**: Test `useLobbyStore` state transitions.
+  - [ ] **Integration Test**: Mock Supabase Realtime to verify subscription and event handling (AC 1).
+  - [ ] **Integration Test**: Verify `toggleReady` API call updates the database correctly (AC 2).
+  - [ ] **Manual Test**: Open two browsers. Join same game. Verify Player A sees Player B join. Verify Ready status syncs. Verify redirection (AC 3).
+]]></tasks>
+  </story>
+
+  <acceptanceCriteria><![CDATA[
+1.  **Given** I am in the Lobby
+    **When** The other player joins
+    **Then** The UI updates instantly to show their avatar/name (via Supabase Realtime)
+2.  **When** I click "I'm Ready"
+    **Then** My status updates to `is_ready: true`
+    **And** The "Ready" button becomes disabled/green
+3.  **When** Both players are `is_ready: true`
+    **Then** The game automatically transitions to the Gameplay screen
+]]></acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-2.md</path>
+        <title>Tech Spec: Epic 2 - Game Session Management</title>
+        <section>Detailed Design / APIs &amp; Interfaces</section>
+        <snippet>LobbyStore (lib/store/lobby.ts) manages local UI state. Set Ready: PATCH /players/[id] updates is_ready=true.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Communication Patterns (Supabase Realtime)</section>
+        <snippet>Channel Naming: game:[game-id]. Event Names: player-joined. State Sync: Events payload includes delta.</snippet>
+      </doc>
+      <doc>
+        <path>docs/ux-design-specification.md</path>
+        <title>UX Design Specification</title>
+        <section>Journey 1: Starting and Joining a Game</section>
+        <snippet>Game Start: The game begins only after both players have signaled they are ready. Click "I'm Ready".</snippet>
+      </doc>
+    </docs>
+    <code>
+      <item>
+        <path>digital-guess-who/db/schema.ts</path>
+        <kind>schema</kind>
+        <symbol>players</symbol>
+        <lines>26-32</lines>
+        <reason>Defines players table with is_ready boolean field.</reason>
+      </item>
+      <item>
+        <path>digital-guess-who/app/game-lobby/[code]/page.tsx</path>
+        <kind>component</kind>
+        <symbol>GameLobbyPage</symbol>
+        <reason>Main UI file for the lobby where the ready button and player list will be added.</reason>
+      </item>
+      <item>
+        <path>digital-guess-who/lib/supabase/client.ts</path>
+        <kind>utility</kind>
+        <symbol>createClient</symbol>
+        <reason>Factory for creating the browser Supabase client used for subscriptions.</reason>
+      </item>
+    </code>
+    <dependencies>
+      <pkg name="zustand" version="latest (missing)" />
+      <pkg name="@supabase/supabase-js" version="latest" />
+      <pkg name="sonner" version="latest" />
+    </dependencies>
+  </artifacts>
+
+  <constraints><![CDATA[
+- **Realtime Latency:** Updates must appear within 500ms (use Supabase Realtime Broadcast/Presence or Table changes).
+- **State Management:** MUST use `zustand` for lobby state as per Architecture.
+- **Channel Naming:** Must use `game:[game-id]`.
+- **Database:** `is_ready` field in `players` table is the source of truth for readiness.
+]]></constraints>
+
+  <interfaces><![CDATA[
+- **Supabase Realtime Channel**: `game:[id]`
+  - `INSERT` on `public.players`: New player joined.
+  - `UPDATE` on `public.players`: Player readiness changed.
+  - `DELETE` on `public.players`: Player left (optional handling).
+- **Database Update**:
+  - Table: `public.players`
+  - Field: `is_ready` (boolean)
+  - Operation: `UPDATE players SET is_ready = true WHERE id = [player_id]`
+]]></interfaces>
+
+  <tests>
+    <standards>Use Jest + React Testing Library (if configured) or manual verification. Focus on unit testing the Zustand store logic independently of UI.</standards>
+    <locations>digital-guess-who/tests/integration</locations>
+    <ideas><![CDATA[
+- Unit: Mock `useLobbyStore` and call `setReady`, verify state change.
+- Integration: Mock Supabase client, simulate `INSERT` event, verify store update.
+- Manual: Open two tabs (Split Brain), join same game code. Click Ready on one, verify button state. Click Ready on second, verify redirect.
+]]></ideas>
+  </tests>
+</story-context>

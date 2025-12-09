@@ -1,6 +1,6 @@
 # Story 2.3: Real-time Lobby & Player Readiness
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -93,11 +93,12 @@ so that we can start the game at the same time.
 - tirsdag 9. desember 2025: Initial Draft.
 - tirsdag 9. desember 2025: Updated after validation (Fixed citations, structure, and testing coverage).
 - tirsdag 9. desember 2025: Updated to resolve minor validation issues (Complete file list, specific citations).
+- tirsdag 9. desember 2025: Mark as ready-for-dev with context generated.
 
 ## Dev Agent Record
 
 ### Context Reference
-- `docs/sprint-artifacts/2-3-real-time-lobby-player-readiness.context.xml` (Placeholder)
+- `docs/sprint-artifacts/2-3-real-time-lobby-player-readiness.context.xml`
 
 ### Agent Model Used
 - gemini-2.5-flash
