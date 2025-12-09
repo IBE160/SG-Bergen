@@ -6,6 +6,13 @@ Managed by Supabase Auth.
 - `email` (String)
 - `created_at` (Timestamp)
 
+## Public User Profile (`public.users`)
+Mirrors auth users for public/shared access.
+- `id` (UUID, PK, FK -> `auth.users.id`)
+- `username` (Text)
+- `avatar_url` (Text)
+- `email` (Text): Duplicated from auth.users for visibility in lobby.
+
 ## Game Session (`public.game_sessions`)
 Represents a single match.
 - `id` (UUID, PK): `gen_random_uuid()`

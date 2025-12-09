@@ -34,6 +34,7 @@ export function useGameSubscription(gameId: string) {
           if (error) {
              console.error('Error fetching user for new player:', error)
              addPlayer({ ...newPlayer, users: null })
+             toast.error('Failed to fetch player details for a new player.')
           } else {
              addPlayer({ ...newPlayer, users: userData })
           }

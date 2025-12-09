@@ -8,7 +8,8 @@ create type public.action_type as enum ('question', 'answer', 'guess', 'flip');
 create table public.users (
   id uuid references auth.users not null primary key,
   username text,
-  avatar_url text
+  avatar_url text,
+  email text
 );
 
 create table public.game_sessions (

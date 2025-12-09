@@ -14,3 +14,5 @@ Routing guidance:
 | 2025-12-08 | 2.1 | 2 | Bug | Medium | Amelia | Done | Fix invalid fetch mocking in UI tests for game lobby. |
 | 2025-12-08 | 2.1 | 2 | Tech Debt | Low | TBD | Open | Wrap game/player creation in Supabase RPC to prevent orphaned sessions. |
 | 2025-12-08 | 2.1 | 2 | Enhancement | Low | TBD | Open | Add collision check or database constraint for game code uniqueness. |
+| tirsdag 9. desember 2025 | 2.3 | 2 | Security | Critical | TBD | Done | Verify Supabase RLS Policies for `public.players` and `public.users` tables to ensure authorization and data access control. |
+| tirsdag 9. desember 2025 | 2.3 | 2 | Documentation | Medium | TBD | Open | Create `docs/sprint-artifacts/tech-spec-epic-2.md` to detail architectural blueprint for "Game Session Management" epic. |
