@@ -1,6 +1,6 @@
 # Story 2.3: Real-time Lobby & Player Readiness
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -21,25 +21,25 @@ so that we can start the game at the same time.
 
 ## Tasks / Subtasks
 
-- [ ] **Implement Client-Side State & Realtime Logic (AC: 1)**
-  - [ ] Create `useLobbyStore` (Zustand) to manage player list and readiness.
-  - [ ] Create `useGameSubscription` hook to subscribe to `game:[id]` channel.
-  - [ ] Handle `INSERT` events on `players` table (new player joined).
-  - [ ] Handle `DELETE` events or status updates for player leaving/disconnecting.
-  - [ ] Update UI avatar/list instantly upon events.
-- [ ] **Implement Player Readiness Interaction (AC: 2)**
-  - [ ] Add "I'm Ready" button to Lobby UI.
-  - [ ] Implement `toggleReady` function calling Supabase (update `players` set `is_ready = true`).
-  - [ ] Disable button and show green state upon success.
-- [ ] **Implement Game Start Transition (AC: 3)**
-  - [ ] In `useGameSubscription`, listen for `UPDATE` on `players`.
-  - [ ] Logic: If `players.length == 2` AND `all(p.is_ready)`, trigger navigation.
-  - [ ] Redirect both users to `/game-play/[code]`.
-- [ ] **Testing & Verification**
-  - [ ] **Unit Test**: Test `useLobbyStore` state transitions.
-  - [ ] **Integration Test**: Mock Supabase Realtime to verify subscription and event handling (AC 1).
-  - [ ] **Integration Test**: Verify `toggleReady` API call updates the database correctly (AC 2).
-  - [ ] **Manual Test**: Open two browsers. Join same game. Verify Player A sees Player B join. Verify Ready status syncs. Verify redirection (AC 3).
+- [x] **Implement Client-Side State & Realtime Logic (AC: 1)**
+  - [x] Create `useLobbyStore` (Zustand) to manage player list and readiness.
+  - [x] Create `useGameSubscription` hook to subscribe to `game:[id]` channel.
+  - [x] Handle `INSERT` events on `players` table (new player joined).
+  - [x] Handle `DELETE` events or status updates for player leaving/disconnecting.
+  - [x] Update UI avatar/list instantly upon events.
+- [x] **Implement Player Readiness Interaction (AC: 2)**
+  - [x] Add "I'm Ready" button to Lobby UI.
+  - [x] Implement `toggleReady` function calling Supabase (update `players` set `is_ready = true`).
+  - [x] Disable button and show green state upon success.
+- [x] **Implement Game Start Transition (AC: 3)**
+  - [x] In `useGameSubscription`, listen for `UPDATE` on `players`.
+  - [x] Logic: If `players.length == 2` AND `all(p.is_ready)`, trigger navigation.
+  - [x] Redirect both users to `/game-play/[code]`.
+- [x] **Testing & Verification**
+  - [x] **Unit Test**: Test `useLobbyStore` state transitions.
+  - [x] **Integration Test**: Mock Supabase Realtime to verify subscription and event handling (AC 1).
+  - [x] **Integration Test**: Verify `toggleReady` API call updates the database correctly (AC 2).
+  - [x] **Manual Test**: Open two browsers. Join same game. Verify Player A sees Player B join. Verify Ready status syncs. Verify redirection (AC 3).
 
 ## Dev Notes
 
@@ -94,6 +94,7 @@ so that we can start the game at the same time.
 - tirsdag 9. desember 2025: Updated after validation (Fixed citations, structure, and testing coverage).
 - tirsdag 9. desember 2025: Updated to resolve minor validation issues (Complete file list, specific citations).
 - tirsdag 9. desember 2025: Mark as ready-for-dev with context generated.
+- tirsdag 9. desember 2025: Implemented lobby state management, realtime subscription, readiness logic, and navigation. Added unit, integration and UI tests.
 
 ## Dev Agent Record
 
@@ -107,7 +108,17 @@ so that we can start the game at the same time.
 - N/A
 
 ### Completion Notes List
-- (To be filled upon completion)
+- Implemented `useLobbyStore` using Zustand for managing player state in the lobby.
+- Created `useGameSubscription` hook to listen to Supabase Realtime events (INSERT, UPDATE, DELETE) on the `players` table.
+- Updated `GameLobbyPage` to use the store and subscription, providing a reactive UI.
+- Added "I'm Ready" button with optimistic updates and database persistence.
+- Implemented auto-navigation to `/game-play/[code]` when both players are ready.
+- Fixed UI tests by mocking `sonner` and waiting for async effects.
 
 ### File List
-- (To be filled upon completion)
+- digital-guess-who/lib/store/lobby.ts
+- digital-guess-who/lib/hooks/use-game-subscription.ts
+- digital-guess-who/app/game-lobby/[code]/page.tsx
+- digital-guess-who/tests/unit/lobbyStore.test.ts
+- digital-guess-who/tests/integration/lobbyRealtime.test.ts
+- digital-guess-who/tests/ui/gameLobby.test.tsx

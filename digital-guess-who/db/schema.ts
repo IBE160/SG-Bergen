@@ -66,4 +66,9 @@ $$;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
+
+-- Enable Realtime for specific tables
+-- Note: You must run this in the Supabase SQL Editor
+alter publication supabase_realtime add table players;
+alter publication supabase_realtime add table game_sessions;
 `;

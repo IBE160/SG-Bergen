@@ -3,6 +3,7 @@ import '@testing-library/jest-dom';
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import CreateGamePage from '@/app/game-lobby/create/page';
 import GameLobbyPage from '@/app/game-lobby/[code]/page';
+import { toast } from 'sonner';
 
 // Mock useRouter and useParams from next/navigation
 const mockPush = jest.fn();
@@ -18,9 +19,51 @@ jest.mock('next/navigation', () => ({
 // Mock clipboard API
 Object.assign(navigator, {
   clipboard: {
-    writeText: jest.fn(),
+    writeText: jest.fn().mockResolvedValue(undefined),
   },
 });
+
+// Mock Supabase Client
+jest.mock('@/lib/supabase/client', () => ({
+  createClient: () => ({
+    from: jest.fn().mockReturnThis(),
+    select: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    single: jest.fn().mockResolvedValue({ data: { id: 'game-123' }, error: null }),
+    update: jest.fn().mockResolvedValue({ error: null }),
+    auth: {
+      getUser: jest.fn().mockResolvedValue({ data: { user: { id: 'user-1' } } }),
+    },
+    channel: jest.fn().mockReturnValue({
+        on: jest.fn().mockReturnThis(),
+        subscribe: jest.fn(),
+    }),
+    removeChannel: jest.fn(),
+  }),
+}));
+
+// Mock hooks
+jest.mock('@/lib/hooks/use-game-subscription', () => ({
+    useGameSubscription: jest.fn(),
+}));
+
+// Mock useLobbyStore
+jest.mock('@/lib/store/lobby', () => ({
+  useLobbyStore: () => ({
+    players: [],
+    setPlayers: jest.fn(),
+    updatePlayer: jest.fn(),
+  }),
+}));
+
+// Mock sonner
+jest.mock('sonner', () => ({
+  toast: {
+    success: jest.fn(),
+    error: jest.fn(),
+    info: jest.fn(),
+  },
+}));
 
 describe('CreateGamePage', () => {
   beforeEach(() => {
@@ -84,26 +127,29 @@ describe('CreateGamePage', () => {
 });
 
 describe('GameLobbyPage', () => {
-  it('renders without crashing and displays the game code', () => {
+  it('renders without crashing and displays the game code', async () => {
     render(<GameLobbyPage />);
     expect(screen.getByText('Game Lobby')).toBeInTheDocument();
     expect(screen.getByDisplayValue('TESTCODE')).toBeInTheDocument();
+    
+    // Wait for the async effects to settle to avoid "act" warnings
+    await waitFor(() => expect(screen.getByText(/Loading players.../i)).toBeInTheDocument());
   });
 
-  it('has a copy-to-clipboard button', () => {
+  it('has a copy-to-clipboard button', async () => {
     render(<GameLobbyPage />);
     expect(screen.getByRole('button', { name: /Copy/i })).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText(/Loading players.../i)).toBeInTheDocument());
   });
 
   it('copies the game code to clipboard when copy button is clicked', async () => {
     render(<GameLobbyPage />);
     const copyButton = screen.getByRole('button', { name: /Copy/i });
 
-    await act(async () => {
-      fireEvent.click(copyButton);
-    });
+    fireEvent.click(copyButton);
 
     expect(navigator.clipboard.writeText).toHaveBeenCalledTimes(1);
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith('TESTCODE');
+    expect(toast.success).toHaveBeenCalledWith('Game code copied!');
   });
 });
