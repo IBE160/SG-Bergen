@@ -68,6 +68,36 @@
         <section>Journey 1: Starting and Joining a Game</section>
         <snippet>Game Start: The game begins only after both players have signaled they are ready. Click "I'm Ready".</snippet>
       </doc>
+      <doc>
+        <path>docs/data-models.md</path>
+        <title>Data Models</title>
+        <section>Player (public.players)</section>
+        <snippet>Player (`public.players`) ... `is_ready` (Boolean): Default `false`</snippet>
+      </doc>
+      <doc>
+        <path>docs/frontend-architecture.md</path>
+        <title>Frontend Architecture</title>
+        <section>Realtime Integration</section>
+        <snippet>Pattern: Custom hooks (e.g., `useGameSubscription`) wrap Supabase subscriptions and dispatch updates to Zustand stores.</snippet>
+      </doc>
+      <doc>
+        <path>docs/coding-standards.md</path>
+        <title>Coding Standards</title>
+        <section>Project Structure (Feature-Sliced)</section>
+        <snippet>Organize code by Feature rather than Type. Example: `app/game-lobby/` contains its own components...</snippet>
+      </doc>
+      <doc>
+        <path>docs/testing-strategy.md</path>
+        <title>Testing Strategy</title>
+        <section>Unit Testing (Automated)</section>
+        <snippet>Scope: Zustand store logic (state transitions). Tools: Jest, `ts-jest`.</snippet>
+      </doc>
+      <doc>
+        <path>docs/unified-project-structure.md</path>
+        <title>Unified Project Structure</title>
+        <section>3. components/ Directory</section>
+        <snippet>This directory is for reusable UI components, categorized by their domain or purpose.</snippet>
+      </doc>
     </docs>
     <code>
       <item>
@@ -88,6 +118,18 @@
         <kind>utility</kind>
         <symbol>createClient</symbol>
         <reason>Factory for creating the browser Supabase client used for subscriptions.</reason>
+      </item>
+      <item>
+        <path>digital-guess-who/package.json</path>
+        <kind>config</kind>
+        <symbol>dependencies</symbol>
+        <reason>Identifies current dependencies and highlights the absence of 'zustand'.</reason>
+      </item>
+      <item>
+        <path>digital-guess-who/components/home/join-game-form.tsx</path>
+        <kind>component</kind>
+        <symbol>JoinGameForm</symbol>
+        <reason>Provides an example of `shadcn/ui` Button usage and `next/navigation` useRouter for programmatic navigation.</reason>
       </item>
     </code>
     <dependencies>
