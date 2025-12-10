@@ -14,6 +14,8 @@ const mockSupabase = {
   from: jest.fn(() => mockSupabase), // Allows chaining .from().insert()
   insert: jest.fn(() => mockSupabase),
   select: jest.fn(() => mockSupabase),
+  delete: jest.fn(() => mockSupabase),
+  eq: jest.fn(() => mockSupabase),
   single: jest.fn(),
 };
 
@@ -173,5 +175,10 @@ describe('POST /api/game/create', () => {
 
     expect(response.status).toBe(500);
     expect(responseBody).toEqual({ error: 'Player DB error' });
+
+    // Verify cleanup: Should delete the created game session
+    expect(mockSupabase.from).toHaveBeenCalledWith('game_sessions');
+    expect(mockSupabase.delete).toHaveBeenCalled();
+    expect(mockSupabase.eq).toHaveBeenCalledWith('id', mockGameId);
   });
 });

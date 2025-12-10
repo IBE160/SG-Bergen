@@ -176,10 +176,23 @@ These patterns ensure consistent implementation across all AI agents and develop
 ## Security Architecture
 
 *   **Authentication:** Supabase Auth (Email/Password or Social).
-*   **Authorization (RLS):**
-    *   **Public:** Read-only access to specific public game data.
-    *   **Authenticated:** Can create games.
-    *   **Player:** Can only update *their own* moves and game state for games they are part of.
+*   **Authorization (Row Level Security - RLS):**
+    *   **Strict Default:** All tables have RLS enabled. "Enable all" policies are forbidden.
+    *   **Users Table:**
+        *   `SELECT`: Public (Authenticated) for basic profile info (username, avatar).
+        *   `UPDATE`: Restricted to `auth.uid() = id` (Self-service only).
+    *   **Game Sessions Table:**
+        *   `SELECT`: Public (Authenticated) to allow joining.
+        *   `INSERT`: Authenticated users only.
+        *   `UPDATE/DELETE`: Restricted to Host only (`auth.uid() = host_id`).
+    *   **Players Table (Sensitive):**
+        *   `SELECT`: Restricted to authenticated users (for MVP lobby visibility). *Planned upgrade for Epic 3: Restrict `character_id` visibility via a separate view.*
+        *   `INSERT`: Users can only add *themselves* as players (`auth.uid() = user_id`).
+        *   `UPDATE`: Users can only update their own status (`is_ready`).
+*   **Data Integrity & Anti-Cheating:**
+    *   **Uniqueness:** `game_sessions.code` has a strict unique constraint in the database.
+    *   **Atomic Cleanup:** API routes implement cleanup logic to delete orphaned game sessions if player creation fails.
+    *   **Server-Side Verification (Epic 3):** Winning guesses are verified on the server; the opponent's secret `character_id` is NEVER sent to the client to prevent inspection cheating.
 *   **Secrets:** API keys managed via `.env.local` and Vercel Environment Variables. Never committed to Git.
 
 ## Performance Considerations

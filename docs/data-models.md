@@ -50,3 +50,25 @@ erDiagram
     game_sessions ||--o{ moves : tracks
     players ||--o{ moves : performs
 ```
+
+## Security Policies (RLS)
+
+### `public.users`
+- **Select:** Public (Authenticated).
+- **Update:** Self-service only (`auth.uid() = id`).
+- **Insert:** Trigger-based or Service Role only.
+
+### `public.game_sessions`
+- **Select:** Public (Authenticated).
+- **Insert:** Authenticated users only.
+- **Update/Delete:** Host only (`auth.uid() = host_id`).
+- **Uniqueness:** `code` column must be unique.
+
+### `public.players`
+- **Select:** Authenticated users (Restricted view planned for Epic 3).
+- **Insert:** Users can only add themselves (`auth.uid() = user_id`).
+- **Update:** Users can only update their own status (e.g., `is_ready`).
+
+### `public.moves`
+- **Select:** Participants of the game only (Planned).
+- **Insert:** Active player only (Planned).

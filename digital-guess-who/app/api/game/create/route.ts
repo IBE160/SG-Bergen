@@ -51,7 +51,17 @@ export async function POST(request: NextRequest) {
 
     if (playerError || !player) {
       console.error('Error creating player record for host:', playerError);
-      // Potentially roll back game session creation here, or handle orphaned session
+      
+      // Cleanup orphaned game session
+      const { error: cleanupError } = await supabase
+        .from('game_sessions')
+        .delete()
+        .eq('id', gameSession.id);
+
+      if (cleanupError) {
+        console.error('Failed to cleanup orphaned game session:', cleanupError);
+      }
+
       return NextResponse.json({ error: playerError?.message || 'Failed to create player record' }, { status: 500 });
     }
 

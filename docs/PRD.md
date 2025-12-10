@@ -139,10 +139,11 @@ Key interactions within "Digital Guess Who" include:
     *   The UI elimination mechanic shall have a visual response time under 100ms.
 
 ### Security
-*   **Why it matters:** To protect user data and ensure fair play in a multiplayer environment.
+*   **Why it matters:** To protect user data and ensure fair play in a multiplayer environment, specifically preventing client-side state inspection cheating.
 *   **Criteria:**
+    *   **Strict Row Level Security (RLS):** All database tables must have granular RLS policies enabled. Public access is forbidden; data access must be restricted to authenticated users and scoped to specific games/users where applicable.
+    *   **Anti-Cheating:** Critical game logic, specifically the verification of a winning guess, must be validated server-side. The opponent's secret character ID must **never** be exposed to the client to prevent inspection-based cheating.
     *   User authentication (via Supabase) shall be secure.
-    *   Game session data shall be protected from unauthorized access or manipulation.
 
 ### Scalability
 *   **Why it matters:** To ensure the project can grow and accommodate future features and potential user base expansion.
