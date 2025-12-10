@@ -1,5 +1,5 @@
-import { useGameStore } from '@/app/game-play/store/game-store';
-import { act } from 'react-dom/test-utils'; // For Zustand testing
+import { useGameStore } from '@/lib/store/game-store';
+import { act } from 'react'; // Updated import
 
 // Mock Supabase Realtime for unit tests
 const mockSupabaseChannel = {
@@ -17,10 +17,7 @@ jest.mock('@supabase/supabase-js', () => ({
 }));
 
 describe('Game Zustand Store', () => {
-  let store: ReturnType<typeof useGameStore>;
-
   beforeEach(() => {
-    store = useGameStore.getState();
     act(() => {
       useGameStore.setState({
         currentTurnPlayerId: null,
@@ -33,19 +30,22 @@ describe('Game Zustand Store', () => {
   });
 
   it('should initialize with correct default state', () => {
-    expect(store.gameStatus).toBe('waiting');
-    expect(store.currentTurnPlayerId).toBeNull();
-    expect(store.winnerId).toBeNull();
-    expect(store.players).toHaveLength(2);
+    const state = useGameStore.getState();
+    expect(state.gameStatus).toBe('waiting');
+    expect(state.currentTurnPlayerId).toBeNull();
+    expect(state.winnerId).toBeNull();
+    expect(state.players).toHaveLength(2);
   });
 
   it('should start the game and set the first player\'s turn', () => {
+    const store = useGameStore.getState();
     act(() => store.startGame());
     expect(useGameStore.getState().gameStatus).toBe('active');
     expect(useGameStore.getState().currentTurnPlayerId).toBe('player1');
   });
 
   it('should switch turn to the next player', () => {
+    const store = useGameStore.getState();
     act(() => useGameStore.setState({ gameStatus: 'active', currentTurnPlayerId: 'player1' }));
     act(() => store.nextTurn('player2'));
     expect(useGameStore.getState().currentTurnPlayerId).toBe('player2');
@@ -55,6 +55,7 @@ describe('Game Zustand Store', () => {
   });
 
   it('should eliminate a character (placeholder logic)', () => {
+    const store = useGameStore.getState();
     const consoleSpy = jest.spyOn(console, 'log');
     act(() => store.eliminateCharacter(5));
     expect(consoleSpy).toHaveBeenCalledWith('Eliminating character: 5');
@@ -76,6 +77,7 @@ describe('Game Zustand Store', () => {
     });
 
     it('should set winner and game status if guess is correct (mocked API)', async () => {
+      const store = useGameStore.getState();
       // Mock correct guess response
       mockFetch.mockResolvedValueOnce({
         ok: true,
@@ -89,6 +91,7 @@ describe('Game Zustand Store', () => {
     });
 
     it('should set opponent as winner if guess is incorrect (mocked API)', async () => {
+      const store = useGameStore.getState();
       // Mock incorrect guess response
       mockFetch.mockResolvedValueOnce({
         ok: true,
@@ -103,6 +106,7 @@ describe('Game Zustand Store', () => {
   });
 
   it('should set the winner and end the game', () => {
+    const store = useGameStore.getState();
     act(() => store.setWinner('player1'));
     expect(useGameStore.getState().winnerId).toBe('player1');
     expect(useGameStore.getState().gameStatus).toBe('finished');

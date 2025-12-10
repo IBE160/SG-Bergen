@@ -5,7 +5,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "test": "jest"
+    "test": "jest",
+    "supabase:generate-types": "npx supabase gen types typescript --project-id atjwikeymrdkfczihgma --schema public > db/types.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
