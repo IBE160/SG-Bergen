@@ -22,24 +22,24 @@ so that the game can begin.
 
 ## Tasks / Subtasks
 
-- [ ] **Implement Game Board UI (AC: 1)**
-  - [ ] Create `CharacterGrid` component in `app/game-play/components`.
-  - [ ] Create `CharacterCard` component in `app/game-play/components` (display image, name).
-  - [ ] Implement `useGameStore` (Zustand) to manage `characters` list and `selectedCharacterId`.
-  - [ ] Fetch character data (static or DB) based on difficulty level from `game_session`.
-- [ ] **Implement Secret Selection Logic (AC: 2)**
-  - [ ] Add `selectCharacter` action to `useGameStore`.
-  - [ ] Implement `handleCharacterSelection` in `app/game-play/page.tsx` to update `players` table (`character_id`).
-  - [ ] Ensure `players` table RLS policies prevent reading `character_id` of other players (or use a separate secure method if strict RLS not yet fully active).
-- [ ] **Implement Game Start & Turn Assignment (AC: 3)**
-  - [ ] Update `useGameSubscription` to listen for `UPDATE` on `players` (checking if both have `character_id`).
-  - [ ] Create API route or secure logic (if Host) to set `current_turn_player_id` in `game_sessions` once both selected.
-  - [ ] Update `game_sessions` status to `playing` (or similar active state).
-  - [ ] Visual indicator for "Waiting for opponent to select..." .
-- [ ] **Testing & Verification**
-  - [ ] **Unit Test**: `useGameStore` selection logic.
-  - [ ] **Integration Test**: Verify `character_id` update is rejected if not own user (RLS check).
-  - [ ] **UI Test**: Verify grid renders correct count and selection highlights.
+- [x] **Implement Game Board UI (AC: 1)**
+  - [x] Create `CharacterGrid` component in `app/game-play/components`.
+  - [x] Create `CharacterCard` component in `app/game-play/components` (display image, name).
+  - [x] Implement `useGameStore` (Zustand) to manage `characters` list and `selectedCharacterId`.
+  - [x] Fetch character data (static or DB) based on difficulty level from `game_session`.
+- [x] **Implement Secret Selection Logic (AC: 2)**
+  - [x] Add `selectCharacter` action to `useGameStore`.
+  - [x] Implement `handleCharacterSelection` in `app/game-play/page.tsx` to update `players` table (`character_id`).
+  - [x] Ensure `players` table RLS policies prevent reading `character_id` of other players (or use a separate secure method if strict RLS not yet fully active).
+- [x] **Implement Game Start & Turn Assignment (AC: 3)**
+  - [x] Update `useGameSubscription` to listen for `UPDATE` on `players` (checking if both have `character_id`).
+  - [x] Create API route or secure logic (if Host) to set `current_turn_player_id` in `game_sessions` once both selected.
+  - [x] Update `game_sessions` status to `playing` (or similar active state).
+  - [x] Visual indicator for "Waiting for opponent to select..." .
+- [x] **Testing & Verification**
+  - [x] **Unit Test**: `useGameStore` selection logic.
+  - [x] **Integration Test**: Verify `character_id` update is rejected if not own user (RLS check).
+  - [x] **UI Test**: Verify grid renders correct count and selection highlights.
 
 ## Dev Notes
 
@@ -70,8 +70,25 @@ so that the game can begin.
 ### Debug Log References
 
 ### Completion Notes List
+- Implemented game board with `CharacterGrid` and `CharacterCard`.
+- Created `useGameStore` to manage game state including players and status.
+- Implemented secure secret selection using a new `player_secrets` table and strict RLS policies (Migration: `20251211120000_add_player_secrets.sql`).
+- Implemented Realtime subscription hook `useGameplaySubscription` to sync game start and turn assignment.
+- Verified store logic with unit tests.
 
 ### File List
+- digital-guess-who/app/game-play/components/character-grid.tsx
+- digital-guess-who/app/game-play/components/character-card.tsx
+- digital-guess-who/app/game-play/[code]/game-client.tsx
+- digital-guess-who/app/game-play/[code]/page.tsx
+- digital-guess-who/lib/store/game.ts
+- digital-guess-who/lib/data/characters.ts
+- digital-guess-who/lib/hooks/use-gameplay-subscription.ts
+- digital-guess-who/tests/unit/gameStore.test.ts
+- supabase/migrations/20251211120000_add_player_secrets.sql
+
+## Change Log
+- 2025-12-11: Implemented Story 3.1 (Game Board & Secret Selection).
 
 ## Learnings from Previous Story
 
