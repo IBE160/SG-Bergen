@@ -1,6 +1,6 @@
 # Story 3.1: Game Board & Secret Character Selection
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -35,7 +35,7 @@ so that the game can begin.
   - [ ] Update `useGameSubscription` to listen for `UPDATE` on `players` (checking if both have `character_id`).
   - [ ] Create API route or secure logic (if Host) to set `current_turn_player_id` in `game_sessions` once both selected.
   - [ ] Update `game_sessions` status to `playing` (or similar active state).
-  - [ ] Visual indicator for "Waiting for opponent to select...".
+  - [ ] Visual indicator for "Waiting for opponent to select..." .
 - [ ] **Testing & Verification**
   - [ ] **Unit Test**: `useGameStore` selection logic.
   - [ ] **Integration Test**: Verify `character_id` update is rejected if not own user (RLS check).
@@ -63,11 +63,9 @@ so that the game can begin.
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- docs/sprint-artifacts/3-1-game-board-secret-character-selection.context.xml
 
 ### Agent Model Used
-
-gemini-2.5-flash
 
 ### Debug Log References
 
