@@ -55,6 +55,11 @@ It adheres to the **Backend Architecture** by using **Next.js API Routes** for s
 
 **Note:** See `docs/data-models.md` for full field definitions and relationships.
 
+**Key Entities:**
+*   **`game_sessions`**: Manages the overall state of a game, including turn management and win/loss conditions.
+*   **`players`**: Stores player-specific data within a game session, including chosen secret character.
+*   **`moves`**: Records actions taken during a game, such as questions, answers, and guesses.
+
 **Database Updates:**
 *   **`game_sessions`**: Updates to `current_turn_player_id`, `winner_id`, and `status`.
 *   **`players`**: `character_id` is now actively used.
@@ -96,11 +101,16 @@ It adheres to the **Backend Architecture** by using **Next.js API Routes** for s
 ### Reliability
 *   **Reconnection:** If a player refreshes, `useGameStore` should re-hydrate state from `game_sessions` and `moves` history.
 
+### Observability
+*   **Logging:** Implement structured logging for key events (e.g., game start/end, player actions, errors).
+*   **Monitoring:** Monitor Realtime channel performance and API route response times.
+*   **Error Reporting:** Integrate with an error tracking system to capture and report exceptions.
+
 ## Dependencies and Integrations
 
-*   **Supabase Realtime:** Critical for the game loop.
-*   **Zustand:** Required for `useGameStore`.
-*   **shadcn/ui:** Components: `Card`, `Button`, `Dialog` (for Guess confirmation), `Input`.
+*   **Supabase Realtime:** Critical for the game loop (e.g., `^1.0.0`).
+*   **Zustand:** Required for `useGameStore` (e.g., `^4.0.0`).
+*   **shadcn/ui:** Components: `Card`, `Button`, `Dialog` (for Guess confirmation), `Input` (e.g., `^0.5.0`).
 
 ## Acceptance Criteria (Authoritative)
 
@@ -140,6 +150,10 @@ It adheres to the **Backend Architecture** by using **Next.js API Routes** for s
 ## Risks, Assumptions, Open Questions
 
 *   **Risk:** Users inspecting network traffic. *Mitigation:* Strict RLS as per `docs/security/rls-audit.md`.
+*   **Assumption:** Supabase Realtime performance will be sufficient for 500ms latency requirement.
+*   **Open Question:** How will game state be reconciled if a player disconnects and reconnects mid-turn?
+    *   *Impact:* Could lead to inconsistent game states or unfair advantages.
+    *   *Next Steps:* Investigate Supabase Realtime presence and state management features.
 
 ## Test Strategy Summary
 
