@@ -23,7 +23,7 @@ const mockSupabase = {
                 select: () => ({
                     eq: () => ({
                         single: jest.fn().mockResolvedValue({ 
-                            data: { id: 'game-1', difficulty: 'medium', status: 'waiting' } 
+                            data: { id: 'game-1', difficulty: 'medium', status: 'waiting', phase: 'selection' } 
                         })
                     })
                 })

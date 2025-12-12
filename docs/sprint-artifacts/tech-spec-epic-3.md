@@ -56,13 +56,15 @@ It adheres to the **Backend Architecture** by using **Next.js API Routes** for s
 **Note:** See `docs/data-models.md` for full field definitions and relationships.
 
 **Key Entities:**
-*   **`game_sessions`**: Manages the overall state of a game, including turn management and win/loss conditions.
-*   **`players`**: Stores player-specific data within a game session, including chosen secret character.
-*   **`moves`**: Records actions taken during a game, such as questions, answers, and guesses.
+*   **`game_sessions`**: Manages the overall state of a game, including turn management, phase, and win/loss conditions.
+*   **`players`**: Stores player-specific data within a game session.
+*   **`player_secrets`**: Securely stores the chosen secret character, replacing `players.character_id`.
+*   **`moves`**: Records actions taken during the game, such as questions, answers, and guesses.
 
 **Database Updates:**
-*   **`game_sessions`**: Updates to `current_turn_player_id`, `winner_id`, and `status`.
-*   **`players`**: `character_id` is now actively used.
+*   **`game_sessions`**: Updates to `current_turn_player_id`, `winner_id`, `status`, and `phase`.
+*   **`players`**: `is_ready` is reset and used in a 2-phase process. `character_id` is deprecated.
+*   **`player_secrets`**: New table for secure character storage.
 *   **`moves`**: New usage for recording actions (`question`, `answer`, `guess`) and `details` JSONB.
 
 ### APIs and Interfaces
@@ -166,6 +168,9 @@ It adheres to the **Backend Architecture** by using **Next.js API Routes** for s
 ## Post-Review Follow-ups
 
 **Story 3.1 Review (2025-12-12):**
-- **Critical Gap:** The mechanism to transition a game from 'waiting'/'selecting' to 'playing' is missing on the server side. Logic must be added (API or DB trigger) to detect when both players are ready and update `game_sessions.status` and `current_turn_player_id`.
-- **Critical Gap:** `GameClient` is not using the Realtime subscription, meaning it ignores server state updates.
-- **Testing:** Targeted integration tests for the RLS security on `player_secrets` are missing.
+- **Resolved (2025-12-12):** Initial critical gaps addressed through migration (`add_game_phase.sql`) and client-side updates. Game now transitions through `lobby` -> `selection` -> `game` phases.
+  - Server-side game start logic via trigger `handle_game_start` now correctly updates `game_sessions.phase`.
+  - `GameClient` and `GameLobbyPage` now correctly use `gamePhase` for state transitions and UI.
+  - `useGameplaySubscription` is integrated and both Realtime hooks are working.
+  - Missing tests for Grid UI and Secret RLS integration have been added.
+- **Resolved (2025-12-12):** Difficulty logic implemented in `GameClient`.

@@ -16,9 +16,11 @@ create table public.game_sessions (
   id uuid default gen_random_uuid() primary key,
   code text not null,
   status public.game_status default 'waiting'::public.game_status not null,
+  phase text default 'lobby' not null,
   host_id uuid references public.users(id) not null,
   winner_id uuid references public.users(id),
   difficulty public.game_difficulty,
+  current_turn_player_id uuid,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
@@ -26,8 +28,15 @@ create table public.players (
   id uuid default gen_random_uuid() primary key,
   user_id uuid references public.users(id) not null,
   game_id uuid references public.game_sessions(id) not null,
-  character_id integer,
+  character_id integer, -- Deprecated in favor of player_secrets
   is_ready boolean default false not null
+);
+
+create table public.player_secrets (
+  id uuid default gen_random_uuid() primary key,
+  player_id uuid references public.players(id) not null unique,
+  character_id integer not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
 create table public.moves (
@@ -43,33 +52,8 @@ create table public.moves (
 alter table public.users enable row level security;
 alter table public.game_sessions enable row level security;
 alter table public.players enable row level security;
+alter table public.player_secrets enable row level security;
 alter table public.moves enable row level security;
 
--- Permissive policies for MVP
-create policy "Enable all access for all users" on public.users for all using (true) with check (true);
-create policy "Enable all access for all users" on public.game_sessions for all using (true) with check (true);
-create policy "Enable all access for all users" on public.players for all using (true) with check (true);
-create policy "Enable all access for all users" on public.moves for all using (true) with check (true);
-
--- Function and trigger to create a public.users entry for each new auth.users
-create function public.handle_new_user()
-returns trigger
-language plpgsql
-security definer set search_path = public
-as $$
-begin
-  insert into public.users (id)
-  values (new.id);
-  return new;
-end;
-$$;
-
-create trigger on_auth_user_created
-  after insert on auth.users
-  for each row execute procedure public.handle_new_user();
-
--- Enable Realtime for specific tables
--- Note: You must run this in the Supabase SQL Editor
-alter publication supabase_realtime add table players;
-alter publication supabase_realtime add table game_sessions;
+-- Policies (Refer to migration files for exact policies)
 `;

@@ -19,17 +19,26 @@ Represents a single match.
 - `code` (Text, Unique): Human-readable join code (e.g., "ABCD")
 - `host_id` (UUID, FK -> `auth.users.id`): The creator of the game
 - `status` (Enum): `waiting`, `active`, `finished`
+- `phase` (Text): `lobby` (default), `selection`, `game` - Tracks granular game flow.
 - `difficulty` (Enum): `easy`, `medium`, `hard`
-- `created_at` (Timestamptz)
+- `current_turn_player_id` (UUID, Nullable): FK -> `players.id`
 - `winner_id` (UUID, Nullable): FK -> `auth.users.id`
+- `created_at` (Timestamptz)
 
 ## Player (`public.players`)
 Links a user to a game session.
 - `id` (UUID, PK): `gen_random_uuid()`
 - `game_id` (UUID, FK -> `game_sessions.id`)
 - `user_id` (UUID, FK -> `auth.users.id`)
-- `character_id` (Integer, Nullable): ID of the assigned character (Secret)
+- `character_id` (Integer, Nullable): *Deprecated* - Moved to `player_secrets`.
 - `is_ready` (Boolean): Default `false`
+
+## Player Secrets (`public.player_secrets`)
+Secure storage for sensitive player data (character selection).
+- `id` (UUID, PK)
+- `player_id` (UUID, Unique, FK -> `players.id`)
+- `character_id` (Integer): The selected secret character ID.
+- `created_at` (Timestamptz)
 
 ## Move (`public.moves`)
 Records actions taken during the game.
