@@ -14,7 +14,7 @@ interface GameClientProps {
 }
 
 export function GameClient({ gameCode }: GameClientProps) {
-  const { setCharacters, selectedCharacterId, selectCharacter, gameStatus, setGameStatus } = useGameStore();
+  const { setCharacters, selectedCharacterId, selectCharacter, gamePhase, setGamePhase } = useGameStore();
   const [isLoading, setIsLoading] = useState(false);
   const [playerId, setPlayerId] = useState<string | null>(null);
   const [gameId, setGameId] = useState<string | null>(null);
@@ -32,7 +32,7 @@ export function GameClient({ gameCode }: GameClientProps) {
       // 1. Fetch Session & Difficulty
       const { data: session } = await supabase
         .from('game_sessions')
-        .select('id, difficulty, status')
+        .select('id, difficulty, status, phase')
         .eq('code', gameCode)
         .single();
       
@@ -42,7 +42,7 @@ export function GameClient({ gameCode }: GameClientProps) {
       }
 
       setGameId(session.id);
-      setGameStatus(session.status as any);
+      if (session.phase) setGamePhase(session.phase);
 
       // Set Characters based on Difficulty
       let charCount = 24; // Default Medium
@@ -76,7 +76,7 @@ export function GameClient({ gameCode }: GameClientProps) {
     };
 
     initGame();
-  }, [gameCode, setCharacters, selectCharacter, supabase, setGameStatus]);
+  }, [gameCode, setCharacters, selectCharacter, supabase, setGamePhase]);
 
   const handleConfirmSelection = async () => {
     if (!selectedCharacterId || !playerId) return;
@@ -108,8 +108,8 @@ export function GameClient({ gameCode }: GameClientProps) {
     }
   };
 
-  // Determine mode based on global status
-  const isSelecting = gameStatus === 'selecting' || gameStatus === 'waiting';
+  // Determine mode based on global phase
+  const isSelecting = gamePhase === 'selection';
 
   return (
     <div className="container mx-auto flex min-h-screen flex-col p-4">

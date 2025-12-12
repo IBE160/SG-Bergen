@@ -9,7 +9,8 @@ interface LobbyState {
   players: Player[]
   isLoading: boolean
   error: string | null
-  gameStatus: string // 'waiting' | 'selecting' | 'active' | 'finished'
+  gameStatus: string 
+  gamePhase: string
   setPlayers: (players: Player[]) => void
   addPlayer: (player: Player) => void
   removePlayer: (playerId: string) => void
@@ -17,6 +18,7 @@ interface LobbyState {
   setLoading: (isLoading: boolean) => void
   setError: (error: string | null) => void
   setGameStatus: (status: string) => void
+  setGamePhase: (phase: string) => void
 }
 
 export const useLobbyStore = create<LobbyState>((set) => ({
@@ -24,6 +26,7 @@ export const useLobbyStore = create<LobbyState>((set) => ({
   isLoading: false,
   error: null,
   gameStatus: 'waiting',
+  gamePhase: 'lobby',
   setPlayers: (players) => set({ players }),
   addPlayer: (player) =>
     set((state) => ({
@@ -42,4 +45,5 @@ export const useLobbyStore = create<LobbyState>((set) => ({
   setLoading: (isLoading) => set({ isLoading }),
   setError: (error) => set({ error }),
   setGameStatus: (status) => set({ gameStatus: status }),
+  setGamePhase: (phase) => set({ gamePhase: phase }),
 }))

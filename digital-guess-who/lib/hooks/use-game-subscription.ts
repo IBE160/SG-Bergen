@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 import { Tables } from '@/db/types'
 
 export function useGameSubscription(gameId: string) {
-  const { addPlayer, removePlayer, updatePlayer, setGameStatus } = useLobbyStore()
+  const { addPlayer, removePlayer, updatePlayer, setGameStatus, setGamePhase } = useLobbyStore()
   const supabase = createClient()
 
   useEffect(() => {
@@ -79,8 +79,11 @@ export function useGameSubscription(gameId: string) {
         (payload: any) => {
            const newStatus = payload.new.status
            setGameStatus(newStatus)
-           if (newStatus === 'selecting') {
-               toast.success("All players ready! Starting selection...");
+           if (payload.new.phase) {
+               setGamePhase(payload.new.phase)
+               if (payload.new.phase === 'selection') {
+                   toast.success("Starting selection...");
+               }
            }
         }
       )
@@ -89,5 +92,5 @@ export function useGameSubscription(gameId: string) {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [gameId, supabase, addPlayer, removePlayer, updatePlayer, setGameStatus])
+  }, [gameId, supabase, addPlayer, removePlayer, updatePlayer, setGameStatus, setGamePhase])
 }

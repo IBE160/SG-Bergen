@@ -18,7 +18,7 @@ export default function GameLobbyPage() {
   const [gameId, setGameId] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<any>(null);
 
-  const { players, setPlayers, updatePlayer, gameStatus } = useLobbyStore();
+  const { players, setPlayers, updatePlayer, gamePhase } = useLobbyStore();
   const supabase = createClient();
 
   // 1. Fetch Game ID and Initial Players
@@ -28,7 +28,7 @@ export default function GameLobbyPage() {
 
       const { data: gameData, error: gameError } = await supabase
         .from('game_sessions')
-        .select('id, status')
+        .select('id, status, phase')
         .eq('code', gameCode)
         .single();
 
@@ -39,8 +39,8 @@ export default function GameLobbyPage() {
       }
 
       setGameId(gameData.id);
-      // Initialize store status if already selecting
-      if (gameData.status === 'selecting') {
+      // Initialize store phase if already selecting or game
+      if (gameData.phase === 'selection' || gameData.phase === 'game') {
           router.push(`/game-play/${gameCode}`);
           return;
       }
@@ -89,10 +89,10 @@ export default function GameLobbyPage() {
 
   // 4. Handle Navigation (Game Start)
   useEffect(() => {
-    if (gameStatus === 'selecting') {
+    if (gamePhase === 'selection') {
       router.push(`/game-play/${gameCode}`);
     }
-  }, [gameStatus, gameCode, router]);
+  }, [gamePhase, gameCode, router]);
 
   const handleCopyCode = () => {
     if (gameCode) {

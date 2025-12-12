@@ -4,7 +4,7 @@ import { useGameStore } from '@/lib/store/game'
 import { toast } from 'sonner'
 
 export function useGameplaySubscription(gameId: string | null) {
-  const { setGameStatus, setCurrentTurn, setPlayers } = useGameStore()
+  const { setGameStatus, setCurrentTurn, setPlayers, setGamePhase } = useGameStore()
   const supabase = createClient()
 
   useEffect(() => {
@@ -16,6 +16,7 @@ export function useGameplaySubscription(gameId: string | null) {
         if (session) {
             setGameStatus(session.status as any); 
             setCurrentTurn(session.current_turn_player_id);
+            if (session.phase) setGamePhase(session.phase);
         }
         
         const { data: currentPlayers } = await supabase.from('players').select('*').eq('game_id', gameId);
@@ -42,7 +43,11 @@ export function useGameplaySubscription(gameId: string | null) {
           setGameStatus(newStatus);
           setCurrentTurn(newTurn);
           
-          if (newStatus === 'playing' && payload.old.status !== 'playing') {
+          if (payload.new.phase) {
+              setGamePhase(payload.new.phase);
+          }
+          
+          if (newStatus === 'active' && payload.old.status !== 'active') {
             toast.info("Game Started!");
           }
         }
@@ -68,5 +73,5 @@ export function useGameplaySubscription(gameId: string | null) {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [gameId, supabase, setGameStatus, setCurrentTurn, setPlayers])
+  }, [gameId, supabase, setGameStatus, setCurrentTurn, setPlayers, setGamePhase])
 }
