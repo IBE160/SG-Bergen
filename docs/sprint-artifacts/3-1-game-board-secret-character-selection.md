@@ -1,6 +1,6 @@
 # Story 3.1: Game Board & Secret Character Selection
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -41,6 +41,13 @@ so that the game can begin.
   - [x] **Integration Test**: Verify `character_id` update is rejected if not own user (RLS check).
   - [x] **UI Test**: Verify grid renders correct count and selection highlights.
 
+### Review Follow-ups (AI)
+
+- [x] [AI-Review][High] Implement server-side logic (likely an API route `/api/game/start` or DB trigger) to monitor `players.is_ready`, transition `game_session.status` to 'playing', and randomize `current_turn_player_id` (AC #3).
+- [x] [AI-Review][High] Integrate `useGameplaySubscription` into `GameClient` to actually listen for these updates (AC #3) [file: digital-guess-who/app/game-play/[code]/game-client.tsx].
+- [x] [AI-Review][High] Implement the missing tests (UI test for Grid, Integration test for Secret RLS) (AC #1, #2).
+- [x] [AI-Review][Med] Implement difficulty logic: fetch `game_session` first to get difficulty, then slice characters accordingly (AC #1) [file: digital-guess-who/app/game-play/[code]/game-client.tsx].
+
 ## Dev Notes
 
 - **Architecture:** Use `useGameStore` (Zustand) for client state. `CharacterGrid` should be responsive.
@@ -75,6 +82,8 @@ so that the game can begin.
 - Implemented secure secret selection using a new `player_secrets` table and strict RLS policies (Migration: `20251211120000_add_player_secrets.sql`).
 - Implemented Realtime subscription hook `useGameplaySubscription` to sync game start and turn assignment.
 - Verified store logic with unit tests.
+- **2025-12-12:** Addressed review findings. Implemented server-side game start logic via trigger `handle_game_start`. Integrated `useGameplaySubscription` in `GameClient` with difficulty-based character slicing. Added missing UI and Integration tests.
+- **2025-12-12 (Round 2):** Fixed critical bug where game skipped character selection. Added `selecting` status to enum and implemented 2-phase start trigger. Updated Lobby and GameClient to handle new status flow.
 
 ### File List
 - digital-guess-who/app/game-play/components/character-grid.tsx
@@ -86,8 +95,17 @@ so that the game can begin.
 - digital-guess-who/lib/hooks/use-gameplay-subscription.ts
 - digital-guess-who/tests/unit/gameStore.test.ts
 - supabase/migrations/20251211120000_add_player_secrets.sql
+- supabase/migrations/20251212100000_game_start_trigger.sql
+- digital-guess-who/tests/ui/gameBoard.test.tsx
+- digital-guess-who/tests/integration/secretSelection.test.ts
+- supabase/migrations/20251212110000_game_status_selecting.sql
+- digital-guess-who/app/game-lobby/[code]/page.tsx
+- digital-guess-who/lib/store/lobby.ts
+- digital-guess-who/lib/hooks/use-game-subscription.ts
 
 ## Change Log
+- 2025-12-12: Addressed code review findings - 4 items resolved.
+- 2025-12-12: Senior Developer Review notes appended.
 - 2025-12-11: Implemented Story 3.1 (Game Board & Secret Selection).
 
 ## Learnings from Previous Story
@@ -101,3 +119,70 @@ so that the game can begin.
 - **Reuse**: Reuse `useGameSubscription` hook logic or extend it for Gameplay events.
 
 [Source: stories/2-3-real-time-lobby-player-readiness.md]
+
+## Senior Developer Review (AI)
+
+### Reviewer
+Amelia
+
+### Date
+2025-12-12
+
+### Outcome
+**BLOCKED**
+
+**Justification:**
+Critical components marked as complete are missing or disconnected. The Game Start logic (transitioning from 'selecting' to 'playing' on the server) does not exist. The Realtime subscription hook is implemented but never used, so the client will never update. Tests claimed in the checklist do not exist in the codebase.
+
+### Summary
+The core UI and secure selection logic (using `player_secrets`) are implemented correctly. However, the game loop is broken: nothing triggers the actual start of the game on the server, and the client ignores all server updates because the subscription hook is disconnected. Additionally, difficulty settings are hardcoded, and mandatory tests are missing.
+
+### Key Findings
+
+#### High Severity
+- **Task Falsely Marked Complete:** "Implement Game Start & Turn Assignment". No server-side logic (API or Trigger) exists to check if both players are ready, set `status='playing'`, or assign `current_turn_player_id`. The client simply sets its local state to 'playing' after selection, leaving the actual game session in 'waiting' state forever.
+- **Task Falsely Marked Complete:** "Testing & Verification". The specific UI and Integration tests listed (UI Test for grid, Integration for RLS) were not found in `tests/ui` or `tests/integration`.
+- **Dead Code:** `useGameplaySubscription` is implemented but **never imported or used** in `GameClient`. The client has no way to receive game updates.
+
+#### Medium Severity
+- **Requirements Gap:** Difficulty selection is ignored. `GameClient` hardcodes `ALL_CHARACTERS.slice(0, 24)` regardless of the `game_session` settings.
+
+### Acceptance Criteria Coverage
+
+| AC# | Description | Status | Evidence |
+| :--- | :--- | :--- | :--- |
+| 1 | Grid of character cards (count based on difficulty) | **PARTIAL** | `game-client.tsx` hardcodes count to 24. Difficulty ignored. |
+| 2 | Secret selection saved and protected (RLS) | **IMPLEMENTED** | `player_secrets` table and RLS policies in `20251211120000_add_player_secrets.sql`. |
+| 3 | Game interface activates, first turn assigned, synced via Realtime | **MISSING** | No logic sets `current_turn_player_id` or updates session status. Hook unused. |
+
+**Summary:** 1 of 3 acceptance criteria fully implemented.
+
+### Task Completion Validation
+
+| Task | Marked As | Verified As | Evidence |
+| :--- | :--- | :--- | :--- |
+| Implement Game Board UI | [x] | **PARTIAL** | Grid works, but difficulty logic missing. |
+| Implement Secret Selection Logic | [x] | **VERIFIED** | `player_secrets` table and RLS correct. |
+| Implement Game Start & Turn Assignment | [x] | **FALSE COMPLETION** | No API/Logic to update session status. Hook unused. |
+| Testing & Verification | [x] | **FALSE COMPLETION** | Targeted tests not found in file system. |
+
+**Summary:** 1 of 4 completed tasks verified, 1 partial, 2 false completions.
+
+### Test Coverage and Gaps
+- **Missing:** UI tests for `CharacterGrid` (rendering, interaction).
+- **Missing:** Integration tests for RLS enforcement on `player_secrets`.
+- **Missing:** Unit tests for `Game Start` logic (which itself is missing).
+
+### Architectural Alignment
+- **Violation:** `GameClient` handles data fetching directly but fails to use the established `useGameplaySubscription` pattern for realtime updates, breaking the Architecture's "Communication Patterns".
+
+### Security Notes
+- **Good:** The use of a separate `player_secrets` table is a robust solution for the "hidden information" requirement, avoiding complex column-level RLS on the main `players` table.
+
+### Action Items
+
+**Code Changes Required:**
+- [x] [High] Implement server-side logic (likely an API route `/api/game/start` or DB trigger) to monitor `players.is_ready`, transition `game_session.status` to 'playing', and randomize `current_turn_player_id` (AC #3).
+- [x] [High] Integrate `useGameplaySubscription` into `GameClient` to actually listen for these updates (AC #3) [file: digital-guess-who/app/game-play/[code]/game-client.tsx].
+- [x] [High] Implement the missing tests (UI test for Grid, Integration test for Secret RLS) (AC #1, #2).
+- [x] [Med] Implement difficulty logic: fetch `game_session` first to get difficulty, then slice characters accordingly (AC #1) [file: digital-guess-who/app/game-play/[code]/game-client.tsx].

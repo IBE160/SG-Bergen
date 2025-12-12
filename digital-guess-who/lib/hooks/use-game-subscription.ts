@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 import { Tables } from '@/db/types'
 
 export function useGameSubscription(gameId: string) {
-  const { addPlayer, removePlayer, updatePlayer } = useLobbyStore()
+  const { addPlayer, removePlayer, updatePlayer, setGameStatus } = useLobbyStore()
   const supabase = createClient()
 
   useEffect(() => {
@@ -24,7 +24,6 @@ export function useGameSubscription(gameId: string) {
         async (payload) => {
           const newPlayer = payload.new as Tables<'players'>
           
-          // Fetch user details
           const { data: userData, error } = await supabase
             .from('users')
             .select('*')
@@ -62,11 +61,26 @@ export function useGameSubscription(gameId: string) {
           filter: `game_id=eq.${gameId}`,
         },
         (payload) => {
-           // Type assertion for payload.old assuming it contains the record or at least the ID
            const deletedRecord = payload.old as { id: string }
            if (deletedRecord && deletedRecord.id) {
              removePlayer(deletedRecord.id)
              toast.info('A player has left.')
+           }
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'game_sessions',
+          filter: `id=eq.${gameId}`,
+        },
+        (payload: any) => {
+           const newStatus = payload.new.status
+           setGameStatus(newStatus)
+           if (newStatus === 'selecting') {
+               toast.success("All players ready! Starting selection...");
            }
         }
       )
@@ -75,5 +89,5 @@ export function useGameSubscription(gameId: string) {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [gameId, supabase, addPlayer, removePlayer, updatePlayer])
+  }, [gameId, supabase, addPlayer, removePlayer, updatePlayer, setGameStatus])
 }

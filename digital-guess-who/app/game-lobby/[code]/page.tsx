@@ -1,4 +1,3 @@
-// digital-guess-who/app/game-lobby/[code]/page.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -19,7 +18,7 @@ export default function GameLobbyPage() {
   const [gameId, setGameId] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<any>(null);
 
-  const { players, setPlayers, updatePlayer } = useLobbyStore();
+  const { players, setPlayers, updatePlayer, gameStatus } = useLobbyStore();
   const supabase = createClient();
 
   // 1. Fetch Game ID and Initial Players
@@ -27,10 +26,9 @@ export default function GameLobbyPage() {
     async function initLobby() {
       if (!gameCode) return;
 
-      // Get Game ID from Code
       const { data: gameData, error: gameError } = await supabase
         .from('game_sessions')
-        .select('id')
+        .select('id, status')
         .eq('code', gameCode)
         .single();
 
@@ -41,12 +39,15 @@ export default function GameLobbyPage() {
       }
 
       setGameId(gameData.id);
+      // Initialize store status if already selecting
+      if (gameData.status === 'selecting') {
+          router.push(`/game-play/${gameCode}`);
+          return;
+      }
 
-      // Get Current User
       const { data: { user } } = await supabase.auth.getUser();
       setCurrentUser(user);
 
-      // Fetch Players
       const { data: playersData, error: playersError } = await supabase
         .from('players')
         .select('*, users(*)')
@@ -73,7 +74,6 @@ export default function GameLobbyPage() {
 
     const newStatus = !myPlayer.is_ready;
 
-    // Optimistic Update
     updatePlayer({ ...myPlayer, is_ready: newStatus });
 
     const { error } = await supabase
@@ -83,20 +83,16 @@ export default function GameLobbyPage() {
 
     if (error) {
       toast.error('Failed to update status');
-      // Revert
       updatePlayer({ ...myPlayer, is_ready: !newStatus });
     }
   };
 
   // 4. Handle Navigation (Game Start)
   useEffect(() => {
-    if (players.length === 2 && players.every(p => p.is_ready)) {
-      toast.success('Both players ready! Starting game...');
-      setTimeout(() => {
-        router.push(`/game-play/${gameCode}`);
-      }, 1000);
+    if (gameStatus === 'selecting') {
+      router.push(`/game-play/${gameCode}`);
     }
-  }, [players, gameCode, router]);
+  }, [gameStatus, gameCode, router]);
 
   const handleCopyCode = () => {
     if (gameCode) {
@@ -170,7 +166,7 @@ export default function GameLobbyPage() {
 
         <Button 
           onClick={handleReady}
-          disabled={!myPlayer || isReady} // Disable if already ready
+          disabled={!myPlayer || isReady}
           className={`w-full text-lg py-6 transition-all ${
             isReady 
               ? 'bg-green-600 hover:bg-green-700 cursor-default' 

@@ -162,3 +162,10 @@ It adheres to the **Backend Architecture** by using **Next.js API Routes** for s
 *   **Unit Tests:** Test `useGameStore` logic (toggling cards, switching turns).
 *   **Integration Tests:** Create `RealtimeTestHarness` to mock Supabase channels and verify sync between two store instances.
 *   **E2E Tests:** Simulate a two-player game (using two browser contexts).
+
+## Post-Review Follow-ups
+
+**Story 3.1 Review (2025-12-12):**
+- **Critical Gap:** The mechanism to transition a game from 'waiting'/'selecting' to 'playing' is missing on the server side. Logic must be added (API or DB trigger) to detect when both players are ready and update `game_sessions.status` and `current_turn_player_id`.
+- **Critical Gap:** `GameClient` is not using the Realtime subscription, meaning it ignores server state updates.
+- **Testing:** Targeted integration tests for the RLS security on `player_secrets` are missing.

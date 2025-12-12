@@ -16,3 +16,7 @@ Routing guidance:
 | 2025-12-08 | 2.1 | 2 | Enhancement | Low | TBD | Open | Add collision check or database constraint for game code uniqueness. |
 | tirsdag 9. desember 2025 | 2.3 | 2 | Security | Critical | TBD | Done | Verify Supabase RLS Policies for `public.players` and `public.users` tables to ensure authorization and data access control. |
 | tirsdag 9. desember 2025 | 2.3 | 2 | Documentation | Medium | TBD | Open | Create `docs/sprint-artifacts/tech-spec-epic-2.md` to detail architectural blueprint for "Game Session Management" epic. |
+| 2025-12-12 | 3.1 | 3 | Bug | High | Amelia | Done | Implement server-side logic (API/Trigger) to transition game to 'playing' (AC #3). |
+| 2025-12-12 | 3.1 | 3 | Bug | High | Amelia | Done | Integrate useGameplaySubscription in GameClient to enable realtime updates (AC #3). |
+| 2025-12-12 | 3.1 | 3 | Bug | High | Amelia | Done | Implement missing UI/Integration tests for Grid and RLS (AC #1, #2). |
+| 2025-12-12 | 3.1 | 3 | Bug | Medium | Amelia | Done | Implement difficulty logic to slice characters based on game settings (AC #1). |

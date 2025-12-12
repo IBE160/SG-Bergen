@@ -6,8 +6,8 @@ interface GameState {
   selectedCharacterId: number | null;
   eliminatedCharacterIds: number[];
   isMyTurn: boolean;
-  gameStatus: 'waiting' | 'selecting' | 'playing' | 'finished';
-  players: any[]; // Using any to avoid circular deps for now, ideally Player type
+  gameStatus: 'waiting' | 'selecting' | 'active' | 'finished';
+  players: any[]; 
   currentTurnPlayerId: string | null;
   
   // Actions
@@ -26,7 +26,7 @@ export const useGameStore = create<GameState>((set) => ({
   selectedCharacterId: null,
   eliminatedCharacterIds: [],
   isMyTurn: false,
-  gameStatus: 'selecting', // Default to selecting as we enter game-play
+  gameStatus: 'selecting',
   players: [],
   currentTurnPlayerId: null,
 
