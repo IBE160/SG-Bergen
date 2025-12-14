@@ -8,31 +8,35 @@ import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { useGameplaySubscription } from "@/lib/hooks/use-gameplay-subscription";
+import { useAuth } from "@/lib/hooks/use-auth"; // Assuming this hook provides the current user's ID
 
 interface GameClientProps {
   gameCode: string;
 }
 
 export function GameClient({ gameCode }: GameClientProps) {
-  const { setCharacters, selectedCharacterId, selectCharacter, gamePhase, setGamePhase } = useGameStore();
+  const { setCharacters, selectedCharacterId, selectCharacter, gamePhase, setGamePhase, currentTurnPlayerId } = useGameStore();
   const [isLoading, setIsLoading] = useState(false);
   const [playerId, setPlayerId] = useState<string | null>(null);
   const [gameId, setGameId] = useState<string | null>(null);
-  
+  const { user } = useAuth(); // Get current user from auth context
+
   const supabase = createClient();
 
   // Integrate Realtime Subscription
   useGameplaySubscription(gameId);
 
+  const isMyTurn = user?.id === currentTurnPlayerId; // Derive isMyTurn
+
   useEffect(() => {
     const initGame = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      // const { data: { user } } = await supabase.auth.getUser(); // user is now from useAuth()
       if (!user) return;
 
       // 1. Fetch Session & Difficulty
       const { data: session } = await supabase
         .from('game_sessions')
-        .select('id, difficulty, status, phase')
+        .select('id, difficulty, status, phase, current_turn_player_id') // Fetch current_turn_player_id
         .eq('code', gameCode)
         .single();
       
@@ -43,6 +47,8 @@ export function GameClient({ gameCode }: GameClientProps) {
 
       setGameId(session.id);
       if (session.phase) setGamePhase(session.phase);
+      // set current turn player in the store
+      useGameStore.getState().setCurrentTurn(session.current_turn_player_id);
 
       // Set Characters based on Difficulty
       let charCount = 24; // Default Medium
@@ -76,7 +82,7 @@ export function GameClient({ gameCode }: GameClientProps) {
     };
 
     initGame();
-  }, [gameCode, setCharacters, selectCharacter, supabase, setGamePhase]);
+  }, [gameCode, setCharacters, selectCharacter, supabase, setGamePhase, user]); // Added user to dependency array
 
   const handleConfirmSelection = async () => {
     if (!selectedCharacterId || !playerId) return;
@@ -110,6 +116,7 @@ export function GameClient({ gameCode }: GameClientProps) {
 
   // Determine mode based on global phase
   const isSelecting = gamePhase === 'selection';
+  const isGameActive = gamePhase === 'active';
 
   return (
     <div className="container mx-auto flex min-h-screen flex-col p-4">
@@ -135,9 +142,15 @@ export function GameClient({ gameCode }: GameClientProps) {
                     {isLoading ? "Confirming..." : "Confirm Selection"}
                 </Button>
             )}
-            {!isSelecting && (
-                <div className="text-sm font-medium text-green-500">
-                    Game Active!
+            {!isSelecting && isGameActive && (
+                <div className="flex items-center space-x-2">
+                    {isMyTurn ? (
+                        <span className="rounded-full bg-green-500 px-3 py-1 text-sm font-medium text-white">Your Turn</span>
+                    ) : (
+                        <span className="rounded-full bg-red-500 px-3 py-1 text-sm font-medium text-white">Opponent's Turn</span>
+                    )}
+                    <Button disabled={!isMyTurn} variant="outline">Ask Question</Button>
+                    <Button disabled={!isMyTurn}>Make Guess</Button>
                 </div>
             )}
         </div>

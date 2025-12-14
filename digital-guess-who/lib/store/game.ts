@@ -5,7 +5,6 @@ interface GameState {
   characters: Character[];
   selectedCharacterId: number | null;
   eliminatedCharacterIds: number[];
-  isMyTurn: boolean;
   gameStatus: 'waiting' | 'selecting' | 'active' | 'finished';
   gamePhase: string; // Added phase
   players: any[]; 
@@ -15,7 +14,6 @@ interface GameState {
   setCharacters: (characters: Character[]) => void;
   selectCharacter: (id: number) => void;
   toggleElimination: (id: number) => void;
-  setTurn: (isMyTurn: boolean) => void;
   setGameStatus: (status: GameState['gameStatus']) => void;
   setGamePhase: (phase: string) => void; // Added action
   setPlayers: (players: any[]) => void;
@@ -27,7 +25,6 @@ export const useGameStore = create<GameState>((set) => ({
   characters: [],
   selectedCharacterId: null,
   eliminatedCharacterIds: [],
-  isMyTurn: false,
   gameStatus: 'selecting',
   gamePhase: 'selection', // Default to selection since we arrive here for selection
   players: [],
@@ -43,8 +40,7 @@ export const useGameStore = create<GameState>((set) => ({
         : [...state.eliminatedCharacterIds, id],
     };
   }),
-  setTurn: (isMyTurn) => set({ isMyTurn }),
-  setGameStatus: (status) => set({ gameStatus: status }),
+  setGameStatus: (status) => set({ status }),
   setGamePhase: (phase) => set({ gamePhase: phase }),
   setPlayers: (players) => set({ players }),
   setCurrentTurn: (id) => set({ currentTurnPlayerId: id }),
@@ -52,7 +48,6 @@ export const useGameStore = create<GameState>((set) => ({
     characters: [], 
     selectedCharacterId: null, 
     eliminatedCharacterIds: [], 
-    isMyTurn: false,
     gameStatus: 'selecting',
     gamePhase: 'selection',
     players: [],
