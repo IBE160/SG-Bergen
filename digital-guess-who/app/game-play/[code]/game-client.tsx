@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { useGameplaySubscription } from "@/lib/hooks/use-gameplay-subscription";
-import { useAuth } from "@/lib/hooks/use-auth"; // Assuming this hook provides the current user's ID
 
 interface GameClientProps {
   gameCode: string;
@@ -19,19 +18,20 @@ export function GameClient({ gameCode }: GameClientProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [playerId, setPlayerId] = useState<string | null>(null);
   const [gameId, setGameId] = useState<string | null>(null);
-  const { user } = useAuth(); // Get current user from auth context
+  const [userId, setUserId] = useState<string | null>(null);
 
   const supabase = createClient();
 
   // Integrate Realtime Subscription
   useGameplaySubscription(gameId);
 
-  const isMyTurn = user?.id === currentTurnPlayerId; // Derive isMyTurn
+  const isMyTurn = userId === currentTurnPlayerId; // Derive isMyTurn
 
   useEffect(() => {
     const initGame = async () => {
-      // const { data: { user } } = await supabase.auth.getUser(); // user is now from useAuth()
+      const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
+      setUserId(user.id);
 
       // 1. Fetch Session & Difficulty
       const { data: session } = await supabase
@@ -82,7 +82,7 @@ export function GameClient({ gameCode }: GameClientProps) {
     };
 
     initGame();
-  }, [gameCode, setCharacters, selectCharacter, supabase, setGamePhase, user]); // Added user to dependency array
+  }, [gameCode, setCharacters, selectCharacter, supabase, setGamePhase]);
 
   const handleConfirmSelection = async () => {
     if (!selectedCharacterId || !playerId) return;
