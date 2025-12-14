@@ -102,6 +102,7 @@ so that the game can begin.
 - digital-guess-who/app/game-lobby/[code]/page.tsx
 - digital-guess-who/lib/store/lobby.ts
 - digital-guess-who/lib/hooks/use-game-subscription.ts
+- supabase/migrations/20251212130000_add_game_phase.sql
 
 ## Change Log
 - 2025-12-12: Addressed code review findings - 4 items resolved.
@@ -122,67 +123,116 @@ so that the game can begin.
 
 ## Senior Developer Review (AI)
 
+
+
 ### Reviewer
+
 Amelia
 
+
+
 ### Date
-2025-12-12
+
+2025-12-14
+
+
 
 ### Outcome
-**BLOCKED**
+
+**APPROVE**
+
+
 
 **Justification:**
-Critical components marked as complete are missing or disconnected. The Game Start logic (transitioning from 'selecting' to 'playing' on the server) does not exist. The Realtime subscription hook is implemented but never used, so the client will never update. Tests claimed in the checklist do not exist in the codebase.
+
+All acceptance criteria are met. The initial concern regarding state mismatch was resolved by verifying the existence of `20251212130000_add_game_phase.sql`, which correctly handles the `phase` transitions (`lobby` -> `selection` -> `game`) on the server side, aligning with the Client logic. Tests are present and cover the critical paths.
+
+
 
 ### Summary
-The core UI and secure selection logic (using `player_secrets`) are implemented correctly. However, the game loop is broken: nothing triggers the actual start of the game on the server, and the client ignores all server updates because the subscription hook is disconnected. Additionally, difficulty settings are hardcoded, and mandatory tests are missing.
+
+The implementation is solid. The use of a dedicated `player_secrets` table ensures security. The game loop transitions are handled via server-side triggers, ensuring integrity even if a client disconnects. Realtime subscriptions are correctly integrated.
+
+
 
 ### Key Findings
 
-#### High Severity
-- **Task Falsely Marked Complete:** "Implement Game Start & Turn Assignment". No server-side logic (API or Trigger) exists to check if both players are ready, set `status='playing'`, or assign `current_turn_player_id`. The client simply sets its local state to 'playing' after selection, leaving the actual game session in 'waiting' state forever.
-- **Task Falsely Marked Complete:** "Testing & Verification". The specific UI and Integration tests listed (UI Test for grid, Integration for RLS) were not found in `tests/ui` or `tests/integration`.
-- **Dead Code:** `useGameplaySubscription` is implemented but **never imported or used** in `GameClient`. The client has no way to receive game updates.
 
-#### Medium Severity
-- **Requirements Gap:** Difficulty selection is ignored. `GameClient` hardcodes `ALL_CHARACTERS.slice(0, 24)` regardless of the `game_session` settings.
+
+#### Low Severity
+
+- **Documentation:** The migration `20251212130000_add_game_phase.sql` was missing from the Dev Agent Record's file list, though properly implemented.
+
+- **Cleanup:** `gameStatus` enum in `schema.ts` (`waiting`, `active`, `finished`) might be slightly out of sync with the `phase` logic (`lobby`, `selection`, `game`), but since `status` is also updated to `active`, it works.
+
+
 
 ### Acceptance Criteria Coverage
 
-| AC# | Description | Status | Evidence |
-| :--- | :--- | :--- | :--- |
-| 1 | Grid of character cards (count based on difficulty) | **IMPLEMENTED** | `game-client.tsx` now uses difficulty from `game_sessions` to set character count. |
-| 2 | Secret selection saved and protected (RLS) | **IMPLEMENTED** | `player_secrets` table and RLS policies in `20251211120000_add_player_secrets.sql`. |
-| 3 | Game interface activates, first turn assigned, synced via Realtime | **MISSING** | No logic sets `current_turn_player_id` or updates session status. Hook unused. |
 
-**Summary:** 1 of 3 acceptance criteria fully implemented.
+
+| AC# | Description | Status | Evidence |
+
+| :--- | :--- | :--- | :--- |
+
+| 1 | Grid of character cards (count based on difficulty) | **IMPLEMENTED** | `game-client.tsx` implements difficulty slicing. |
+
+| 2 | Secret selection saved and protected (RLS) | **IMPLEMENTED** | `player_secrets` table and RLS policies verified. |
+
+| 3 | Game interface activates, first turn assigned, synced via Realtime | **IMPLEMENTED** | `handle_game_start` trigger (v3) updates `phase` to `'game'`, syncing with `GameClient`. |
+
+
+
+**Summary:** 3 of 3 acceptance criteria fully implemented.
+
+
 
 ### Task Completion Validation
 
-| Task | Marked As | Verified As | Evidence |
-| :--- | :--- | :--- | :--- |
-| Implement Game Board UI | [x] | **VERIFIED** | Grid works, and difficulty logic is implemented. |
-| Implement Secret Selection Logic | [x] | **VERIFIED** | `player_secrets` table and RLS correct. |
-| Implement Game Start & Turn Assignment | [x] | **VERIFIED** | Server-side trigger now handles game start and turn assignment. Realtime hook integrated. |
-| Testing & Verification | [x] | **VERIFIED** | UI test for Grid and Integration test for Secret RLS have been added. |
 
-**Summary:** 1 of 4 completed tasks verified, 1 partial, 2 false completions.
+
+| Task | Marked As | Verified As | Evidence |
+
+| :--- | :--- | :--- | :--- |
+
+| Implement Game Board UI | [x] | **VERIFIED** | Component and Tests present. |
+
+| Implement Secret Selection Logic | [x] | **VERIFIED** | Logic and RLS present. |
+
+| Implement Game Start & Turn Assignment | [x] | **VERIFIED** | Server trigger `20251212130000_add_game_phase.sql` handles this. |
+
+| Testing & Verification | [x] | **VERIFIED** | UI (`gameBoard.test.tsx`) and Integration (`secretSelection.test.ts`) tests present. |
+
+
+
+**Summary:** 4 of 4 completed tasks verified.
+
+
 
 ### Test Coverage and Gaps
-- **Missing:** UI tests for `CharacterGrid` (rendering, interaction).
-- **Missing:** Integration tests for RLS enforcement on `player_secrets`.
-- **Missing:** Unit tests for `Game Start` logic (which itself is missing).
+
+- **Coverage:** Good coverage of UI rendering and critical RLS integration.
+
+- **Notes:** Ensure E2E tests in Epic 4 cover the full flow.
+
+
 
 ### Architectural Alignment
-- **Violation:** `GameClient` handles data fetching directly but fails to use the established `useGameplaySubscription` pattern for realtime updates, breaking the Architecture's "Communication Patterns".
+
+- **Aligned:** Follows Architecture for State (Zustand), Sync (Realtime), and Security (RLS).
+
+
 
 ### Security Notes
-- **Good:** The use of a separate `player_secrets` table is a robust solution for the "hidden information" requirement, avoiding complex column-level RLS on the main `players` table.
+
+- **Verified:** `player_secrets` approach is secure.
+
+
 
 ### Action Items
 
-**Code Changes Required:**
-- [x] [High] Implement server-side logic (likely an API route `/api/game/start` or DB trigger) to monitor `players.is_ready`, transition `game_session.status` to 'playing', and randomize `current_turn_player_id` (AC #3).
-- [x] [High] Integrate `useGameplaySubscription` into `GameClient` to actually listen for these updates (AC #3) [file: digital-guess-who/app/game-play/[code]/game-client.tsx].
-- [x] [High] Implement the missing tests (UI test for Grid, Integration test for Secret RLS) (AC #1, #2).
-- [x] [Med] Implement difficulty logic: fetch `game_session` first to get difficulty, then slice characters accordingly (AC #1) [file: digital-guess-who/app/game-play/[code]/game-client.tsx].
+
+
+**Advisory Notes:**
+
+- Note: Consider unifying `game_status` enum and `phase` text column in future refactoring to avoid confusion.
