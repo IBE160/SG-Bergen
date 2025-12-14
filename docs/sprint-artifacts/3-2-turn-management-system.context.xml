@@ -110,7 +110,7 @@
         <path>digital-guess-who/lib/store/game.ts</path>
         <kind>state-management</kind>
         <symbol>useGameStore</symbol>
-        <lines>8-20</lines>
+        <lines>25-58</lines>
         <reason>Primary store for game state. Needs extension for `isMyTurn` derivation and `currentTurnPlayerId` management logic.</reason>
       </item>
       <item>
