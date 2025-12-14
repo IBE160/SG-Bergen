@@ -1,3 +1,7 @@
+# Story 3.2: Turn Management System
+
+Status: ready-for-dev
+
 ## Story
 
 As a Player,
@@ -99,7 +103,7 @@ so that I know when I can ask a question or when I need to wait.
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- docs/sprint-artifacts/3-2-turn-management-system.context.xml
 
 ### Agent Model Used
 
