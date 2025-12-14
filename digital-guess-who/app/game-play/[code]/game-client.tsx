@@ -25,7 +25,7 @@ export function GameClient({ gameCode }: GameClientProps) {
   // Integrate Realtime Subscription
   useGameplaySubscription(gameId);
 
-  const isMyTurn = userId === currentTurnPlayerId; // Derive isMyTurn
+  const isMyTurn = playerId === currentTurnPlayerId; // Derive isMyTurn
 
   useEffect(() => {
     const initGame = async () => {
@@ -116,7 +116,7 @@ export function GameClient({ gameCode }: GameClientProps) {
 
   // Determine mode based on global phase
   const isSelecting = gamePhase === 'selection';
-  const isGameActive = gamePhase === 'active';
+  const isGameActive = gamePhase === 'active' || gamePhase === 'game';
 
   return (
     <div className="container mx-auto flex min-h-screen flex-col p-4">
