@@ -1,6 +1,7 @@
 import { Character } from "@/lib/data/characters";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { KeyboardEvent } from "react";
 
 interface CharacterCardProps {
   character: Character;
@@ -17,11 +18,28 @@ export function CharacterCard({
   onClick,
   disabled
 }: CharacterCardProps) {
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (disabled) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
+  const statusLabel = isEliminated ? "eliminated" : "active";
+  const selectedLabel = isSelected ? ", selected" : "";
+  const label = `${character.name}, ${statusLabel}${selectedLabel}`;
+
   return (
     <div
       onClick={disabled ? undefined : onClick}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={disabled ? -1 : 0}
+      aria-label={label}
+      aria-disabled={disabled}
       className={cn(
-        "relative aspect-[3/4] cursor-pointer rounded-xl border-2 transition-all duration-200",
+        "relative aspect-[3/4] cursor-pointer rounded-xl border-2 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
         isSelected
           ? "border-green-500 ring-4 ring-green-500/50 scale-105 z-10"
           : "border-border hover:border-primary/50",
@@ -32,7 +50,7 @@ export function CharacterCard({
       <div className="relative h-full w-full overflow-hidden rounded-lg bg-card">
          <Image
             src={character.imageUrl}
-            alt={character.name}
+            alt="" // Decorative since we have aria-label on the button container
             fill
             className="object-cover"
             sizes="(max-width: 768px) 33vw, (max-width: 1200px) 16vw, 10vw"

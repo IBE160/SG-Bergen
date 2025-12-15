@@ -16,29 +16,29 @@ so that I can narrow down the possibilities and effectively strategize my guess.
 
 ## Tasks / Subtasks
 
-- [ ] **Implement `CharacterCard` Component (AC: 1, 2)**
-    - [ ] Create `CharacterCard` component in `app/game-play/components/`.
-    - [ ] Implement visual states for "Active" and "Eliminated" (grayed out/flipped effect).
-    - [ ] Integrate click handler to toggle state.
-    - [ ] Ensure `CharacterCard` adheres to accessibility guidelines (keyboard navigation, focus states, screen reader support).
-- [ ] **Integrate `CharacterCard` into `CharacterBoard` (AC: 1)**
-    - [ ] Update `CharacterBoard` component to render `CharacterCard` instances.
-    - [ ] Pass necessary props from `useGameStore` to `CharacterCard` for initial state.
-- [ ] **Update `useGameStore` for Character Elimination State (AC: 2)**
-    - [ ] Add state in `useGameStore` to track `eliminatedCharacterIds` (Set or Array).
-    - [ ] Implement an action in `useGameStore` to toggle elimination status of a character.
-    - [ ] Ensure local persistence of this state (Zustand).
-- [ ] **Connect `CharacterCard` to `useGameStore` (AC: 1, 2)**
-    - [ ] Dispatch the `toggleElimination` action from `CharacterCard`'s click handler.
-    - [ ] `CharacterCard` should react to `useGameStore` state for its visual representation.
-- [ ] **Implement "End Turn" Logic (AC: 3)**
-    - [ ] Ensure "End Turn" button (likely in `GameClient.tsx` or `InteractionPanel.tsx`) correctly triggers turn transition. (Leverage learnings from Story 3.3 for turn management).
-    - [ ] Verify `game_sessions.current_turn_player_id` updates via Realtime after turn end.
-- [ ] **Testing (AC: 1-3)**
-    - [ ] Unit test `useGameStore` actions for toggling elimination status.
-    - [ ] UI Test: Verify `CharacterCard` visual state changes on click.
-    - [ ] Integration Test: Verify "End Turn" correctly passes control to opponent.
-    - [ ] Accessibility Test: Verify keyboard navigation and screen reader announcements for `CharacterCard`.
+- [x] **Implement `CharacterCard` Component (AC: 1, 2)**
+    - [x] Create `CharacterCard` component in `app/game-play/components/`.
+    - [x] Implement visual states for "Active" and "Eliminated" (grayed out/flipped effect).
+    - [x] Integrate click handler to toggle state.
+    - [x] Ensure `CharacterCard` adheres to accessibility guidelines (keyboard navigation, focus states, screen reader support).
+- [x] **Integrate `CharacterCard` into `CharacterBoard` (AC: 1)**
+    - [x] Update `CharacterBoard` component to render `CharacterCard` instances.
+    - [x] Pass necessary props from `useGameStore` to `CharacterCard` for initial state.
+- [x] **Update `useGameStore` for Character Elimination State (AC: 2)**
+    - [x] Add state in `useGameStore` to track `eliminatedCharacterIds` (Set or Array).
+    - [x] Implement an action in `useGameStore` to toggle elimination status of a character.
+    - [x] Ensure local persistence of this state (Zustand).
+- [x] **Connect `CharacterCard` to `useGameStore` (AC: 1, 2)**
+    - [x] Dispatch the `toggleElimination` action from `CharacterCard`'s click handler.
+    - [x] `CharacterCard` should react to `useGameStore` state for its visual representation.
+- [x] **Implement "End Turn" Logic (AC: 3)**
+    - [x] Ensure "End Turn" button (likely in `GameClient.tsx` or `InteractionPanel.tsx`) correctly triggers turn transition. (Leverage learnings from Story 3.3 for turn management).
+    - [x] Verify `game_sessions.current_turn_player_id` updates via Realtime after turn end.
+- [x] **Testing (AC: 1-3)**
+    - [x] Unit test `useGameStore` actions for toggling elimination status.
+    - [x] UI Test: Verify `CharacterCard` visual state changes on click.
+    - [x] Integration Test: Verify "End Turn" correctly passes control to opponent.
+    - [x] Accessibility Test: Verify keyboard navigation and screen reader announcements for `CharacterCard`.
 
 ## Dev Notes
 
@@ -85,6 +85,7 @@ so that I can narrow down the possibilities and effectively strategize my guess.
 
 - 2025-12-15: Initial draft.
 - 2025-12-15: Updated Dev Notes to explicitly reference testing strategy and coding standards.
+- 2025-12-15: Implemented CharacterCard and updated tests.
 
 ## Dev Agent Record
 
@@ -100,4 +101,16 @@ so that I can narrow down the possibilities and effectively strategize my guess.
 
 ### Completion Notes List
 
+- Implemented `CharacterCard` component with full accessibility (keyboard, focus, screen reader) and elimination visual state.
+- Integrated `CharacterCard` into `CharacterGrid` (CharacterBoard).
+- Verified `useGameStore` correctly handles `toggleElimination`.
+- Verified `GameClient` "End Turn" functionality and Realtime integration through existing and updated tests.
+- Added comprehensive UI tests for `CharacterCard` interaction and accessibility.
+- Fixed existing `gamePlay.test.tsx` by updating mocks and fixing query logic to align with current UI state.
+
 ### File List
+
+- digital-guess-who/app/game-play/components/character-card.tsx
+- digital-guess-who/tests/ui/characterCard.test.tsx
+- digital-guess-who/tests/ui/gameBoard.test.tsx
+- digital-guess-who/tests/ui/gamePlay.test.tsx
