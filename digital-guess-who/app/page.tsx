@@ -85,7 +85,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="w-full border-t py-8 text-center text-sm text-muted-foreground bg-card/30 backdrop-blur-md">
         <p className="flex items-center justify-center gap-2">
-           Digital Guess Who &copy; {new Date().getFullYear()}
+           Digital Guess Who © 2025
         </p>
       </footer>
     </main>
