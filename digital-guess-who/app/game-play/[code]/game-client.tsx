@@ -94,6 +94,13 @@ export function GameClient({ gameCode }: GameClientProps) {
         return;
       }
 
+      // Check for session change to reset persisted state (like eliminated characters)
+      const currentStoredGameId = useGameStore.getState().gameId;
+      if (currentStoredGameId !== session.id) {
+          useGameStore.getState().reset();
+          useGameStore.getState().setGameId(session.id);
+      }
+
       setGameId(session.id);
       if (session.phase) setGamePhase(session.phase);
       useGameStore.getState().setCurrentTurn(session.current_turn_player_id);

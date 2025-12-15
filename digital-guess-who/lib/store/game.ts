@@ -20,11 +20,12 @@ export type Interaction = {
 }
 
 interface GameState {
+  gameId: string | null; // Added to track session
   characters: Character[];
   selectedCharacterId: number | null;
   eliminatedCharacterIds: number[];
   gameStatus: 'waiting' | 'selecting' | 'active' | 'finished';
-  gamePhase: string; // Added phase
+  gamePhase: string;
   players: any[]; 
   currentTurnPlayerId: string | null;
   winnerId: string | null;
@@ -34,11 +35,12 @@ interface GameState {
   lastMove: Move | null;
   
   // Actions
+  setGameId: (id: string | null) => void;
   setCharacters: (characters: Character[]) => void;
   selectCharacter: (id: number) => void;
   toggleElimination: (id: number) => void;
   setGameStatus: (status: GameState['gameStatus']) => void;
-  setGamePhase: (phase: string) => void; // Added action
+  setGamePhase: (phase: string) => void;
   setPlayers: (players: any[]) => void;
   setCurrentTurn: (playerId: string | null) => void;
   setWinner: (winnerId: string | null) => void;
@@ -54,11 +56,12 @@ interface GameState {
 export const useGameStore = create(
   persist<GameState>(
     (set) => ({
+      gameId: null,
       characters: [],
       selectedCharacterId: null,
       eliminatedCharacterIds: [],
       gameStatus: 'selecting',
-      gamePhase: 'selection', // Default to selection since we arrive here for selection
+      gamePhase: 'selection',
       players: [],
       currentTurnPlayerId: null,
       winnerId: null,
@@ -66,6 +69,7 @@ export const useGameStore = create(
       currentInteraction: null,
       lastMove: null,
 
+      setGameId: (id) => set({ gameId: id }),
       setCharacters: (characters) => set({ characters }),
       selectCharacter: (id) => set({ selectedCharacterId: id }),
       toggleElimination: (id) => set((state) => {
@@ -111,6 +115,7 @@ export const useGameStore = create(
       },
 
       reset: () => set({ 
+        gameId: null,
         characters: [], 
         selectedCharacterId: null, 
         eliminatedCharacterIds: [], 
@@ -118,13 +123,14 @@ export const useGameStore = create(
         gamePhase: 'selection',
         players: [],
         currentTurnPlayerId: null,
+        winnerId: null,
         currentInteraction: null,
         lastMove: null
       }),
     }),
     {
-      name: 'game-storage', // unique name
-      getStorage: () => localStorage, // Use localStorage for persistence
+      name: 'game-storage',
+      getStorage: () => localStorage,
     }
   )
 );
