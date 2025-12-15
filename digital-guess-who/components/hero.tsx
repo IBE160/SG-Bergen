@@ -1,44 +1,17 @@
-import { NextLogo } from "./next-logo";
-import { SupabaseLogo } from "./supabase-logo";
-
 export function Hero() {
   return (
-    <div className="flex flex-col gap-16 items-center">
-      <div className="flex gap-8 justify-center items-center">
-        <a
-          href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <SupabaseLogo />
-        </a>
-        <span className="border-l rotate-45 h-6" />
-        <a href="https://nextjs.org/" target="_blank" rel="noreferrer">
-          <NextLogo />
-        </a>
+    <div className="flex flex-col gap-8 items-center text-center animate-in fade-in slide-in-from-bottom-4 duration-1000">
+      <div className="flex justify-center items-center p-6 rounded-full bg-primary/10 mb-4 ring-4 ring-primary/20">
+        <div className="text-7xl drop-shadow-lg">🕵️‍♀️</div> 
       </div>
-      <h1 className="sr-only">Supabase and Next.js Starter Template</h1>
-      <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-xl text-center">
-        The fastest way to build apps with{" "}
-        <a
-          href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-          target="_blank"
-          className="font-bold hover:underline"
-          rel="noreferrer"
-        >
-          Supabase
-        </a>{" "}
-        and{" "}
-        <a
-          href="https://nextjs.org/"
-          target="_blank"
-          className="font-bold hover:underline"
-          rel="noreferrer"
-        >
-          Next.js
-        </a>
+      <h1 className="text-5xl font-black tracking-tighter lg:text-7xl bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+        Digital Guess Who
+      </h1>
+      <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto font-light leading-relaxed">
+        The classic game of deduction, reimagined. <br className="hidden md:block"/>
+        Ask smart questions. Eliminate suspects. <span className="text-foreground font-semibold">Reveal the truth.</span>
       </p>
-      <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
+      <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent my-8" />
     </div>
   );
 }
