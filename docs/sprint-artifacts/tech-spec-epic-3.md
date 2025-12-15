@@ -133,6 +133,7 @@ It adheres to the **Backend Architecture** by using **Next.js API Routes** for s
 4.  **Elimination:**
     *   Clicking a character card toggles its state (Active/Eliminated).
     *   State is preserved across turns locally.
+    *   **End Turn:** Player can end their turn, passing control to the opponent.
 
 5.  **Winning/Losing:**
     *   Correct Guess -> Player Wins.

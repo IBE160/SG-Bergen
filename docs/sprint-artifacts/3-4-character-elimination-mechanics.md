@@ -60,7 +60,7 @@ so that I can narrow down the possibilities and effectively strategize my guess.
 ### References
 
 - [Source: docs/epics.md#Story-3.4] - User Story and ACs.
-- [Source: docs/tech-spec-epic-3.md#Elimination] - Technical details on elimination.
+- [Source: docs/sprint-artifacts/tech-spec-epic-3.md#Elimination] - Technical details on elimination.
 - [Source: docs/ux-design-specification.md#Custom-Component:-Character-Card] - Detailed UX for Character Card.
 - [Source: docs/architecture.md#Decision-Summary] - Justification for Zustand and Optimistic UI.
 - [Source: docs/frontend-architecture.md#State-Management-Strategy] - Frontend state management strategy (Zustand).
