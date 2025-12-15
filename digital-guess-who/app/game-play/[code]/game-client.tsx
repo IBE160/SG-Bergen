@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { useGameplaySubscription } from "@/lib/hooks/use-gameplay-subscription";
-import { submitQuestion, submitAnswer } from "@/lib/game-logic";
+import { endPlayerTurn, submitQuestion, submitAnswer } from "@/lib/game-logic";
 
 interface GameClientProps {
   gameCode: string;
@@ -158,6 +158,17 @@ export function GameClient({ gameCode }: GameClientProps) {
       }
   };
 
+  const handleEndTurn = async () => {
+    if (!gameId || !playerId) return;
+    try {
+        await endPlayerTurn(gameId, playerId);
+        toast.success("Turn ended. Waiting for opponent.");
+    } catch (error) {
+        console.error("Failed to end turn:", error);
+        toast.error("Failed to end turn.");
+    }
+  };
+
   // Determine mode based on global phase
   const isSelecting = gamePhase === 'selection';
   const isGameActive = gamePhase === 'active' || gamePhase === 'game';
@@ -189,6 +200,7 @@ export function GameClient({ gameCode }: GameClientProps) {
                 )}
                 {!isSelecting && isGameActive && (
                     <div className="flex items-center space-x-2">
+                        <Button disabled={!isMyTurn} variant="secondary" onClick={handleEndTurn}>End Turn</Button>
                         <Button disabled={!isMyTurn} variant="destructive">Make Guess</Button>
                     </div>
                 )}

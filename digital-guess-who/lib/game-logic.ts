@@ -35,3 +35,36 @@ export async function submitAnswer(gameId: string, playerId: string, answer: 'Ye
 
   return data;
 }
+
+export async function endPlayerTurn(gameId: string, currentPlayerId: string) {
+  const supabase = createClient();
+
+  // Find the opponent's player_id
+  const { data: playersInGame, error: playersError } = await supabase
+    .from('players')
+    .select('id')
+    .eq('game_id', gameId);
+
+  if (playersError) {
+    console.error("Error fetching players for end turn:", playersError);
+    throw playersError;
+  }
+
+  const nextPlayer = playersInGame.find(p => p.id !== currentPlayerId);
+
+  if (!nextPlayer) {
+    console.error("Opponent not found for turn change.");
+    throw new Error("Opponent not found for turn change.");
+  }
+
+  // Update the game session to pass the turn
+  const { error: updateError } = await supabase
+    .from('game_sessions')
+    .update({ current_turn_player_id: nextPlayer.id })
+    .eq('id', gameId); 
+
+  if (updateError) {
+    console.error("Error updating game session for turn change:", updateError);
+    throw updateError;
+  }
+}

@@ -90,6 +90,7 @@ so that I can eliminate characters.
 
 - 2025-12-15: Started work on "Implement Q&A UI Components". Created new UI components, move submission logic, integrated with realtime and updated state management.
 - 2025-12-15: All core Q&A interaction components and logic implemented.
+- 2025-12-15: Modified database trigger `handle_turn_end` to only act on 'guess' moves, and implemented client-side "End Turn" button and logic.
 
 ### Completion Notes List
 
@@ -100,15 +101,19 @@ so that I can eliminate characters.
 - Connected UI (`InteractionPanel`) to `useGameStore` and `game-logic` functions in `GameClient.tsx`.
 - Added unit tests for move submission logic (`moveSubmission.test.ts`).
 - Added UI tests for `InteractionPanel` (`InteractionPanel.test.tsx`).
+- Created migration `20251215110000_update_turn_end_trigger.sql` to adjust database trigger for turn management.
+- Implemented `endPlayerTurn` function in `lib/game-logic.ts` to manage turn passing.
+- Added "End Turn" button to `GameClient.tsx`.
 
 ### File List
 - digital-guess-who/app/game-play/components/interaction-panel.tsx (Added)
-- digital-guess-who/lib/game-logic.ts (Added)
+- digital-guess-who/lib/game-logic.ts (Modified)
 - digital-guess-who/lib/store/game.ts (Modified)
 - digital-guess-who/lib/hooks/use-gameplay-subscription.ts (Modified)
 - digital-guess-who/app/game-play/[code]/game-client.tsx (Modified)
 - digital-guess-who/tests/unit/moveSubmission.test.ts (Added)
 - digital-guess-who/tests/ui/InteractionPanel.test.tsx (Added)
+- supabase/migrations/20251215110000_update_turn_end_trigger.sql (Added)
 
 ## Change Log
 
