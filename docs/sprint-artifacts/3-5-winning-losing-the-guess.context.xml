@@ -110,27 +110,24 @@
     </docs>
     <code>
       <entry>
-        <path>digital-guess-who/app/game-play/components/interaction-panel.tsx</path>
-        <kind>component</kind>
-        <symbol>InteractionPanel</symbol>
-        <lines></lines>
-        <reason>Needs "Make a Guess" button addition.</reason>
-      </entry>
-      <entry>
-        <path>digital-guess-who/lib/store/game-store.ts</path>
-        <kind>store</kind>
-        <symbol>useGameStore</symbol>
-        <lines></lines>
-        <reason>Existing 'makeGuess' placeholder needs update, handles game status and winner.</reason>
-      </entry>
-      <entry>
-        <path>digital-guess-who/db/schema.ts</path>
-        <kind>schema</kind>
-        <symbol>player_secrets</symbol>
-        <lines></lines>
-        <reason>Defines the 'player_secrets' table for secure character storage.</reason>
-      </entry>
-      <entry>
+            <path>digital-guess-who/app/game-play/components/interaction-panel.tsx</path>
+            <kind>component</kind>
+            <symbol>InteractionPanel</symbol>
+            <lines>20-75</lines>
+            <reason>Needs "Make a Guess" button addition.</reason>
+          </entry>      <entry>
+            <path>digital-guess-who/lib/store/game-store.ts</path>
+            <kind>store</kind>
+            <symbol>useGameStore</symbol>
+            <lines>25-75</lines>
+            <reason>Existing 'makeGuess' placeholder needs update, handles game status and winner.</reason>
+          </entry>      <entry>
+            <path>digital-guess-who/db/schema.ts</path>
+            <kind>schema</kind>
+            <symbol>player_secrets</symbol>
+            <lines>38-42</lines>
+            <reason>Defines the 'player_secrets' table for secure character storage.</reason>
+          </entry>      <entry>
         <path>digital-guess-who/app/api/game/[gameId]/guess/route.ts</path>
         <kind>api-route</kind>
         <symbol>POST /api/game/[gameId]/guess</symbol>

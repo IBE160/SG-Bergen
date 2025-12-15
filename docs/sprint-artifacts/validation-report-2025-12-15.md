@@ -1,75 +1,87 @@
 # Validation Report
 
-**Document:** /Users/sandrachristensen/SG-Bergen/docs/sprint-artifacts/3-4-character-elimination-mechanics.context.xml
-**Checklist:** .bmad/bmm/workflows/4-implementation/create-story/checklist.md
-**Date:** 2025-12-15
+**Document:** /Users/sandrachristensen/SG-Bergen/docs/sprint-artifacts/3-5-winning-losing-the-guess.context.xml
+**Checklist:** .bmad/bmm/workflows/4-implementation/story-context/checklist.md
+**Date:** 2025-12-15 (Updated)
 
 ## Summary
-- Overall: 8/8 passed (100%)
+- Overall: 10/10 passed (100%)
 - Critical Issues: 0
 
 ## Section Results
 
-### Previous Story Continuity Check
-Pass Rate: 5/5 (100%)
-✓ "Learnings from Previous Story" subsection exists in Dev Notes
-Evidence: Found in `docs/sprint-artifacts/3-4-character-elimination-mechanics.md`
-✓ References to NEW files from previous story
-Evidence: Implicitly covered by detailed learnings from previous story in `docs/sprint-artifacts/3-4-character-elimination-mechanics.md`
-✓ Mentions completion notes/warnings
-Evidence: Detailed summary of implementations in `docs/sprint-artifacts/3-4-character-elimination-mechanics.md`
-✓ Calls out unresolved review items (if any exist)
-Evidence: No unchecked review items found in previous story (`3-3-question-answer-interaction.md`)
-✓ Cites previous story: [Source: stories/{{previous_story_key}}.md]
-Evidence: `[Source: docs/sprint-artifacts/3-3-question-answer-interaction.md#Dev-Agent-Record]` in `docs/sprint-artifacts/3-4-character-elimination-mechanics.md`
-
-### Source Document Coverage Check
+### Story Fields
 Pass Rate: 1/1 (100%)
-✓ Verify cited file paths are correct and files exist
-Evidence: All citations now point to existing files, including `docs/sprint-artifacts/tech-spec-epic-3.md`.
 
-### Acceptance Criteria Quality Check
+✓ Story fields (asA/iWant/soThat) captured
+Evidence:
+```xml
+<story>
+  <asA>Player</asA>
+  <iWant>to make a final guess about the opponent's secret character</iWant>
+  <soThat>I can win the game (or lose if incorrect) and conclude the match</soThat>
+</story>
+```
+and
+```
+As a Player,
+I want to make a final guess about the opponent's secret character,
+so that I can win the game (or lose if incorrect) and conclude the match.
+```
+
+### Acceptance Criteria
 Pass Rate: 1/1 (100%)
-✓ Compare story ACs vs tech spec ACs
-Evidence: "End Turn" AC is now explicitly covered in `docs/sprint-artifacts/tech-spec-epic-3.md`.
 
-### Task-AC Mapping Check
-Pass Rate: 3/3 (100%)
-✓ For each AC: Search tasks for "(AC: #{{ac_num}})" reference
-Evidence: All ACs (1, 2, 3) are referenced in tasks.
-✓ For each task: Check if references an AC number
-Evidence: All tasks reference AC numbers.
-✓ Count tasks with testing subtasks
-Evidence: Four testing subtasks are present for three ACs.
+✓ Acceptance criteria list matches story draft exactly (no invention)
+Evidence: Both the context XML and the markdown story draft contain identical acceptance criteria.
 
-### Dev Notes Quality Check
-Pass Rate: 7/7 (100%)
-✓ Architecture patterns and constraints
-Evidence: "Relevant Architecture Patterns and Constraints" section found.
-✓ References (with citations)
-Evidence: "References" section with 8 citations found.
-✓ Project Structure Notes (if unified-project-structure.md exists)
-Evidence: "Project Structure Notes" section found.
-✓ Learnings from Previous Story (if previous story has content)
-Evidence: "Learnings from Previous Story" section found.
-✓ Architecture guidance is specific (not generic "follow architecture docs")
-Evidence: Guidance is specific (e.g., "Use `useGameStore` (Zustand)").
-✓ Count citations in References subsection
-Evidence: 8 citations counted.
-✓ Scan for suspicious specifics without citations
-Evidence: No suspicious specifics without citations found.
-
-### Story Structure Check
+### Tasks/Subtasks
 Pass Rate: 1/1 (100%)
-✓ Status = "drafted"
-Evidence: Status updated to `drafted` in `docs/sprint-artifacts/3-4-character-elimination-mechanics.md`.
 
-### Unresolved Review Items Alert
-Pass Rate: 2/2 (100%)
-✓ Count unchecked [ ] items in "Action Items"
-Evidence: 0 unchecked items found.
-✓ Count unchecked [ ] items in "Review Follow-ups (AI)"
-Evidence: 0 unchecked items found.
+✓ Tasks/subtasks captured as task list
+Evidence: Both the context XML and the markdown story draft contain identical, well-structured task lists with subtasks.
+
+### Relevant Docs
+Pass Rate: 1/1 (100%)
+
+✓ Relevant docs (5-15) included with path and snippets
+Evidence: 9 documents are included in the <docs> section of the XML, each with path, title, section, and snippet.
+
+### Relevant Code References
+Pass Rate: 1/1 (100%)
+
+✓ Relevant code references included with reason and line hints
+Evidence: Line hints have been added for `InteractionPanel` (20-75), `useGameStore` (25-75), and `player_secrets` (38-42). For new files (`POST /api/game/[gameId]/guess` and `GuessConfirmationModal`), line hints are left empty as they refer to code that does not yet exist.
+
+### Interfaces/API Contracts
+Pass Rate: 1/1 (100%)
+
+✓ Interfaces/API contracts extracted if applicable
+Evidence: Two interfaces are defined: a REST endpoint with signature and path, and a Supabase Realtime event with signature.
+
+### Constraints
+Pass Rate: 1/1 (100%)
+
+✓ Constraints include applicable dev rules and patterns
+Evidence: Five constraints are listed, covering security, state management, and data integrity, providing clear guidance.
+
+### Dependencies
+Pass Rate: 1/1 (100%)
+
+✓ Dependencies detected from manifests and frameworks
+Evidence: Three Node.js dependencies (zustand, supabase-js, next) are listed with ecosystem and version.
+
+### Testing Standards and Locations
+Pass Rate: 1/1 (100%)
+
+✓ Testing standards and locations populated
+Evidence: Testing standards are referenced, and unit, integration, and e2e test locations are specified, along with test ideas.
+
+### XML Structure
+Pass Rate: 1/1 (100%)
+
+✓ XML structure follows story-context template format
+Evidence: The document starts with `<story-context id=".bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">` and contains all expected top-level elements.
 
 ## Failed Items
 (None)
@@ -78,7 +90,4 @@ Evidence: 0 unchecked items found.
 (None)
 
 ## Recommendations
-1. Must Fix: (None)
-2. Should Improve: (None)
-3. Consider:
-    - Proceed to mark the story as "Ready for Dev" now that it has passed validation.
+(None)
