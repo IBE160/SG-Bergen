@@ -80,7 +80,10 @@ so that I can win the game (or lose if incorrect) and conclude the match.
 ### References
 - [Source: docs/sprint-artifacts/tech-spec-epic-3.md#Secure-Guess-Endpoint] - API Contract and Logic.
 - [Source: docs/epics.md#Story-3.5] - Functional Requirements.
-- [Source: docs/design/secret-character-selection.md] - Security Design for Secret Verification.
+- [Source: docs/design/secret-character-selection.md#Secure-Guess-Endpoint] - Security Design for Secret Verification.
+- [Source: docs/architecture.md] - System Architecture.
+- [Source: docs/testing-strategy.md] - Testing Strategy.
+- [Source: docs/coding-standards.md] - Coding Standards.
 
 ## Dev Agent Record
 
@@ -107,5 +110,12 @@ so that I can win the game (or lose if incorrect) and conclude the match.
 - **Turn Management:** Manual turn ending was implemented - ensure "Make a Guess" ends the turn (and the game) implicitly.
 - **Pending Items:** `player_secrets` type definition is missing in `database.types.ts` - **SHOULD BE ADDED IN THIS STORY** to avoid `as any` in the API route.
 - **Testing:** `GameClient` tests cover turn management - extend to cover "Game Over" state.
+- **Refinement:** Consider adding `persist` middleware to `useGameStore` to support page refreshes without losing the elimination board state (from Story 3.4 Review Follow-ups).
 
 [Source: stories/3-4-character-elimination-mechanics.md#Dev-Agent-Record]
+
+## Change Log
+
+- 2025-12-15: Initial draft.
+- 2025-12-15: Updated references to include architecture and standards documents.
+- 2025-12-15: Added missing learning regarding persist middleware.
