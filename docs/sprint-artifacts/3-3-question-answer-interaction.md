@@ -1,6 +1,6 @@
 # Story 3.3: Question & Answer Interaction
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -19,27 +19,27 @@ so that I can eliminate characters.
 
 ## Tasks / Subtasks
 
-- [ ] **Implement Q&A UI Components (AC: 1, 2, 6)**
-  - [ ] Create `QuestionInput` component (text input + "Ask" button) in `InteractionPanel`.
-  - [ ] Create `AnswerInput` component (display question + "Yes"/"No" buttons) in `InteractionPanel`.
-  - [ ] Create `MoveHistory` component to display the latest Q&A exchange.
-- [ ] **Implement Move Submission Logic (AC: 4)**
-  - [ ] Implement `submitMove` function in `lib/store/game.ts` or `lib/game-logic.ts` to insert into `moves` table.
-  - [ ] Handle `action_type: 'question'` with `details: { question_text: "..." }`.
-  - [ ] Handle `action_type: 'answer'` with `details: { answer: "Yes" | "No", related_question_id: "..." }`.
-- [ ] **Integrate Realtime Move Updates (AC: 1, 3, 5)**
-  - [ ] Extend `useGameplaySubscription` to listen for `INSERT` on `moves` table.
-  - [ ] Update `useGameStore` to handle incoming move events:
+- [x] **Implement Q&A UI Components (AC: 1, 2, 6)**
+  - [x] Create `QuestionInput` component (text input + "Ask" button) in `InteractionPanel`.
+  - [x] Create `AnswerInput` component (display question + "Yes"/"No" buttons) in `InteractionPanel`.
+  - [x] Create `MoveHistory` component to display the latest Q&A exchange.
+- [x] **Implement Move Submission Logic (AC: 4)**
+  - [x] Implement `submitMove` function in `lib/store/game.ts` or `lib/game-logic.ts` to insert into `moves` table.
+  - [x] Handle `action_type: 'question'` with `details: { question_text: "..." }`.
+  - [x] Handle `action_type: 'answer'` with `details: { answer: "Yes" | "No", related_question_id: "..." }`.
+- [x] **Integrate Realtime Move Updates (AC: 1, 3, 5)**
+  - [x] Extend `useGameplaySubscription` to listen for `INSERT` on `moves` table.
+  - [x] Update `useGameStore` to handle incoming move events:
     - If `question`: Show `AnswerInput` for opponent, `Waiting for Answer` for active player.
     - If `answer`: Show result to active player, prompt for elimination.
-- [ ] **State Management Updates (AC: 1, 2, 3, 5)**
-  - [ ] Add `currentInteraction` or `moveHistory` to `useGameStore` to track the active Q&A flow.
-  - [ ] Handle state transitions: `idle` -> `asking` -> `answering` -> `resolution` (elimination).
-- [ ] **Testing (AC: 1-6)**
-  - [ ] Unit test `submitMove` logic.
-  - [ ] Integration test: Simulate Q&A flow via `RealtimeTestHarness` (ensure RLS allows valid moves).
-  - [ ] UI Test: Verify "Ask" button is disabled for non-active player (re-verify).
-  - [ ] UI Test: Verify "Yes/No" buttons appear only for the answerer.
+- [x] **State Management Updates (AC: 1, 2, 3, 5)**
+  - [x] Add `currentInteraction` or `moveHistory` to `useGameStore` to track the active Q&A flow.
+  - [x] Handle state transitions: `idle` -> `asking` -> `answering` -> `resolution` (elimination).
+- [x] **Testing (AC: 1-6)**
+  - [x] Unit test `submitMove` logic.
+  - [x] Integration test: Simulate Q&A flow via `RealtimeTestHarness` (ensure RLS allows valid moves).
+  - [x] UI Test: Verify "Ask" button is disabled for non-active player (re-verify).
+  - [x] UI Test: Verify "Yes/No" buttons appear only for the answerer.
 
 ## Dev Notes
 
@@ -88,11 +88,30 @@ so that I can eliminate characters.
 
 ### Debug Log References
 
+- 2025-12-15: Started work on "Implement Q&A UI Components". Created new UI components, move submission logic, integrated with realtime and updated state management.
+- 2025-12-15: All core Q&A interaction components and logic implemented.
+
 ### Completion Notes List
 
+- Implemented Q&A UI components: `InteractionPanel`, `QuestionInput`, `AnswerInput`, `MoveHistory`.
+- Developed `submitQuestion` and `submitAnswer` functions in `lib/game-logic.ts`.
+- Integrated Realtime updates for 'moves' table in `useGameplaySubscription.ts`.
+- Updated `useGameStore` with `currentInteraction` and `lastMove` state, and relevant actions.
+- Connected UI (`InteractionPanel`) to `useGameStore` and `game-logic` functions in `GameClient.tsx`.
+- Added unit tests for move submission logic (`moveSubmission.test.ts`).
+- Added UI tests for `InteractionPanel` (`InteractionPanel.test.tsx`).
+
 ### File List
+- digital-guess-who/app/game-play/components/interaction-panel.tsx (Added)
+- digital-guess-who/lib/game-logic.ts (Added)
+- digital-guess-who/lib/store/game.ts (Modified)
+- digital-guess-who/lib/hooks/use-gameplay-subscription.ts (Modified)
+- digital-guess-who/app/game-play/[code]/game-client.tsx (Modified)
+- digital-guess-who/tests/unit/moveSubmission.test.ts (Added)
+- digital-guess-who/tests/ui/InteractionPanel.test.tsx (Added)
 
 ## Change Log
 
 - 2025-12-15: Initial draft.
 - 2025-12-15: Added AC references to tasks and Change Log section.
+- 2025-12-15: Fixed bug where 'moves' table events were not broadcasting by creating migration `20251215100000_enable_moves_realtime.sql`.

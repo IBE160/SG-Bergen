@@ -1,6 +1,23 @@
 import { create } from 'zustand';
 import { Character } from '@/lib/data/characters';
 
+// Define Move type
+export type Move = {
+    id: string;
+    game_id: string;
+    player_id: string;
+    action_type: 'question' | 'answer';
+    details: any;
+    created_at: string;
+}
+
+export type Interaction = {
+    id: string; // move id of the question
+    player_id: string; // asker id
+    text: string;
+    status: 'pending_answer' | 'completed';
+}
+
 interface GameState {
   characters: Character[];
   selectedCharacterId: number | null;
@@ -10,6 +27,10 @@ interface GameState {
   players: any[]; 
   currentTurnPlayerId: string | null;
   
+  // New State
+  currentInteraction: Interaction | null;
+  lastMove: Move | null;
+  
   // Actions
   setCharacters: (characters: Character[]) => void;
   selectCharacter: (id: number) => void;
@@ -18,6 +39,11 @@ interface GameState {
   setGamePhase: (phase: string) => void; // Added action
   setPlayers: (players: any[]) => void;
   setCurrentTurn: (playerId: string | null) => void;
+  
+  // New Actions
+  setInteraction: (interaction: Interaction | null) => void;
+  setLastMove: (move: Move | null) => void;
+
   reset: () => void;
 }
 
@@ -30,6 +56,9 @@ export const useGameStore = create<GameState>((set) => ({
   players: [],
   currentTurnPlayerId: null,
 
+  currentInteraction: null,
+  lastMove: null,
+
   setCharacters: (characters) => set({ characters }),
   selectCharacter: (id) => set({ selectedCharacterId: id }),
   toggleElimination: (id) => set((state) => {
@@ -40,10 +69,14 @@ export const useGameStore = create<GameState>((set) => ({
         : [...state.eliminatedCharacterIds, id],
     };
   }),
-  setGameStatus: (status) => set({ status }),
+  setGameStatus: (status) => set({ status: status as any }), // Cast for flexibility if types mismatch slightly
   setGamePhase: (phase) => set({ gamePhase: phase }),
   setPlayers: (players) => set({ players }),
   setCurrentTurn: (id) => set({ currentTurnPlayerId: id }),
+
+  setInteraction: (interaction) => set({ currentInteraction: interaction }),
+  setLastMove: (move) => set({ lastMove: move }),
+
   reset: () => set({ 
     characters: [], 
     selectedCharacterId: null, 
@@ -51,6 +84,8 @@ export const useGameStore = create<GameState>((set) => ({
     gameStatus: 'selecting',
     gamePhase: 'selection',
     players: [],
-    currentTurnPlayerId: null
+    currentTurnPlayerId: null,
+    currentInteraction: null,
+    lastMove: null
   }),
 }));

@@ -4,28 +4,55 @@ import { useEffect, useState } from "react";
 import { useGameStore } from "@/lib/store/game";
 import { ALL_CHARACTERS } from "@/lib/data/characters";
 import { CharacterGrid } from "../components/character-grid";
+import { InteractionPanel, InteractionState } from "../components/interaction-panel";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { useGameplaySubscription } from "@/lib/hooks/use-gameplay-subscription";
+import { submitQuestion, submitAnswer } from "@/lib/game-logic";
 
 interface GameClientProps {
   gameCode: string;
 }
 
 export function GameClient({ gameCode }: GameClientProps) {
-  const { setCharacters, selectedCharacterId, selectCharacter, gamePhase, setGamePhase, currentTurnPlayerId } = useGameStore();
+  const { 
+    setCharacters, 
+    selectedCharacterId, 
+    selectCharacter, 
+    gamePhase, 
+    setGamePhase, 
+    currentTurnPlayerId,
+    currentInteraction,
+    lastMove
+  } = useGameStore();
+  
   const [isLoading, setIsLoading] = useState(false);
   const [playerId, setPlayerId] = useState<string | null>(null);
   const [gameId, setGameId] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
-
+  
   const supabase = createClient();
 
   // Integrate Realtime Subscription
   useGameplaySubscription(gameId);
 
-  const isMyTurn = playerId === currentTurnPlayerId; // Derive isMyTurn
+  const isMyTurn = playerId === currentTurnPlayerId;
+
+  // Derive UI State from Store
+  const interactionState: InteractionState = {
+    status: currentInteraction ? 'answering' : 'idle',
+    questionText: currentInteraction?.text
+  };
+
+  const mappedLastMove = lastMove ? {
+      player: lastMove.player_id === playerId ? "You" : "Opponent",
+      action: lastMove.action_type,
+      text: lastMove.action_type === 'question' 
+            ? `Asked: "${lastMove.details.question_text}"` 
+            : `Answered: ${lastMove.details.answer}`,
+      timestamp: new Date(lastMove.created_at)
+  } : undefined;
 
   useEffect(() => {
     const initGame = async () => {
@@ -36,7 +63,7 @@ export function GameClient({ gameCode }: GameClientProps) {
       // 1. Fetch Session & Difficulty
       const { data: session } = await supabase
         .from('game_sessions')
-        .select('id, difficulty, status, phase, current_turn_player_id') // Fetch current_turn_player_id
+        .select('id, difficulty, status, phase, current_turn_player_id') 
         .eq('code', gameCode)
         .single();
       
@@ -47,7 +74,6 @@ export function GameClient({ gameCode }: GameClientProps) {
 
       setGameId(session.id);
       if (session.phase) setGamePhase(session.phase);
-      // set current turn player in the store
       useGameStore.getState().setCurrentTurn(session.current_turn_player_id);
 
       // Set Characters based on Difficulty
@@ -114,6 +140,24 @@ export function GameClient({ gameCode }: GameClientProps) {
     }
   };
 
+  const handleAskQuestion = async (text: string) => {
+      if (!gameId || !playerId) return;
+      try {
+          await submitQuestion(gameId, playerId, text);
+      } catch (error) {
+          toast.error("Failed to send question");
+      }
+  };
+
+  const handleAnswerQuestion = async (answer: 'Yes' | 'No') => {
+      if (!gameId || !playerId || !currentInteraction) return;
+      try {
+          await submitAnswer(gameId, playerId, answer, currentInteraction.id);
+      } catch (error) {
+          toast.error("Failed to send answer");
+      }
+  };
+
   // Determine mode based on global phase
   const isSelecting = gamePhase === 'selection';
   const isGameActive = gamePhase === 'active' || gamePhase === 'game';
@@ -128,30 +172,36 @@ export function GameClient({ gameCode }: GameClientProps) {
       </header>
 
       <main className="flex-1">
-        <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-xl font-semibold">
-                {isSelecting ? "Select Your Secret Character" : "Game Board"}
-            </h2>
-            {isSelecting && (
-                <Button 
-                    onClick={handleConfirmSelection} 
-                    disabled={!selectedCharacterId || isLoading || !playerId}
-                    size="lg"
-                    className="gap-2"
-                >
-                    {isLoading ? "Confirming..." : "Confirm Selection"}
-                </Button>
-            )}
+        <div className="mb-4 flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold">
+                    {isSelecting ? "Select Your Secret Character" : "Game Board"}
+                </h2>
+                {isSelecting && (
+                    <Button 
+                        onClick={handleConfirmSelection} 
+                        disabled={!selectedCharacterId || isLoading || !playerId}
+                        size="lg"
+                        className="gap-2"
+                    >
+                        {isLoading ? "Confirming..." : "Confirm Selection"}
+                    </Button>
+                )}
+                {!isSelecting && isGameActive && (
+                    <div className="flex items-center space-x-2">
+                        <Button disabled={!isMyTurn} variant="destructive">Make Guess</Button>
+                    </div>
+                )}
+            </div>
+
             {!isSelecting && isGameActive && (
-                <div className="flex items-center space-x-2">
-                    {isMyTurn ? (
-                        <span className="rounded-full bg-green-500 px-3 py-1 text-sm font-medium text-white">Your Turn</span>
-                    ) : (
-                        <span className="rounded-full bg-red-500 px-3 py-1 text-sm font-medium text-white">Opponent's Turn</span>
-                    )}
-                    <Button disabled={!isMyTurn} variant="outline">Ask Question</Button>
-                    <Button disabled={!isMyTurn}>Make Guess</Button>
-                </div>
+                <InteractionPanel 
+                    isMyTurn={!!isMyTurn}
+                    interactionState={interactionState}
+                    lastMove={mappedLastMove}
+                    onAskQuestion={handleAskQuestion}
+                    onAnswerQuestion={handleAnswerQuestion}
+                />
             )}
         </div>
         
