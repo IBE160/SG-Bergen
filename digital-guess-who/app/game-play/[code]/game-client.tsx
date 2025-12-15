@@ -108,7 +108,7 @@ export function GameClient({ gameCode }: GameClientProps) {
         
         // Check if already selected
         const { data: secret } = await supabase
-            .from('player_secrets' as any)
+            .from('player_secrets')
             .select('character_id')
             .eq('player_id', player.id)
             .single();
@@ -128,7 +128,7 @@ export function GameClient({ gameCode }: GameClientProps) {
 
     try {
         const { error: secretError } = await supabase
-            .from('player_secrets' as any)
+            .from('player_secrets')
             .insert({
                 player_id: playerId,
                 character_id: selectedCharacterId
