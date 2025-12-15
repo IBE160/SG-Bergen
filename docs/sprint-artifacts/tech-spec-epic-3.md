@@ -179,3 +179,7 @@ It adheres to the **Backend Architecture** by using **Next.js API Routes** for s
 
 **Story 3.3 Review (2025-12-15):**
 - [x] [Low] Add a visual toast/banner prompt "Eliminate Characters" after receiving an answer (AC #5 enhancement) [file: digital-guess-who/app/game-play/[code]/game-client.tsx]
+
+**Story 3.4 Review (2025-12-15):**
+- [ ] [Low] Consider adding `persist` middleware to `useGameStore` to support page refreshes without losing the elimination board state (AC #2 robustness).
+- [ ] [Low] Update `database.types.ts` to include `player_secrets` table definition to avoid `as any` casting.
