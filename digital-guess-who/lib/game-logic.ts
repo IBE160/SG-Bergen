@@ -57,11 +57,11 @@ export async function endPlayerTurn(gameId: string, currentPlayerId: string) {
     throw new Error("Opponent not found for turn change.");
   }
 
-  // Update the game session to pass the turn
-  const { error: updateError } = await supabase
-    .from('game_sessions')
-    .update({ current_turn_player_id: nextPlayer.id })
-    .eq('id', gameId); 
+  // Update the game session to pass the turn using Secure RPC
+  const { error: updateError } = await supabase.rpc('end_turn', {
+    p_game_id: gameId,
+    p_next_player_id: nextPlayer.id
+  });
 
   if (updateError) {
     console.error("Error updating game session for turn change:", updateError);
