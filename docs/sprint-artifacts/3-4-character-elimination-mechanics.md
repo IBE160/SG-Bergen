@@ -1,6 +1,6 @@
 # Story 3.4: Character Elimination Mechanics
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -90,7 +90,7 @@ so that I can narrow down the possibilities and effectively strategize my guess.
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- docs/sprint-artifacts/3-4-character-elimination-mechanics.context.xml
 
 ### Agent Model Used
 

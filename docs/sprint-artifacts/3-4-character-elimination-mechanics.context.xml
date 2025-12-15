@@ -1,0 +1,91 @@
+<story-context id="3-4-character-elimination-mechanics" v="1.0">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>3.4</storyId>
+    <title>Character Elimination Mechanics</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-15</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/3-4-character-elimination-mechanics.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>Player</asA>
+    <iWant>to visually eliminate characters from my board based on the opponent's answer</iWant>
+    <soThat>I can narrow down the possibilities and effectively strategize my guess</soThat>
+    <tasks>
+- [ ] **Implement `CharacterCard` Component (AC: 1, 2)**
+    - [ ] Create `CharacterCard` component in `app/game-play/components/`.
+    - [ ] Implement visual states for "Active" and "Eliminated" (grayed out/flipped effect).
+    - [ ] Integrate click handler to toggle state.
+    - [ ] Ensure `CharacterCard` adheres to accessibility guidelines (keyboard navigation, focus states, screen reader support).
+- [ ] **Integrate `CharacterCard` into `CharacterBoard` (AC: 1)**
+    - [ ] Update `CharacterBoard` component to render `CharacterCard` instances.
+    - [ ] Pass necessary props from `useGameStore` to `CharacterCard` for initial state.
+- [ ] **Update `useGameStore` for Character Elimination State (AC: 2)**
+    - [ ] Add state in `useGameStore` to track `eliminatedCharacterIds` (Set or Array).
+    - [ ] Implement an action in `useGameStore` to toggle elimination status of a character.
+    - [ ] Ensure local persistence of this state (Zustand).
+- [ ] **Connect `CharacterCard` to `useGameStore` (AC: 1, 2)**
+    - [ ] Dispatch the `toggleElimination` action from `CharacterCard`'s click handler.
+    - [ ] `CharacterCard` should react to `useGameStore` state for its visual representation.
+- [ ] **Implement "End Turn" Logic (AC: 3)**
+    - [ ] Ensure "End Turn" button (likely in `GameClient.tsx` or `InteractionPanel.tsx`) correctly triggers turn transition. (Leverage learnings from Story 3.3 for turn management).
+    - [ ] Verify `game_sessions.current_turn_player_id` updates via Realtime after turn end.
+- [ ] **Testing (AC: 1-3)**
+    - [ ] Unit test `useGameStore` actions for toggling elimination status.
+    - [ ] UI Test: Verify `CharacterCard` visual state changes on click.
+    - [ ] Integration Test: Verify "End Turn" correctly passes control to opponent.
+    - [ ] Accessibility Test: Verify keyboard navigation and screen reader announcements for `CharacterCard`.
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+- **Given** I have received an answer **When** I click on a character card **Then** It toggles to "Eliminated" state (grayed out/flipped)
+- **And** This state is preserved locally (Zustand store)
+- **When** I click "End Turn" (or automatic) **Then** Control passes to the opponent
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/PRD.md" title="Product Requirements Document" section="Functional Requirements" snippet="FR3.3 - Character Elimination: The system shall allow the active player to visually eliminate characters from their board based on the opponent's answer. Acceptance Criteria: An active player can 'flip down' or gray out characters on their grid." />
+      <doc path="docs/ux-design-specification.md" title="UX Design Specification" section="Component Library" snippet="Custom Component: Character Card. Behavior: On click, the card toggles between its 'Active' and 'Eliminated' states. States: Active (full color), Eliminated (grayed out)." />
+      <doc path="docs/architecture.md" title="Architecture" section="Decision Summary" snippet="State Management: Zustand. Simplifies complex game logic (turns, elimination) compared to Context API. Decouples logic from UI components for better testability." />
+      <doc path="docs/frontend-architecture.md" title="Frontend Architecture" section="State Management Strategy" snippet="Global Client State (Zustand): useGameStore: Manages active game state (cards, turn, players)." />
+    </docs>
+    <code>
+      <item path="digital-guess-who/app/game-play/components/character-card.tsx" kind="component" symbol="CharacterCard" reason="Existing implementation of the character card with visual states and click handler." />
+      <item path="digital-guess-who/app/game-play/components/character-grid.tsx" kind="component" symbol="CharacterGrid" reason="Existing grid component that renders CharacterCards and connects them to the store." />
+      <item path="digital-guess-who/lib/store/game.ts" kind="store" symbol="useGameStore" reason="Existing store implementation with toggleElimination action and eliminatedCharacterIds state." />
+      <item path="digital-guess-who/app/game-play/[code]/game-client.tsx" kind="component" symbol="GameClient" reason="Main game client which includes the End Turn button logic." />
+      <item path="digital-guess-who/tests/unit/gameStore.test.ts" kind="test" symbol="toggles elimination" reason="Existing unit test verifying the toggleElimination logic." />
+    </code>
+    <dependencies>
+      <pkg name="zustand" type="production" />
+      <pkg name="clsx" type="production" />
+      <pkg name="tailwind-merge" type="production" />
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    - **State Management:** Must use `useGameStore` (Zustand) for client-side management.
+    - **Performance:** Elimination must be instant (optimistic UI).
+    - **Accessibility:** `CharacterCard` must be fully accessible (keyboard nav, screen reader).
+    - **Feature-Sliced Design:** Components must reside in `app/game-play/components/`.
+  </constraints>
+
+  <interfaces>
+    <interface name="toggleElimination" kind="function" signature="(id: number) => void" path="digital-guess-who/lib/store/game.ts" />
+    <interface name="CharacterCardProps" kind="interface" signature="interface CharacterCardProps { character: Character; isEliminated?: boolean; onClick: () => void; ... }" path="digital-guess-who/app/game-play/components/character-card.tsx" />
+  </interfaces>
+
+  <tests>
+    <standards>Follow the testing pyramid: Unit tests for logic (Zustand), Component tests for UI interactions (React Testing Library), Integration tests for critical flows.</standards>
+    <locations>digital-guess-who/tests/unit/, digital-guess-who/tests/ui/</locations>
+    <ideas>
+      - UI Test: Mount CharacterCard with isEliminated=true and verify 'grayscale' class is applied.
+      - UI Test: Click CharacterCard and verify onClick handler is called.
+      - Integration: Verify clicking End Turn calls the backend API and updates local state.
+    </ideas>
+  </tests>
+</story-context>
