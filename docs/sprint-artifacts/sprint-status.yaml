@@ -50,7 +50,7 @@ development_status:
   epic-3: contexted
   3-1-game-board-secret-character-selection: done
   3-2-turn-management-system: done
-  3-3-question-answer-interaction: backlog
+  3-3-question-answer-interaction: drafted
   3-4-character-elimination-mechanics: backlog
   3-5-winning-losing-the-guess: backlog
   epic-3-retrospective: optional
