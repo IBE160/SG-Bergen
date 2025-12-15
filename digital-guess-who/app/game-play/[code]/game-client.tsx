@@ -5,6 +5,7 @@ import { useGameStore } from "@/lib/store/game";
 import { ALL_CHARACTERS } from "@/lib/data/characters";
 import { CharacterGrid } from "../components/character-grid";
 import { InteractionPanel, InteractionState } from "../components/interaction-panel";
+import { GuessConfirmationModal } from "../components/guess-confirmation-modal";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
@@ -18,16 +19,23 @@ interface GameClientProps {
 export function GameClient({ gameCode }: GameClientProps) {
   const { 
     setCharacters, 
+    characters,
     selectedCharacterId, 
     selectCharacter, 
+    gameStatus,
     gamePhase, 
     setGamePhase, 
     currentTurnPlayerId,
     currentInteraction,
-    lastMove
+    lastMove,
+    makeGuess,
+    winnerId
   } = useGameStore();
   
   const [isLoading, setIsLoading] = useState(false);
+  const [isGuessModalOpen, setIsGuessModalOpen] = useState(false);
+  const [isGuessing, setIsGuessing] = useState(false);
+
   const [playerId, setPlayerId] = useState<string | null>(null);
   const [gameId, setGameId] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
@@ -53,6 +61,8 @@ export function GameClient({ gameCode }: GameClientProps) {
             : `Answered: ${lastMove.details.answer}`,
       timestamp: new Date(lastMove.created_at)
   } : undefined;
+
+  const selectedCharacter = characters.find(c => c.id === selectedCharacterId);
 
   useEffect(() => {
     if (isMyTurn && lastMove?.action_type === 'answer') {
@@ -181,6 +191,28 @@ export function GameClient({ gameCode }: GameClientProps) {
     }
   };
 
+  const handleGuessClick = () => {
+    if (!selectedCharacterId) {
+        toast.error("Please select a character on the board first.");
+        return;
+    }
+    setIsGuessModalOpen(true);
+  };
+
+  const handleConfirmGuess = async () => {
+      if (!gameId || !selectedCharacterId) return;
+      setIsGuessing(true);
+      try {
+          await makeGuess(gameId, selectedCharacterId);
+          // Success handled by store update/realtime
+          setIsGuessModalOpen(false);
+      } catch (error: any) {
+          toast.error(error.message || "Failed to make guess");
+      } finally {
+          setIsGuessing(false);
+      }
+  };
+
   // Determine mode based on global phase
   const isSelecting = gamePhase === 'selection';
   const isGameActive = gamePhase === 'active' || gamePhase === 'game';
@@ -213,7 +245,9 @@ export function GameClient({ gameCode }: GameClientProps) {
                 {!isSelecting && isGameActive && (
                     <div className="flex items-center space-x-2">
                         <Button disabled={!isMyTurn} variant="secondary" onClick={handleEndTurn}>End Turn</Button>
-                        <Button disabled={!isMyTurn} variant="destructive">Make Guess</Button>
+                        {/* Guess button moved to InteractionPanel for context, but keeping here as fallback or removal? 
+                            Story says "Integrate Guessing into InteractionPanel". 
+                            Removing duplicate button here to avoid confusion. */}
                     </div>
                 )}
             </div>
@@ -225,11 +259,38 @@ export function GameClient({ gameCode }: GameClientProps) {
                     lastMove={mappedLastMove}
                     onAskQuestion={handleAskQuestion}
                     onAnswerQuestion={handleAnswerQuestion}
+                    onGuessClick={handleGuessClick}
+                    isGuessDisabled={!selectedCharacterId}
                 />
             )}
         </div>
         
         <CharacterGrid selectionMode={isSelecting} />
+
+        {/* Modals and Overlays */}
+        {selectedCharacter && (
+            <GuessConfirmationModal 
+                isOpen={isGuessModalOpen}
+                character={selectedCharacter}
+                onConfirm={handleConfirmGuess}
+                onCancel={() => setIsGuessModalOpen(false)}
+                isSubmitting={isGuessing}
+            />
+        )}
+
+        {gameStatus === 'finished' && (
+          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background/95 backdrop-blur-sm animate-in fade-in duration-500">
+             <h1 className="text-6xl font-black mb-4 tracking-tighter text-primary">
+                 {winnerId === userId ? "VICTORY!" : "DEFEAT"}
+             </h1>
+             <p className="text-2xl font-medium text-muted-foreground mb-8">
+                 {winnerId === userId ? "You correctly identified the secret character!" : "Your opponent won the game."}
+             </p>
+             <Button size="lg" onClick={() => window.location.href = '/'}>
+                 Back to Menu
+             </Button>
+          </div>
+        )}
       </main>
     </div>
   );

@@ -10,7 +10,8 @@ export function useGameplaySubscription(gameId: string | null) {
     setPlayers, 
     setGamePhase,
     setInteraction,
-    setLastMove
+    setLastMove,
+    setWinner
   } = useGameStore()
   const supabase = createClient()
 
@@ -23,6 +24,7 @@ export function useGameplaySubscription(gameId: string | null) {
         if (session) {
             setGameStatus(session.status as any); 
             setCurrentTurn(session.current_turn_player_id);
+            setWinner(session.winner_id);
             if (session.phase) setGamePhase(session.phase);
         }
         
@@ -68,9 +70,11 @@ export function useGameplaySubscription(gameId: string | null) {
         (payload: any) => {
           const newStatus = payload.new.status;
           const newTurn = payload.new.current_turn_player_id;
+          const newWinner = payload.new.winner_id;
           
           setGameStatus(newStatus);
           setCurrentTurn(newTurn);
+          setWinner(newWinner);
           
           if (payload.new.phase) {
               setGamePhase(payload.new.phase);

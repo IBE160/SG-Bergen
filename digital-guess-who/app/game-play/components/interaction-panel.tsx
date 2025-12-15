@@ -24,6 +24,8 @@ interface InteractionPanelProps {
   }
   onAskQuestion: (text: string) => void
   onAnswerQuestion: (answer: 'Yes' | 'No') => void
+  onGuessClick?: () => void
+  isGuessDisabled?: boolean
 }
 
 export function InteractionPanel({
@@ -31,7 +33,9 @@ export function InteractionPanel({
   interactionState,
   lastMove,
   onAskQuestion,
-  onAnswerQuestion
+  onAnswerQuestion,
+  onGuessClick,
+  isGuessDisabled
 }: InteractionPanelProps) {
   return (
     <Card className="w-full mb-4">
@@ -47,7 +51,25 @@ export function InteractionPanel({
         {/* Active Interaction Area */}
         <div className="p-4 rounded-lg bg-secondary/20 border border-border">
             {isMyTurn && interactionState.status === 'idle' && (
-                <QuestionInput onAsk={onAskQuestion} />
+                <div className="flex flex-col gap-4">
+                    <QuestionInput onAsk={onAskQuestion} />
+                    <div className="relative flex py-1 items-center">
+                        <div className="flex-grow border-t border-border/50"></div>
+                        <span className="flex-shrink-0 mx-4 text-muted-foreground text-xs uppercase">or</span>
+                        <div className="flex-grow border-t border-border/50"></div>
+                    </div>
+                    <Button 
+                        variant="destructive" 
+                        className="w-full" 
+                        onClick={onGuessClick}
+                        disabled={isGuessDisabled}
+                    >
+                        Make a Final Guess
+                    </Button>
+                     {isGuessDisabled && (
+                        <p className="text-xs text-center text-muted-foreground">Select a character on the board to guess.</p>
+                    )}
+                </div>
             )}
             
             {isMyTurn && interactionState.status === 'answering' && (

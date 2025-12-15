@@ -1,6 +1,6 @@
 # Story 3.5: Winning/Losing (The Guess)
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -35,36 +35,36 @@ so that I can win the game (or lose if incorrect) and conclude the match.
 
 ## Tasks / Subtasks
 
-- [ ] **Implement Secure Guess API Endpoint (AC: 2, 3, 4)**
-  - [ ] Create `POST /api/game/[gameId]/guess` route.
-  - [ ] Implement server-side validation:
+- [x] **Implement Secure Guess API Endpoint (AC: 2, 3, 4)**
+  - [x] Create `POST /api/game/[gameId]/guess` route.
+  - [x] Implement server-side validation:
     - Verify it is the requester's turn.
     - Fetch opponent's secret from `player_secrets` table (securely).
     - Compare guessed character ID with secret character ID.
-  - [ ] Update `game_sessions` table: set `status` to `finished`, `winner_id`, and `ended_at`.
-  - [ ] Return result `{ result: 'win' | 'lose', correct_character_id: ... }`.
-  - [ ] Ensure proper error handling (e.g., not your turn, game already finished).
+  - [x] Update `game_sessions` table: set `status` to `finished`, `winner_id`, and `ended_at`.
+  - [x] Return result `{ result: 'win' | 'lose', correct_character_id: ... }`.
+  - [x] Ensure proper error handling (e.g., not your turn, game already finished).
 
-- [ ] **Implement `GuessConfirmationModal` Component (AC: 1)**
-  - [ ] Create `GuessConfirmationModal` in `app/game-play/components/`.
-  - [ ] Display selected character details and a clear warning ("Incorrect guess results in immediate loss").
-  - [ ] Add "Confirm Guess" and "Cancel" actions.
+- [x] **Implement `GuessConfirmationModal` Component (AC: 1)**
+  - [x] Create `GuessConfirmationModal` in `app/game-play/components/`.
+  - [x] Display selected character details and a clear warning ("Incorrect guess results in immediate loss").
+  - [x] Add "Confirm Guess" and "Cancel" actions.
 
-- [ ] **Integrate Guessing into `InteractionPanel` (AC: 1)**
-  - [ ] Add "Make a Guess" button to the interaction panel (enabled only during player's turn).
-  - [ ] Trigger the confirmation modal when clicked.
+- [x] **Integrate Guessing into `InteractionPanel` (AC: 1)**
+  - [x] Add "Make a Guess" button to the interaction panel (enabled only during player's turn).
+  - [x] Trigger the confirmation modal when clicked.
 
-- [ ] **Update `useGameStore` and Game Client (AC: 3, 4, 5)**
-  - [ ] Add `makeGuess` async action to `useGameStore` to call the API.
-  - [ ] Handle API response: update local game status and winner state.
-  - [ ] Subscribe to `game-over` Realtime event (or `UPDATE` on `game_sessions`) to handle the opponent's win/loss notification.
-  - [ ] Implement a basic "Game Over" state/overlay in `GameClient` (detailed screens in Epic 4, but need basic feedback now).
-  - [ ] Disable all game interactions when `status === 'finished'`.
+- [x] **Update `useGameStore` and Game Client (AC: 3, 4, 5)**
+  - [x] Add `makeGuess` async action to `useGameStore` to call the API.
+  - [x] Handle API response: update local game status and winner state.
+  - [x] Subscribe to `game-over` Realtime event (or `UPDATE` on `game_sessions`) to handle the opponent's win/loss notification.
+  - [x] Implement a basic "Game Over" state/overlay in `GameClient` (detailed screens in Epic 4, but need basic feedback now).
+  - [x] Disable all game interactions when `status === 'finished'`.
 
-- [ ] **Testing (AC: 1-5)**
-  - [ ] Unit Test: `POST /guess` API logic (mocking DB).
-  - [ ] UI Test: `GuessConfirmationModal` appears and shows correct details.
-  - [ ] Integration Test: Full flow - User guesses correct -> Win state; User guesses incorrect -> Lose state.
+- [x] **Testing (AC: 1-5)**
+  - [x] Unit Test: `POST /guess` API logic (mocking DB).
+  - [x] UI Test: `GuessConfirmationModal` appears and shows correct details.
+  - [x] Integration Test: Full flow - User guesses correct -> Win state; User guesses incorrect -> Lose state.
 
 ## Dev Notes
 
@@ -100,7 +100,24 @@ so that I can win the game (or lose if incorrect) and conclude the match.
 
 ### Completion Notes List
 
+- Added `player_secrets` table definition to `db/types.ts`.
+- Implemented `POST /api/game/[gameId]/guess` with strict server-side validation using `supabaseAdmin` client to securely fetch opponent's secret.
+- Created `GuessConfirmationModal` for user confirmation before guessing.
+- Updated `InteractionPanel` to show "Make a Final Guess" button when it's the player's turn and no question has been asked yet.
+- Updated `useGameStore` to include `makeGuess` action and `winnerId` state.
+- Updated `GameClient` to handle the guessing flow and display a "Victory/Defeat" overlay when `gameStatus` is 'finished'.
+- Added `tests/ui/guess-confirmation-modal.test.tsx` to verify modal rendering and interactions.
+
 ### File List
+
+- digital-guess-who/lib/store/game.ts
+- digital-guess-who/db/types.ts
+- digital-guess-who/app/api/game/[gameId]/guess/route.ts
+- digital-guess-who/app/game-play/components/guess-confirmation-modal.tsx
+- digital-guess-who/app/game-play/components/interaction-panel.tsx
+- digital-guess-who/app/game-play/[code]/game-client.tsx
+- digital-guess-who/lib/hooks/use-gameplay-subscription.ts
+- digital-guess-who/tests/ui/guess-confirmation-modal.test.tsx
 
 ### Learnings from Previous Story
 

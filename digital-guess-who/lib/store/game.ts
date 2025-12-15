@@ -27,6 +27,7 @@ interface GameState {
   gamePhase: string; // Added phase
   players: any[]; 
   currentTurnPlayerId: string | null;
+  winnerId: string | null;
   
   // New State
   currentInteraction: Interaction | null;
@@ -40,10 +41,12 @@ interface GameState {
   setGamePhase: (phase: string) => void; // Added action
   setPlayers: (players: any[]) => void;
   setCurrentTurn: (playerId: string | null) => void;
+  setWinner: (winnerId: string | null) => void;
   
   // New Actions
   setInteraction: (interaction: Interaction | null) => void;
   setLastMove: (move: Move | null) => void;
+  makeGuess: (gameId: string, characterId: number) => Promise<void>;
 
   reset: () => void;
 }
@@ -58,6 +61,7 @@ export const useGameStore = create(
       gamePhase: 'selection', // Default to selection since we arrive here for selection
       players: [],
       currentTurnPlayerId: null,
+      winnerId: null,
 
       currentInteraction: null,
       lastMove: null,
@@ -76,9 +80,35 @@ export const useGameStore = create(
       setGamePhase: (phase) => set({ gamePhase: phase }),
       setPlayers: (players) => set({ players }),
       setCurrentTurn: (id) => set({ currentTurnPlayerId: id }),
+      setWinner: (id) => set({ winnerId: id }),
 
       setInteraction: (interaction) => set({ currentInteraction: interaction }),
       setLastMove: (move) => set({ lastMove: move }),
+      
+      makeGuess: async (gameId, characterId) => {
+        try {
+            const response = await fetch(`/api/game/${gameId}/guess`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ guess_character_id: characterId })
+            });
+            
+            if (!response.ok) {
+                const error = await response.json();
+                 throw new Error(error.error || 'Failed to submit guess');
+            }
+            
+            const data = await response.json();
+            
+            if (data.result === 'win' || data.result === 'lose') {
+                 set({ gameStatus: 'finished' });
+            }
+    
+        } catch (e) {
+            console.error("Guess error:", e);
+            throw e;
+        }
+      },
 
       reset: () => set({ 
         characters: [], 
