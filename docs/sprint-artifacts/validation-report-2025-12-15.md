@@ -1,55 +1,76 @@
-# Validation Report
+# Story Quality Validation Report
 
-**Document:** docs/sprint-artifacts/3-3-question-answer-interaction.context.xml
-**Checklist:** .bmad/bmm/workflows/4-implementation/story-context/checklist.md
+**Document:** /Users/sandrachristensen/SG-Bergen/docs/sprint-artifacts/3-4-character-elimination-mechanics.md
+**Checklist:** /Users/sandrachristensen/SG-Bergen/.bmad/bmm/workflows/4-implementation/create-story/checklist.md
 **Date:** 2025-12-15
 
 ## Summary
-- Overall: 9/10 passed (90%)
+- Overall: PASS (0/0 critical, 0/10 major, 0/3 minor)
 - Critical Issues: 0
 
 ## Section Results
 
-### Story Context Assembly Checklist
-Pass Rate: 9/10 (90%)
+### 1. Load Story and Extract Metadata
+✓ PASS - Story loaded and metadata extracted.
+Evidence: N/A
 
-[✓ PASS] Story fields (asA/iWant/soThat) captured
-Evidence: <asA>, <iWant>, <soThat> tags match source markdown exactly.
+### 2. Previous Story Continuity Check
+✓ PASS - "Learnings from Previous Story" subsection exists and correctly references NEW files, completion notes, and cites the previous story. No unresolved review items from previous story.
+Evidence: "Learnings from Previous Story" section in Dev Notes.
 
-[✓ PASS] Acceptance criteria list matches story draft exactly (no invention)
-Evidence: 6 items in XML match the 6 ACs in docs/sprint-artifacts/3-3-question-answer-interaction.md.
+### 3. Source Document Coverage Check
+Pass Rate: 7/7 (100%)
 
-[✓ PASS] Tasks/subtasks captured as task list
-Evidence: <tasks> section accurately reflects the markdown task list structure.
+✓ PASS - Tech spec (`tech-spec-epic-3.md`) is cited.
+Evidence: `[Source: docs/tech-spec-epic-3.md#Elimination]`
+✓ PASS - Epics (`epics.md`) is cited.
+Evidence: `[Source: docs/epics.md#Story-3.4]`
+✓ PASS - Architecture (`architecture.md`) is cited.
+Evidence: `[Source: docs/architecture.md#Decision-Summary]`
+✓ PASS - `Testing-strategy.md` is explicitly cited and referenced in Dev Notes.
+Evidence: `[Source: docs/testing-strategy.md]` and "Testing & Standards" subsection.
+✓ PASS - `Coding-standards.md` is explicitly cited and referenced in Dev Notes.
+Evidence: `[Source: docs/coding-standards.md]` and "Testing & Standards" subsection.
+✓ PASS - `unified-project-structure.md` exists and "Project Structure Notes" subsection is present.
+Evidence: "Project Structure Notes" section in Dev Notes.
+✓ PASS - All cited file paths are correct and files exist, and citations include section names.
+Evidence: All citations verified.
 
-[⚠ PARTIAL] Relevant docs (5-15) included with path and snippets
-Evidence: 4 docs included (Epics, PRD, Architecture, UX).
-Missing: The source story markdown explicitly references `docs/sprint-artifacts/3-2-turn-management-system.md` in "Learnings" and "References", but this file is missing from the XML context. The count (4) is also slightly below the recommended range (5-15).
+### 4. Acceptance Criteria Quality Check
+✓ PASS - 3 ACs found. ACs are testable, specific, atomic, and consistent with the tech spec.
+Evidence: All ACs in story.
 
-[✓ PASS] Relevant code references included with reason and line hints
-Evidence: Included `game-store.ts`, `use-gameplay-subscription.ts`, and `schema.ts` with clear reasons.
+### 5. Task-AC Mapping Check
+✓ PASS - All ACs are covered by tasks, and all tasks reference AC numbers. Sufficient testing subtasks are present.
+Evidence: Task list with "(AC: #)" references.
 
-[✓ PASS] Interfaces/API contracts extracted if applicable
-Evidence: Extracted `Move` (DB) and `GameState` (Store) interfaces.
+### 6. Dev Notes Quality Check
+✓ PASS - All required subsections exist, architecture guidance is specific, and citations are appropriate.
+Evidence: "Relevant Architecture Patterns and Constraints", "Project Structure Notes", "Testing & Standards", "References", "Learnings from Previous Story" sections.
 
-[✓ PASS] Constraints include applicable dev rules and patterns
-Evidence: Security (RLS), Performance (Latency), and Architecture constraints are clearly listed.
+### 7. Story Structure Check
+Pass Rate: 5/5 (100%)
+✓ PASS - Status is "drafted".
+Evidence: `Status: drafted`
+✓ PASS - Story section has "As a / I want / so that" format.
+Evidence: "As a Player, I want to visually eliminate..."
+✓ PASS - Dev Agent Record has required sections (templated).
+Evidence: "Dev Agent Record" section.
+✓ PASS - `Change Log` section exists.
+Evidence: "Change Log" section present with initial draft entry.
+✓ PASS - File is in correct location.
+Evidence: `/Users/sandrachristensen/SG-Bergen/docs/sprint-artifacts/3-4-character-elimination-mechanics.md`
 
-[✓ PASS] Dependencies detected from manifests and frameworks
-Evidence: Relevant deps like supabase-js, zustand, sonner included.
-
-[✓ PASS] Testing standards and locations populated
-Evidence: Includes specific standards (jest --runInBand) and test ideas mapping to ACs.
-
-[✓ PASS] XML structure follows story-context template format
-Evidence: Valid XML structure matching the template.
+### 8. Unresolved Review Items Alert
+✓ PASS - No unchecked items found in previous story's Senior Developer Review.
+Evidence: No unchecked `[ ]` items in `3-3-question-answer-interaction.md`.
 
 ## Failed Items
-None.
+(none)
 
 ## Partial Items
-1. **Relevant docs (5-15) included** - Missing `docs/sprint-artifacts/3-2-turn-management-system.md` which is referenced in the source story for learnings on RLS and Testing. Including this would provide valuable context on "Learnings from Previous Story".
+(none)
 
 ## Recommendations
-1. **Should Improve**: Add `docs/sprint-artifacts/3-2-turn-management-system.md` to the `<artifacts><docs>` section to ensure the "Learnings" context is fully available to the developer.
-2. **Consider**: Double-check if `docs/data-models.md` offers any extra value over `schema.ts` for the `moves` table, though `schema.ts` is likely sufficient.
+1.  **Success**: The story is now fully compliant with all quality standards.
+2.  **Next Step**: Proceed to generate story context or mark as ready for development.
