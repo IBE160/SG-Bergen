@@ -1,0 +1,156 @@
+<story-context id=".bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>3</storyId>
+    <title>Question &amp; Answer Interaction</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-15</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/3-3-question-answer-interaction.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>Player</asA>
+    <iWant>to ask a yes/no question and receive an answer</iWant>
+    <soThat>I can eliminate characters</soThat>
+    <tasks>
+- [ ] **Implement Q&A UI Components (AC: 1, 2, 6)**
+  - [ ] Create `QuestionInput` component (text input + "Ask" button) in `InteractionPanel`.
+  - [ ] Create `AnswerInput` component (display question + "Yes"/"No" buttons) in `InteractionPanel`.
+  - [ ] Create `MoveHistory` component to display the latest Q&A exchange.
+- [ ] **Implement Move Submission Logic (AC: 4)**
+  - [ ] Implement `submitMove` function in `lib/store/game.ts` or `lib/game-logic.ts` to insert into `moves` table.
+  - [ ] Handle `action_type: 'question'` with `details: { question_text: "..." }`.
+  - [ ] Handle `action_type: 'answer'` with `details: { answer: "Yes" | "No", related_question_id: "..." }`.
+- [ ] **Integrate Realtime Move Updates (AC: 1, 3, 5)**
+  - [ ] Extend `useGameplaySubscription` to listen for `INSERT` on `moves` table.
+  - [ ] Update `useGameStore` to handle incoming move events:
+    - If `question`: Show `AnswerInput` for opponent, `Waiting for Answer` for active player.
+    - If `answer`: Show result to active player, prompt for elimination.
+- [ ] **State Management Updates (AC: 1, 2, 3, 5)**
+  - [ ] Add `currentInteraction` or `moveHistory` to `useGameStore` to track the active Q&A flow.
+  - [ ] Handle state transitions: `idle` -> `asking` -> `answering` -> `resolution` (elimination).
+- [ ] **Testing (AC: 1-6)**
+  - [ ] Unit test `submitMove` logic.
+  - [ ] Integration test: Simulate Q&A flow via `RealtimeTestHarness` (ensure RLS allows valid moves).
+  - [ ] UI Test: Verify "Ask" button is disabled for non-active player (re-verify).
+  - [ ] UI Test: Verify "Yes/No" buttons appear only for the answerer.
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+1.  **Given** It is my turn **When** I type a question and click "Ask" **Then** The opponent sees the question immediately (Realtime).
+2.  **Given** It is the opponent's turn **And** They have asked a question **Then** I see the question and "Yes"/"No" answer buttons.
+3.  **When** The opponent clicks "Yes" or "No" **Then** I receive the answer immediately.
+4.  **And** The interaction (question and answer) is logged in the `moves` table.
+5.  **And** The turn indicator visually prompts the active player to eliminate characters (or end turn).
+6.  **And** The Q&A history is visible (at least the last interaction).
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Epic Breakdown</title>
+        <section>Story 3.3: Question &amp; Answer Interaction</section>
+        <snippet>The system shall allow the active player to ask a yes/no question and the non-active player to provide a "Yes" or "No" answer. Interaction logs to moves table.</snippet>
+      </doc>
+      <doc>
+        <path>docs/PRD.md</path>
+        <title>Product Requirements Document</title>
+        <section>FR3.2 - Questioning &amp; Answering</section>
+        <snippet>The system shall allow the active player to ask a yes/no question and the non-active player to provide a "Yes" or "No" answer.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Communication Patterns (Supabase Realtime)</section>
+        <snippet>Event Names: turn-changed, card-flipped. State Sync: Events payload includes the delta or the new critical state.</snippet>
+      </doc>
+      <doc>
+        <path>docs/ux-design-specification.md</path>
+        <title>UX Design Specification</title>
+        <section>Journey 2: Core Gameplay Loop</section>
+        <snippet>Step 2: Asking a Question - Question Box UI. Step 3: Answering - Yes/No buttons. Feedback: Immediate update.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/3-2-turn-management-system.md</path>
+        <title>Story 3.2: Turn Management System</title>
+        <section>Learnings from Previous Story</section>
+        <snippet>Secure Moves: RLS policies are strictly enforced. Testing: Previous tests failed due to OOM. Use `jest --runInBand`.</snippet>
+      </doc>
+    </docs>
+
+    <code>
+      <item>
+        <path>digital-guess-who/lib/store/game-store.ts</path>
+        <kind>state-store</kind>
+        <symbol>useGameStore</symbol>
+        <reason>Needs updates to handle currentInteraction state (asking/answering) and store move history.</reason>
+      </item>
+      <item>
+        <path>digital-guess-who/lib/hooks/use-gameplay-subscription.ts</path>
+        <kind>hook</kind>
+        <symbol>useGameplaySubscription</symbol>
+        <reason>Needs to subscribe to INSERT events on 'moves' table to receive questions/answers in realtime.</reason>
+      </item>
+      <item>
+        <path>digital-guess-who/db/schema.ts</path>
+        <kind>schema</kind>
+        <symbol>moves</symbol>
+        <reason>Table definition for storing questions and answers. Verify 'details' jsonb structure.</reason>
+      </item>
+    </code>
+
+    <dependencies>
+      <dep package="@supabase/supabase-js" ecosystem="npm">latest</dep>
+      <dep package="zustand" ecosystem="npm">^5.0.9</dep>
+      <dep package="sonner" ecosystem="npm">^2.0.7</dep>
+      <dep package="react-hook-form" ecosystem="npm">^7.68.0</dep>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint>
+      <type>Security</type>
+      <description>RLS Policies: Ensure 'moves' insert policy allows active player to insert 'question' and opponent to insert 'answer'.</description>
+    </constraint>
+    <constraint>
+      <type>Performance</type>
+      <description>Latency: Realtime updates must happen &lt; 500ms. Use optimistic UI updates where possible.</description>
+    </constraint>
+    <constraint>
+      <type>Architecture</type>
+      <description>State Management: Transient Q&amp;A state should be in Zustand. Persistent history in 'moves' table.</description>
+    </constraint>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>Move</name>
+      <kind>Database Table</kind>
+      <signature>id, game_id, player_id, action_type (question|answer), details (jsonb)</signature>
+      <path>digital-guess-who/db/schema.ts</path>
+    </interface>
+    <interface>
+      <name>GameState</name>
+      <kind>Zustand Store</kind>
+      <signature>gameStatus, currentTurnPlayerId, players, winnerId, makeGuess, eliminateCharacter</signature>
+      <path>digital-guess-who/lib/store/game-store.ts</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>Use `jest --runInBand` to avoid OOM. Use `RealtimeTestHarness` for integration testing of game flows.</standards>
+    <locations>
+      <loc>digital-guess-who/tests/integration</loc>
+      <loc>digital-guess-who/tests/ui</loc>
+    </locations>
+    <ideas>
+      <idea ac="1">Test: Active player submits question -> 'moves' insert -> Realtime event broadcast.</idea>
+      <idea ac="2">Test: Opponent receives 'question' event -> UI shows 'Yes/No' buttons.</idea>
+      <idea ac="3">Test: Opponent clicks 'Yes' -> 'moves' insert -> Active player receives answer.</idea>
+      <idea ac="4">Test: DB verification - check 'moves' table contains correct action_type and details.</idea>
+    </ideas>
+  </tests>
+</story-context>

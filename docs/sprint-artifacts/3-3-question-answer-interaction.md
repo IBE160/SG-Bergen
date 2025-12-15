@@ -1,6 +1,6 @@
 # Story 3.3: Question & Answer Interaction
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -80,7 +80,7 @@ so that I can eliminate characters.
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- docs/sprint-artifacts/3-3-question-answer-interaction.context.xml
 
 ### Agent Model Used
 
