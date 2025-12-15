@@ -55,6 +55,18 @@ export function GameClient({ gameCode }: GameClientProps) {
   } : undefined;
 
   useEffect(() => {
+    if (isMyTurn && lastMove?.action_type === 'answer') {
+        toast.info("Eliminate characters based on the answer!", {
+            duration: 5000,
+            action: {
+                label: "Got it",
+                onClick: () => console.log("User acknowledged elimination prompt")
+            }
+        });
+    }
+  }, [lastMove, isMyTurn]);
+
+  useEffect(() => {
     const initGame = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;

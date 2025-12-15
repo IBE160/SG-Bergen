@@ -175,3 +175,6 @@ It adheres to the **Backend Architecture** by using **Next.js API Routes** for s
   - Missing tests for Grid UI and Secret RLS integration have been added.
 - **Resolved (2025-12-12):** Difficulty logic implemented in `GameClient`.
 - **Verified (2025-12-14):** Final Senior Developer Review confirmed all ACs and Tasks are complete. `add_game_phase.sql` migration verified. Story 3.1 is Done.
+
+**Story 3.3 Review (2025-12-15):**
+- [x] [Low] Add a visual toast/banner prompt "Eliminate Characters" after receiving an answer (AC #5 enhancement) [file: digital-guess-who/app/game-play/[code]/game-client.tsx]

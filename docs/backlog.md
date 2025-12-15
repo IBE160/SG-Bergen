@@ -19,4 +19,4 @@ Routing guidance:
 | 2025-12-12 | 3.1 | 3 | Bug | High | Amelia | Done | Implement server-side logic (API/Trigger) to transition game to 'playing' (AC #3). |
 | 2025-12-12 | 3.1 | 3 | Bug | High | Amelia | Done | Integrate useGameplaySubscription in GameClient to enable realtime updates (AC #3). |
 | 2025-12-12 | 3.1 | 3 | Bug | High | Amelia | Done | Implement missing UI/Integration tests for Grid and RLS (AC #1, #2). |
-| 2025-12-12 | 3.1 | 3 | Bug | Medium | Amelia | Done | Implement difficulty logic to slice characters based on game settings (AC #1). |
+| 2025-12-15 | 3.3 | 3 | Enhancement | Low | Amelia | Done | Add a visual toast/banner prompt "Eliminate Characters" after receiving an answer (AC #5 enhancement). (file: digital-guess-who/app/game-play/[code]/game-client.tsx) |
