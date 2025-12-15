@@ -1,6 +1,6 @@
 # Story 3.5: Winning/Losing (The Guess)
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -90,6 +90,7 @@ so that I can win the game (or lose if incorrect) and conclude the match.
 ### Context Reference
 
 <!-- Path(s) to story context XML will be added here by context workflow -->
+- docs/sprint-artifacts/3-5-winning-losing-the-guess.context.xml
 
 ### Agent Model Used
 

@@ -1,0 +1,229 @@
+<story-context id=".bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>5</storyId>
+    <title>Winning/Losing (The Guess)</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-15</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/3-5-winning-losing-the-guess.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>Player</asA>
+    <iWant>to make a final guess about the opponent's secret character</iWant>
+    <soThat>I can win the game (or lose if incorrect) and conclude the match</soThat>
+    <tasks>
+      - Implement Secure Guess API Endpoint (AC: 2, 3, 4)
+        - Create POST /api/game/[gameId]/guess route.
+        - Implement server-side validation:
+          - Verify it is the requester's turn.
+          - Fetch opponent's secret from player_secrets table (securely).
+          - Compare guessed character ID with secret character ID.
+        - Update game_sessions table: set status to finished, winner_id, and ended_at.
+        - Return result { result: 'win' | 'lose', correct_character_id: ... }.
+        - Ensure proper error handling (e.g., not your turn, game already finished).
+      - Implement GuessConfirmationModal Component (AC: 1)
+        - Create GuessConfirmationModal in app/game-play/components/.
+        - Display selected character details and a clear warning ("Incorrect guess results in immediate loss").
+        - Add "Confirm Guess" and "Cancel" actions.
+      - Integrate Guessing into InteractionPanel (AC: 1)
+        - Add "Make a Guess" button to the interaction panel (enabled only during player's turn).
+        - Trigger the confirmation modal when clicked.
+      - Update useGameStore and Game Client (AC: 3, 4, 5)
+        - Add makeGuess async action to useGameStore to call the API.
+        - Handle API response: update local game status and winner state.
+        - Subscribe to game-over Realtime event (or UPDATE on game_sessions) to handle the opponent's win/loss notification.
+        - Implement a basic "Game Over" state/overlay in GameClient (detailed screens in Epic 4, but need basic feedback now).
+        - Disable all game interactions when status === 'finished'.
+      - Testing (AC: 1-5)
+        - Unit Test: POST /guess API logic (mocking DB).
+        - UI Test: GuessConfirmationModal appears and shows correct details.
+        - Integration Test: Full flow - User guesses correct -> Win state; User guesses incorrect -> Lose state.
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    1. Given It is my turn When I click "Make a Guess" Then I am presented with a confirmation modal ("Are you sure you want to guess [Character Name]?") to prevent accidental loss.
+    2. Given I confirm my guess Then The system validates the guess against the opponent's secret character on the server (Secure Verification). And The validation result ("win" or "lose") is returned.
+    3. Given My guess is CORRECT Then The game status updates to `finished`. And The `winner_id` is set to ME. And I see a "You Win!" message/screen. And The opponent sees a "You Lose!" message/screen.
+    4. Given My guess is INCORRECT Then The game status updates to `finished`. And The `winner_id` is set to the OPPONENT. And I see a "You Lose!" message/screen. And The opponent sees a "You Win!" message/screen.
+    5. Given The game has ended Then No further moves (questions, answers, guesses) can be made.
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <entry>
+        <path>docs/PRD.md</path>
+        <title>ibe160 - Product Requirements Document</title>
+        <section>Functional Requirements</section>
+        <snippet>FR3.4 - Guessing & Win/Loss Condition: The system shall allow the active player to make a guess about the opponent's secret character and determine the winner/loser.</snippet>
+      </entry>
+      <entry>
+        <path>docs/PRD.md</path>
+        <title>ibe160 - Product Requirements Document</title>
+        <section>Non-Functional Requirements</section>
+        <snippet>Security: Critical game logic, specifically the verification of a winning guess, must be validated server-side. The opponent's secret character ID must NEVER be exposed to the client to prevent inspection-based cheating.</snippet>
+      </entry>
+      <entry>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Decision Summary</section>
+        <snippet>Core Gameplay Loop: Supabase Realtime, Zustand Store (Game), Feature Components. Next.js API Routes for sensitive operations—specifically the winning guess validation.</snippet>
+      </entry>
+      <entry>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Security Architecture</section>
+        <snippet>Server-Side Verification (Epic 3): Winning guesses are verified on the server; the opponent's secret character_id is NEVER sent to the client to prevent inspection cheating.</snippet>
+      </entry>
+      <entry>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Communication Patterns (Supabase Realtime)</section>
+        <snippet>Event Names: game-over: Payload { "winner_id": "..." }.</snippet>
+      </entry>
+      <entry>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic Technical Specification: Core Gameplay Loop</title>
+        <section>Detailed Design - APIs and Interfaces</section>
+        <snippet>1. Secure Guess Endpoint: POST /api/game/[game_id]/guess. Returns: { "result": "win" | "lose", "correct_character_id": ... }.</snippet>
+      </entry>
+      <entry>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic Technical Specification: Core Gameplay Loop</title>
+        <section>Detailed Design - Workflows and Sequencing</section>
+        <snippet>Winning/Losing Logic: Mechanism to make a final guess, validate it securely, and determine the match outcome.</snippet>
+      </entry>
+      <entry>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic Technical Specification: Core Gameplay Loop</title>
+        <section>Traceability Mapping</section>
+        <snippet>Winning/Losing | Story 3.5 | POST /guess | Mock API response for Win/Loss.</snippet>
+      </entry>
+      <entry>
+        <path>docs/epics.md</path>
+        <title>ibe160 - Epic Breakdown</title>
+        <section>Epic 3: Core Gameplay Loop</section>
+        <snippet>Story 3.5: Winning/Losing (The Guess). As a Player, I want to make a final guess to win the game, So that the match concludes.</snippet>
+      </entry>
+    </docs>
+    <code>
+      <entry>
+        <path>digital-guess-who/app/game-play/components/interaction-panel.tsx</path>
+        <kind>component</kind>
+        <symbol>InteractionPanel</symbol>
+        <lines></lines>
+        <reason>Needs "Make a Guess" button addition.</reason>
+      </entry>
+      <entry>
+        <path>digital-guess-who/lib/store/game-store.ts</path>
+        <kind>store</kind>
+        <symbol>useGameStore</symbol>
+        <lines></lines>
+        <reason>Existing 'makeGuess' placeholder needs update, handles game status and winner.</reason>
+      </entry>
+      <entry>
+        <path>digital-guess-who/db/schema.ts</path>
+        <kind>schema</kind>
+        <symbol>player_secrets</symbol>
+        <lines></lines>
+        <reason>Defines the 'player_secrets' table for secure character storage.</reason>
+      </entry>
+      <entry>
+        <path>digital-guess-who/app/api/game/[gameId]/guess/route.ts</path>
+        <kind>api-route</kind>
+        <symbol>POST /api/game/[gameId]/guess</symbol>
+        <lines></lines>
+        <reason>New API route required for server-side guess validation.</reason>
+      </entry>
+      <entry>
+        <path>digital-guess-who/app/game-play/components/guess-confirmation-modal.tsx</path>
+        <kind>component</kind>
+        <symbol>GuessConfirmationModal</symbol>
+        <lines></lines>
+        <reason>New UI component required for guess confirmation (AC1).</reason>
+      </entry>
+    </code>
+    <dependencies>
+      <entry>
+        <ecosystem>Node</ecosystem>
+        <package>zustand</package>
+        <version>4.x</version>
+      </entry>
+      <entry>
+        <ecosystem>Node</ecosystem>
+        <package>supabase-js</package>
+        <version>2.x</version>
+      </entry>
+      <entry>
+        <ecosystem>Node</ecosystem>
+        <package>next</package>
+        <version>15+</version>
+      </entry>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <entry>
+      <type>Security</type>
+      <description>Server-Authoritative Verification: Guess validation MUST happen on the server to prevent client-side cheating.</description>
+    </entry>
+    <entry>
+      <type>Security</type>
+      <description>Opponent's secret character ID must NEVER be exposed to the client via any API or subscription.</description>
+    </entry>
+    <entry>
+      <type>Security</type>
+      <description>API routes must check 'auth.uid()' to verify the requester is the current player.</description>
+    </entry>
+    <entry>
+      <type>State Management</type>
+      <description>useGameStore will handle UI state transitions (e.g., "Game Over"). Supabase Realtime will handle opponent notifications.</description>
+    </entry>
+    <entry>
+      <type>Data Integrity</type>
+      <description>Update 'database.types.ts' to include 'player_secrets' table definition.</description>
+    </entry>
+  </constraints>
+  <interfaces>
+    <entry>
+      <name>Secure Guess Endpoint</name>
+      <kind>REST endpoint</kind>
+      <signature>POST /api/game/[game_id]/guess (Body: { "guess_character_id": number }, Returns: { "result": "win" | "lose", "correct_character_id": number })</signature>
+      <path>digital-guess-who/app/api/game/[gameId]/guess/route.ts</path>
+    </entry>
+    <entry>
+      <name>Game Over Event</name>
+      <kind>Supabase Realtime</kind>
+      <signature>Channel: "game:[game_id]", Event: "game-over", Payload: { "winner_id": string }</signature>
+      <path></path>
+    </entry>
+  </interfaces>
+  <tests>
+    <standards>Follow the test strategy defined in 'docs/testing/real-time-turn-strategy.md'.</standards>
+    <locations>
+      <entry>tests/unit/</entry>
+      <entry>tests/integration/</entry>
+      <entry>tests/e2e/</entry>
+    </locations>
+    <ideas>
+      <entry>
+        <acId>AC2</acId>
+        <description>Unit Test: POST /guess API logic (mocking DB) for correct and incorrect guesses.</description>
+      </entry>
+      <entry>
+        <acId>AC1</acId>
+        <description>UI Test: GuessConfirmationModal appears with correct character details and handles confirm/cancel.</description>
+      </entry>
+      <entry>
+        <acId>AC3, AC4</acId>
+        <description>Integration Test: Full flow - User guesses correct -> Win state; User guesses incorrect -> Lose state. (Using RealtimeTestHarness).</description>
+      </entry>
+      <entry>
+        <acId>AC5</acId>
+        <description>E2E Test: Simulate game end and verify interaction disabling and win/loss screens.</description>
+      </entry>
+    </ideas>
+  </tests>
+</story-context>
