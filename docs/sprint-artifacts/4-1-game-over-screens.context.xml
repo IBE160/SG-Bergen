@@ -27,6 +27,7 @@
       <when>the result screen loads</when>
       <then>the system fetches the opponent's secret character details from the secure API</then>
       <and>displays the opponent's Character Name and Portrait</and>
+      <and>clearly labels it as "Opponent's Secret Character"</and>
     </criterion>
     <criterion id="AC4">
       <given>the game is finished</given>
@@ -55,6 +56,15 @@
       </doc>
       <doc path="docs/sprint-artifacts/4-1-game-over-screens.md" title="Story: Game Over Screens" section="Dev Notes">
         Highlighting: "Opponent's character ID is NOT available in public players state... new API endpoint is the ONLY place this should be exposed."
+      </doc>
+      <doc path="docs/PRD.md" title="PRD" section="Post-Game Options">
+        Confirms the requirements for "Play Again" and "Return to Menu" options.
+      </doc>
+      <doc path="docs/epics.md" title="Epics" section="Epic 4 Post-Game Experience">
+        Context for the broader goal of the post-game experience and related stories.
+      </doc>
+      <doc path="docs/testing-strategy.md" title="Testing Strategy" section="Integration Testing">
+        Provides guidelines for testing API endpoints and UI interactions.
       </doc>
     </docs>
 
