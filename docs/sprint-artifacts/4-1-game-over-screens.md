@@ -1,8 +1,13 @@
 # Story 4.1: Game Over Screens
 
-**Status:** drafted
+**Status:** ready-for-dev
 **Epic:** Epic 4 - Post-Game Experience
 **Priority:** High
+
+## Dev Agent Record
+
+### Context Reference
+- docs/sprint-artifacts/4-1-game-over-screens.context.xml
 
 ## Story
 

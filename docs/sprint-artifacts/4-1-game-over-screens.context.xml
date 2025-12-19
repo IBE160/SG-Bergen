@@ -1,0 +1,98 @@
+<context id="4-1-game-over-screens" story-id="4.1" epic-id="epic-4">
+  <story_details>
+    <title>Game Over Screens</title>
+    <status>drafted</status>
+    <as_a>Player</as_a>
+    <i_want>to see a clear "You Win" or "You Lose" screen with the revealed opponent character</i_want>
+    <so_that>I get closure on the match and understand why I won or lost</so_that>
+  </story_details>
+
+  <acceptance_criteria>
+    <criterion id="AC1">
+      <given>the game session status updates to `finished`</given>
+      <when>the update is detected by the client</when>
+      <then>the `GameResultView` overlay must appear within 500ms</then>
+      <and>the underlying game board should remain visible (dimmed)</and>
+    </criterion>
+    <criterion id="AC2">
+      <given>I am the winner (winner_id matches player_id)</given>
+      <when>the result screen appears</when>
+      <then>I see a celebratory "You Win!" message (Primary color)</then>
+      <and>appropriate victory iconography</and>
+      <else_given>I am the loser</else_given>
+      <else_then>I see a "You Lose" message (Destructive/Neutral color)</else_then>
+    </criterion>
+    <criterion id="AC3">
+      <given>the game is finished</given>
+      <when>the result screen loads</when>
+      <then>the system fetches the opponent's secret character details from the secure API</then>
+      <and>displays the opponent's Character Name and Portrait</and>
+    </criterion>
+    <criterion id="AC4">
+      <given>the game is finished</given>
+      <when>I refresh the browser page</when>
+      <then>I should still see the result screen (restored from persistence)</then>
+    </criterion>
+  </acceptance_criteria>
+
+  <tasks>
+    <task id="1" title="Implement Secure Result API">Create `app/api/game/[gameId]/result/route.ts` to return opponent character only when status is finished.</task>
+    <task id="2" title="Create Game Result UI Components">Create `GameResultView.tsx` and `OpponentReveal.tsx` with win/loss states and reveal logic.</task>
+    <task id="3" title="Integrate Result View into Game Board">Update `GameClient` (or page.tsx) to render `GameResultView` based on `useGameStore.status`.</task>
+    <task id="4" title="Verify UI & Latency">Manual and unit testing of the result screen appearance and data fetching.</task>
+  </tasks>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/sprint-artifacts/tech-spec-epic-4.md" title="Epic Technical Specification: Post-Game Experience" section="Detailed Design">
+        Describes the `GameResultView`, `OpponentReveal`, and `/api/game/[id]/result` endpoint. Defines the flow: Realtime update -> Store update -> API fetch -> UI render.
+      </doc>
+      <doc path="docs/ux-design-specification.md" title="UX Design Specification" section="Journey 3: Winning the Game">
+        Specifies the user flow for winning/losing, confirming the "You Win/Lose" screen requirements and "Play Again" / "Return to Menu" options.
+      </doc>
+      <doc path="docs/architecture.md" title="Architecture" section="Data Architecture">
+        References `GameSession` status enum ('finished') and `winner_id` field.
+      </doc>
+      <doc path="docs/sprint-artifacts/4-1-game-over-screens.md" title="Story: Game Over Screens" section="Dev Notes">
+        Highlighting: "Opponent's character ID is NOT available in public players state... new API endpoint is the ONLY place this should be exposed."
+      </doc>
+    </docs>
+
+    <code>
+      <item path="digital-guess-who/lib/store/game.ts" kind="store" symbol="useGameStore" lines="21-65" reason="Manages `gameStatus` ('finished'), `winnerId`, and persistence. Critical for triggering the UI." />
+      <item path="digital-guess-who/db/schema.ts" kind="schema" symbol="game_sessions" reason="Defines `status` enum ('finished') and `winner_id` column used in logic." />
+      <item path="digital-guess-who/db/schema.ts" kind="schema" symbol="player_secrets" reason="Source table for the opponent's secret character ID to be fetched by the API." />
+      <item path="digital-guess-who/app/game-play/[code]/game-client.tsx" kind="component" symbol="GameClient" reason="Likely parent component where `GameResultView` will be conditionally rendered." />
+    </code>
+
+    <interfaces>
+      <interface name="GET Result API" kind="REST" signature="GET /api/game/[gameId]/result" path="app/api/game/[gameId]/result/route.ts">
+        Response: { winner_id: string, opponent_character: { id, name, image } }
+        Security: Must verify `game_session.status === 'finished'` before returning data.
+      </interface>
+      <interface name="useGameStore" kind="State" signature="status: 'finished', winnerId: string" path="lib/store/game.ts">
+        Client-side trigger for showing the modal.
+      </interface>
+    </interfaces>
+
+    <dependencies>
+      <dep name="sonner" purpose="Toast notifications (if needed for status updates)" />
+      <dep name="lucide-react" purpose="Iconography for Win (Trophy) / Lose (X/Sad face)" />
+      <dep name="@radix-ui/react-dialog" purpose="Accessible modal primitive for the Result View overlay" />
+      <dep name="framer-motion" purpose="(Optional) Animation for the overlay appearance if installed" />
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint type="Security">Opponent's secret character MUST NOT be revealed to client until game status is confirmed 'finished' on server.</constraint>
+    <constraint type="Performance">Game over transition must occur within 500ms of server update.</constraint>
+    <constraint type="Architecture">Use `shadcn/ui` components (Dialog, Button) and Tailwind CSS.</constraint>
+    <constraint type="Structure">Place components in `app/game-play/components/`.</constraint>
+  </constraints>
+
+  <testing>
+    <standard>Unit test `GameResultView` for correct messaging based on `winnerId`. Integration test the API endpoint security.</standard>
+    <idea>Mock `useGameStore` state to `finished` and verify `GameResultView` renders.</idea>
+    <idea>Attempt to call Result API when game is `active` and verify 403 Forbidden.</idea>
+  </testing>
+</context>
