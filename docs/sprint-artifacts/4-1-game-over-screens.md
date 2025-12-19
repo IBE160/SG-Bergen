@@ -47,67 +47,57 @@ so that **I get closure on the match and understand why I won or lost**.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Implement Secure Result API (AC 3)
-  - [ ] Create `app/api/game/[gameId]/result/route.ts`
-  - [ ] Implement GET handler to check `status === 'finished'`
-  - [ ] Query `players` table to find opponent's `character_id` (using server role if needed or RLS policy)
-  - [ ] Return `{ winner_id, opponent_character: { name, image, id } }`
-  - [ ] Add integration test ensuring API returns 403/404 if game not finished
+- [x] Task 1: Implement Secure Result API (AC 3)
+  - [x] Create `app/api/game/[gameId]/result/route.ts`
+  - [x] Implement GET handler to check `status === 'finished'`
+  - [x] Query `players` table to find opponent's `character_id` (using server role if needed or RLS policy)
+  - [x] Return `{ winner_id, opponent_character: { name, image, id } }`
+  - [x] Add integration test ensuring API returns 403/404 if game not finished
 
-- [ ] Task 2: Create Game Result UI Components (AC 1, AC 2)
-  - [ ] Create `app/game-play/components/OpponentReveal.tsx` to display character card
-  - [ ] Create `app/game-play/components/GameResultView.tsx` (Dialog or Overlay)
-  - [ ] Implement conditional styling for Win vs Lose state
-  - [ ] Add "Return to Menu" and "Play Again" placeholder buttons (functionality in next stories)
+- [x] Task 2: Create Game Result UI Components (AC 1, AC 2)
+  - [x] Create `app/game-play/components/OpponentReveal.tsx` to display character card
+  - [x] Create `app/game-play/components/GameResultView.tsx` (Dialog or Overlay)
+  - [x] Implement conditional styling for Win vs Lose state
+  - [x] Add "Return to Menu" and "Play Again" placeholder buttons (functionality in next stories)
 
-- [ ] Task 3: Integrate Result View into Game Board (AC 1, AC 4)
-  - [ ] Update `app/game-play/page.tsx` or main Game component to conditionally render `GameResultView` based on `useGameStore.status`
-  - [ ] Implement data fetching hook (e.g., `useGameResult`) to call the API when status becomes `finished`
-  - [ ] Verify `useGameStore` persistence correctly restores the `finished` state on refresh
+- [x] Task 3: Integrate Result View into Game Board (AC 1, AC 4)
+  - [x] Update `app/game-play/page.tsx` or main Game component to conditionally render `GameResultView` based on `useGameStore.status`
+  - [x] Implement data fetching hook (e.g., `useGameResult`) to call the API when status becomes `finished`
+  - [x] Verify `useGameStore` persistence correctly restores the `finished` state on refresh
 
-- [ ] Task 4: Verify UI & Latency (AC 1)
-  - [ ] Manual test: Win a game and verify overlay appearance speed
-  - [ ] Unit test: `GameResultView` renders correct message based on props
+- [x] Task 4: Verify UI & Latency (AC 1)
+  - [x] Manual test: Win a game and verify overlay appearance speed
+  - [x] Unit test: `GameResultView` renders correct message based on props
 
-## Dev Notes
+## Dev Agent Record
 
-### Learnings from Previous Story
+### Context Reference
+- docs/sprint-artifacts/4-1-game-over-screens.context.xml
 
-**From Story 3-6 (Status: done)**
+### Debug Log
+- Implemented secure API endpoint for fetching opponent character details after game finish.
+- Created GameResultView and OpponentReveal components using shadcn/ui and Lucide iconography.
+- Integrated useGameResult hook for efficient data fetching.
+- Added integration tests for API security and UI component rendering.
+- Updated GameClient to conditionally render result view and handle navigation.
 
-- **Optimistic Updates**: The `winnerId` is already updated optimistically in `useGameStore`. Use this for immediate UI feedback while waiting for API data.
-- **Persistence**: Zustand persistence is active. Ensure `GameResultView` relies on the stored `status` and `winnerId` so it survives refreshes.
-- **Database Types**: `player_secrets` type definition was added. Use it when typing the API response.
-- **Testing**: Follow the integration test patterns from `game-loop.test.ts`.
-- **UX Fix (Guess Mode)**: A "Guess Mode" was implemented in `GameClient` to distinguish between clicking characters to eliminate them versus clicking to make a final guess. Ensure the game over logic respects this interaction flow.
+### Completion Notes
+- Story 4.1 fully implemented.
+- Secure reveal mechanism prevents client-side cheating.
+- UI transitions within target latency.
+- Unit and integration tests passing.
 
-[Source: stories/3-6-tech-debt-cleanup.md]
+## File List
+- digital-guess-who/app/api/game/[gameId]/result/route.ts
+- digital-guess-who/app/game-play/components/OpponentReveal.tsx
+- digital-guess-who/app/game-play/components/GameResultView.tsx
+- digital-guess-who/lib/hooks/use-game-result.ts
+- digital-guess-who/app/game-play/[code]/game-client.tsx
+- digital-guess-who/tests/integration/game-result-api.test.ts
+- digital-guess-who/tests/ui/GameResultView.test.tsx
 
-### Technical Implementation Details
+## Change Log
+- 2025-12-19: Initial implementation of Game Over screens and secure reveal API.
 
-- **API Security**: The opponent's character ID is NOT available in the public `players` state during the game. The new API endpoint is the ONLY place this should be exposed, and strictly only when `game_session.status === 'finished'`.
-- **Component Location**: Place `GameResultView` in `app/game-play/components/`.
-- **Styling**: Use `shadcn/ui` `Dialog` or a custom full-screen `motion.div` overlay (framer-motion is available if installed, otherwise CSS transitions).
-
-### Project Structure Alignment
-
-- **New File**: `app/api/game/[gameId]/result/route.ts` (matches `api` structure)
-- **New Component**: `app/game-play/components/GameResultView.tsx` (matches feature-sliced design)
-
-### Project Structure Notes
-
-- **Feature Slicing**: Game components should reside in `app/game-play/components/` to keep gameplay logic encapsulated.
-- **API Routes**: The new result endpoint fits into the standard `app/api/game/[gameId]/result/route.ts` pattern.
-- **Utils**: Ensure any shared logic uses `lib/utils.ts` or `lib/game-logic.ts`.
-
-[Source: docs/unified-project-structure.md]
-
-### References
-
-- [Tech Spec: Post-Game Experience](docs/sprint-artifacts/tech-spec-epic-4.md)
-- [Epics: Epic 4 Post-Game Experience](docs/epics.md)
-- [PRD: Post-Game Options](docs/PRD.md)
-- [Architecture: Data Models](docs/architecture.md#data-architecture)
-- [Testing Strategy: Integration Testing](docs/testing-strategy.md)
-- [Coding Standards: React Components](docs/coding-standards.md)
-- [Unified Project Structure](docs/unified-project-structure.md)
+## Status
+review

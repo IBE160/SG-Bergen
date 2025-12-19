@@ -6,17 +6,21 @@ import { ALL_CHARACTERS } from "@/lib/data/characters";
 import { CharacterGrid } from "../components/character-grid";
 import { InteractionPanel, InteractionState } from "../components/interaction-panel";
 import { GuessConfirmationModal } from "../components/guess-confirmation-modal";
+import { GameResultView } from "../components/GameResultView";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { useGameplaySubscription } from "@/lib/hooks/use-gameplay-subscription";
 import { endPlayerTurn, submitQuestion, submitAnswer } from "@/lib/game-logic";
+import { useGameResult } from "@/lib/hooks/use-game-result";
+import { useRouter } from "next/navigation";
 
 interface GameClientProps {
   gameCode: string;
 }
 
 export function GameClient({ gameCode }: GameClientProps) {
+  const router = useRouter();
   const { 
     setCharacters, 
     characters,
@@ -46,6 +50,12 @@ export function GameClient({ gameCode }: GameClientProps) {
 
   // Integrate Realtime Subscription
   useGameplaySubscription(gameId);
+  
+  // Fetch Game Result Details when finished
+  const { opponentCharacter, isLoading: isLoadingResult } = useGameResult({ 
+    gameId, 
+    gameStatus: gameStatus 
+  });
 
   const isMyTurn = playerId === currentTurnPlayerId;
 
@@ -233,6 +243,17 @@ export function GameClient({ gameCode }: GameClientProps) {
       }
   };
 
+  const handleReturnToMenu = () => {
+      useGameStore.getState().reset();
+      router.push('/');
+  };
+
+  const handlePlayAgain = () => {
+      toast.info("Play Again feature coming soon!", {
+          description: "This feature will be implemented in the next update."
+      });
+  };
+
   // Determine mode based on global phase
   const isSelecting = gamePhase === 'selection';
   const isGameActive = gamePhase === 'active' || gamePhase === 'game';
@@ -309,17 +330,14 @@ export function GameClient({ gameCode }: GameClientProps) {
         )}
 
         {gameStatus === 'finished' && (
-          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background/95 backdrop-blur-sm animate-in fade-in duration-500">
-             <h1 className="text-6xl font-black mb-4 tracking-tighter text-primary">
-                 {winnerId === userId ? "VICTORY!" : "DEFEAT"}
-             </h1>
-             <p className="text-2xl font-medium text-muted-foreground mb-8">
-                 {winnerId === userId ? "You correctly identified the secret character!" : "Your opponent won the game."}
-             </p>
-             <Button size="lg" onClick={() => window.location.href = '/'}>
-                 Back to Menu
-             </Button>
-          </div>
+            <GameResultView 
+                winnerId={winnerId}
+                currentUserId={userId || ''}
+                opponentCharacter={opponentCharacter}
+                isLoadingOpponent={isLoadingResult}
+                onPlayAgain={handlePlayAgain}
+                onReturnToMenu={handleReturnToMenu}
+            />
         )}
       </main>
     </div>

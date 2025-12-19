@@ -54,6 +54,16 @@ jest.mock('sonner', () => ({
   },
 }));
 
+// Mock Next Navigation
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    refresh: jest.fn(),
+    back: jest.fn(),
+    forward: jest.fn(),
+  }),
+}));
+
 describe('GameClient UI - Turn Management', () => {
   const GAME_CODE = 'TESTGAME';
   const MY_USER_ID = 'mock-user-id-123';
@@ -92,7 +102,7 @@ describe('GameClient UI - Turn Management', () => {
     });
 
     const askBtn = screen.getByRole('button', { name: /^Ask$/i });
-    const guessBtn = screen.getByRole('button', { name: /Make Guess/i });
+    const guessBtn = screen.getByRole('button', { name: /Make a Final Guess/i });
 
     // Ask button is disabled by default until text is entered
     expect(askBtn).toBeDisabled();
@@ -127,10 +137,10 @@ describe('GameClient UI - Turn Management', () => {
         expect(screen.getByText("Opponent's Turn")).toBeInTheDocument();
     });
 
-    const guessBtn = screen.getByRole('button', { name: /Make Guess/i });
-    expect(guessBtn).toBeDisabled();
+    // In opponent turn, the interaction panel does not show action buttons
+    const guessBtn = screen.queryByRole('button', { name: /Make a Final Guess/i });
+    expect(guessBtn).not.toBeInTheDocument();
     
-    // In opponent turn, the Ask button input form is hidden, so button is not in document
     const askBtn = screen.queryByRole('button', { name: /^Ask$/i });
     expect(askBtn).not.toBeInTheDocument();
   });
