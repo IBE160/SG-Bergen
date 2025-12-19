@@ -23,11 +23,11 @@ app/
 *   **Benefit:** Reduces client bundle size and improves SEO/LCP.
 
 ### 2. Global Client State (Zustand)
-*   **Mechanism:** `zustand` stores.
+*   **Mechanism:** `zustand` stores with `persist` middleware.
 *   **Usage:**
-    *   `useGameStore`: Manages active game state (cards, turn, players).
+    *   `useGameStore`: Manages active game state (cards, turn, players). Persisted to `localStorage` to survive page refreshes.
     *   `useLobbyStore`: Manages waiting room state.
-*   **Rationale:** Simpler than Redux, easier to test, and avoids "Context Hell".
+*   **Rationale:** Simpler than Redux, easier to test, and avoids "Context Hell". Persistence ensures robustness against accidental reloads.
 
 ### 3. Local UI State
 *   **Mechanism:** `useState`, `useReducer`.

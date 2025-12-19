@@ -99,8 +99,13 @@ export async function POST(
       .single();
     
     if (secretError || !secret) {
-        console.error('Secret error:', secretError);
-        return NextResponse.json({ error: 'Opponent secret not found' }, { status: 500 });
+        console.error('Secret lookup failed for opponent:', opponent.id);
+        console.error('Error details:', secretError);
+        console.warn('Check if SUPABASE_SERVICE_ROLE_KEY is valid and has bypass-RLS permissions.');
+        return NextResponse.json({ 
+            error: 'Opponent secret not found',
+            details: secretError?.message 
+        }, { status: 500 });
     }
 
     // 8. Determine Outcome

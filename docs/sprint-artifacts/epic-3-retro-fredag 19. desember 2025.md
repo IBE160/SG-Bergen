@@ -88,13 +88,13 @@ The team committed to the following action items and preparation tasks before st
 
 **Technical Debt & Stability (CRITICAL PATH for Epic 4):**
 
-1. **Fix Win/Loss Race Condition:** Update `makeGuess` in `useGameStore` to optimistically set `winnerId` based on the API response.
+1. **[x] Fix Win/Loss Race Condition:** Update `makeGuess` in `useGameStore` to optimistically set `winnerId` based on the API response.
    - Owner: Charlie (Senior Dev)
    - Priority: High
-2. **Implement Zustand Persistence:** Add `persist` middleware to `useGameStore` to ensure board state and game status survive page refreshes.
+2. **[x] Implement Zustand Persistence:** Add `persist` middleware to `useGameStore` to ensure board state and game status survive page refreshes.
    - Owner: Elena (Junior Dev)
    - Priority: High
-3. **Update Database Types:** Include `player_secrets` table in `db/types.ts` to remove technical debt.
+3. **[x] Update Database Types:** Include `player_secrets` table in `db/types.ts` to remove technical debt.
    - Owner: Charlie (Senior Dev)
    - Priority: Medium
 
