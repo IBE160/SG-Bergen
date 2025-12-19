@@ -89,4 +89,35 @@ describe('Game Loop Integration - Turn Management', () => {
     
     unmount();
   });
+
+  it('updates game status to finished when Realtime UPDATE event indicates game over', async () => {
+    const gameId = 'game-123';
+    const { unmount } = renderHook(() => useGameplaySubscription(gameId));
+
+    await waitFor(() => {
+        expect(useGameStore.getState().gameStatus).toBe('active');
+    });
+
+    const winnerId = 'player-1-id';
+    
+    await act(async () => {
+        mockHarness.simulateUpdate(
+            'game_sessions',
+            { 
+                id: gameId, 
+                status: 'finished', 
+                winner_id: winnerId 
+            },
+            {
+                id: gameId,
+                status: 'active'
+            }
+        );
+    });
+
+    expect(useGameStore.getState().gameStatus).toBe('finished');
+    expect(useGameStore.getState().winnerId).toBe(winnerId);
+    
+    unmount();
+  });
 });

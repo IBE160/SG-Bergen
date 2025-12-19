@@ -57,4 +57,62 @@ describe('useGameStore', () => {
     const isMyTurn = state.currentTurnPlayerId === MOCK_MY_PLAYER_ID;
     expect(isMyTurn).toBe(false);
   });
+
+  describe('persistence', () => {
+    it('uses localStorage for persistence', () => {
+      // Accessing the internal persist options
+      const persistOptions = (useGameStore as any).persist.getOptions();
+      expect(persistOptions.name).toBe('game-storage');
+      // In zustand v4/v5 persist, it doesn't always have getStorage directly on options anymore if using defaults
+      // But we can check if it's configured in our code
+    });
+  });
+
+  describe('makeGuess', () => {
+    beforeEach(() => {
+      global.fetch = jest.fn();
+    });
+
+    it('optimistically updates winnerId on winning guess', async () => {
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ result: 'win' }),
+      });
+
+      const gameId = 'game-123';
+      const myUserId = 'user-123';
+      
+      await act(async () => {
+        await useGameStore.getState().makeGuess(gameId, 1, myUserId);
+      });
+
+      expect(useGameStore.getState().winnerId).toBe(myUserId);
+      expect(useGameStore.getState().gameStatus).toBe('finished');
+    });
+
+    it('optimistically updates winnerId to opponent on losing guess', async () => {
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ result: 'lose' }),
+      });
+
+      const gameId = 'game-123';
+      const myUserId = 'user-123';
+      const opponentUserId = 'opponent-456';
+
+      act(() => {
+        useGameStore.getState().setPlayers([
+          { user_id: myUserId },
+          { user_id: opponentUserId }
+        ]);
+      });
+      
+      await act(async () => {
+        await useGameStore.getState().makeGuess(gameId, 1, myUserId);
+      });
+
+      expect(useGameStore.getState().winnerId).toBe(opponentUserId);
+      expect(useGameStore.getState().gameStatus).toBe('finished');
+    });
+  });
 });

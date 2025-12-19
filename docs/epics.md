@@ -26,7 +26,7 @@ This document provides the complete epic and story breakdown for ibe160, decompo
 *Scope:* Game creation (generating codes), lobby system, game joining logic, player readiness state, and difficulty selection (Easy/Medium/Hard).
 *FR Coverage:* FR1.1, FR1.2, FR1.3, FR4.1
 
-**Epic 3: Core Gameplay Loop**
+**Epic 3: Core Gameplay Loop [COMPLETED]**
 *Goal:* Implement the complete turn-based game experience, allowing players to select characters, ask questions, eliminate options, and determine a winner.
 *Scope:* Character selection, turn management (real-time sync), questioning interface, character elimination interactions, guessing mechanics, and win/loss logic.
 *FR Coverage:* FR2.1, FR2.2, FR3.1, FR3.2, FR3.3, FR3.4
@@ -238,7 +238,7 @@ So that we can start the game at the same time.
 
 **Goal:** Implement the complete turn-based game experience, allowing players to select characters, ask questions, eliminate options, and determine a winner.
 
-### Story 3.1: Game Board & Secret Character Selection
+### Story 3.1: Game Board & Secret Character Selection [DONE]
 
 As a Player,
 I want to see the grid of characters and select my secret identity,
@@ -261,7 +261,7 @@ So that the game can begin.
 - **Arch:** Fetch characters from static assets or DB.
 - **Security:** DO NOT expose the opponent's secret character ID in the public `players` object sent to the client. Use RLS or separate API call if strictly needed, but for MVP, client-side filtering of opponent data is risky but acceptable if acknowledged, OR better: store secret in a separate private table/column. *Decision: Keep simple for MVP, but ensure UI doesn't plainly reveal it.*
 
-### Story 3.2: Turn Management System
+### Story 3.2: Turn Management System [DONE]
 
 As a Player,
 I want to clearly see whose turn it is,
@@ -284,7 +284,7 @@ So that I know when I can ask a question or when I need to wait.
 - **Realtime:** Listen for updates to `current_turn_player_id`.
 - **UX:** Clear visual distinction (e.g., green border/badge).
 
-### Story 3.3: Question & Answer Interaction
+### Story 3.3: Question & Answer Interaction [DONE]
 
 As a Player,
 I want to ask a yes/no question and receive an answer,
@@ -310,7 +310,7 @@ So that I can eliminate characters.
     3. Player B responds -> `moves` insert (action: answer).
     4. Player A receives Realtime event.
 
-### Story 3.4: Character Elimination Mechanics
+### Story 3.4: Character Elimination Mechanics [DONE]
 
 As a Player,
 I want to flip down characters that don't match the answer,
@@ -331,7 +331,7 @@ So that I can narrow down the possibilities.
 - **UX:** "Flip down" animation or grayscale filter.
 - **State:** Local state in Zustand is sufficient for the board state; doesn't strictly need to be synced to DB unless we want resume capability (Post-MVP). MVP: Local storage or memory.
 
-### Story 3.5: Winning/Losing (The Guess)
+### Story 3.5: Winning/Losing (The Guess) [DONE]
 
 As a Player,
 I want to make a final guess to win the game,
@@ -350,6 +350,18 @@ So that the match concludes.
 **Technical Notes:**
 - **UX:** High-stakes confirmation modal ("Are you sure?").
 - **Arch:** Server-side validation of the guess is best to prevent cheating. API Route `/api/game/[id]/guess` checks against the hidden secret ID.
+
+### Story 3.6: Tech Debt & Stabilization [DONE]
+
+As a developer,
+I want to resolve critical stability issues and technical debt,
+So that the codebase is robust for future features.
+
+**Acceptance Criteria:**
+- Win/Loss race condition fixed with optimistic updates.
+- Zustand persistence implemented.
+- Database types updated to include `player_secrets`.
+- Game finalization verified with automated tests.
 
 ---
 
