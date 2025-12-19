@@ -74,6 +74,7 @@ so that **I get closure on the match and understand why I won or lost**.
 - **Persistence**: Zustand persistence is active. Ensure `GameResultView` relies on the stored `status` and `winnerId` so it survives refreshes.
 - **Database Types**: `player_secrets` type definition was added. Use it when typing the API response.
 - **Testing**: Follow the integration test patterns from `game-loop.test.ts`.
+- **UX Fix (Guess Mode)**: A "Guess Mode" was implemented in `GameClient` to distinguish between clicking characters to eliminate them versus clicking to make a final guess. Ensure the game over logic respects this interaction flow.
 
 [Source: stories/3-6-tech-debt-cleanup.md]
 
@@ -88,7 +89,20 @@ so that **I get closure on the match and understand why I won or lost**.
 - **New File**: `app/api/game/[gameId]/result/route.ts` (matches `api` structure)
 - **New Component**: `app/game-play/components/GameResultView.tsx` (matches feature-sliced design)
 
+### Project Structure Notes
+
+- **Feature Slicing**: Game components should reside in `app/game-play/components/` to keep gameplay logic encapsulated.
+- **API Routes**: The new result endpoint fits into the standard `app/api/game/[gameId]/result/route.ts` pattern.
+- **Utils**: Ensure any shared logic uses `lib/utils.ts` or `lib/game-logic.ts`.
+
+[Source: docs/unified-project-structure.md]
+
 ### References
 
 - [Tech Spec: Post-Game Experience](docs/sprint-artifacts/tech-spec-epic-4.md)
+- [Epics: Epic 4 Post-Game Experience](docs/epics.md)
+- [PRD: Post-Game Options](docs/PRD.md)
 - [Architecture: Data Models](docs/architecture.md#data-architecture)
+- [Testing Strategy: Integration Testing](docs/testing-strategy.md)
+- [Coding Standards: React Components](docs/coding-standards.md)
+- [Unified Project Structure](docs/unified-project-structure.md)
