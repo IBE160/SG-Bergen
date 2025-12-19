@@ -35,6 +35,8 @@ export function GameClient({ gameCode }: GameClientProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isGuessModalOpen, setIsGuessModalOpen] = useState(false);
   const [isGuessing, setIsGuessing] = useState(false);
+  const [isGuessSelectionMode, setIsGuessSelectionMode] = useState(false);
+  const [guessTargetId, setGuessTargetId] = useState<number | null>(null);
 
   const [playerId, setPlayerId] = useState<string | null>(null);
   const [gameId, setGameId] = useState<string | null>(null);
@@ -62,7 +64,9 @@ export function GameClient({ gameCode }: GameClientProps) {
       timestamp: new Date(lastMove.created_at)
   } : undefined;
 
-  const selectedCharacter = characters.find(c => c.id === selectedCharacterId);
+  const mySecretCharacter = characters.find(c => c.id === selectedCharacterId);
+  // For the modal, we use the specific target selected for guessing
+  const guessTargetCharacter = characters.find(c => c.id === guessTargetId);
 
   useEffect(() => {
     if (isMyTurn && lastMove?.action_type === 'answer') {
@@ -198,25 +202,34 @@ export function GameClient({ gameCode }: GameClientProps) {
     }
   };
 
-  const handleGuessClick = () => {
-    if (!selectedCharacterId) {
-        toast.error("Please select a character on the board first.");
-        return;
-    }
-    setIsGuessModalOpen(true);
+  const handleGuessButtonClick = () => {
+      if (isGuessSelectionMode) {
+          setIsGuessSelectionMode(false);
+          setGuessTargetId(null);
+      } else {
+          setIsGuessSelectionMode(true);
+          toast.info("Select the character on the board you want to guess.", { duration: 4000 });
+      }
+  };
+
+  const handleGridCardClick = (id: number) => {
+      setGuessTargetId(id);
+      setIsGuessModalOpen(true);
+      setIsGuessSelectionMode(false); // Exit selection mode once picked
   };
 
   const handleConfirmGuess = async () => {
-      if (!gameId || !selectedCharacterId || !userId) return;
+      if (!gameId || !guessTargetId || !userId) return;
       setIsGuessing(true);
       try {
-          await makeGuess(gameId, selectedCharacterId, userId);
+          await makeGuess(gameId, guessTargetId, userId);
           // Success handled by store update/realtime
           setIsGuessModalOpen(false);
       } catch (error: any) {
           toast.error(error.message || "Failed to make guess");
       } finally {
           setIsGuessing(false);
+          setGuessTargetId(null);
       }
   };
 
@@ -252,9 +265,6 @@ export function GameClient({ gameCode }: GameClientProps) {
                 {!isSelecting && isGameActive && (
                     <div className="flex items-center space-x-2">
                         <Button disabled={!isMyTurn} variant="secondary" onClick={handleEndTurn}>End Turn</Button>
-                        {/* Guess button moved to InteractionPanel for context, but keeping here as fallback or removal? 
-                            Story says "Integrate Guessing into InteractionPanel". 
-                            Removing duplicate button here to avoid confusion. */}
                     </div>
                 )}
             </div>
@@ -266,21 +276,34 @@ export function GameClient({ gameCode }: GameClientProps) {
                     lastMove={mappedLastMove}
                     onAskQuestion={handleAskQuestion}
                     onAnswerQuestion={handleAnswerQuestion}
-                    onGuessClick={handleGuessClick}
-                    isGuessDisabled={!selectedCharacterId}
+                    onGuessClick={handleGuessButtonClick}
+                    isGuessDisabled={false} // Always enabled now to trigger selection mode
+                    isGuessMode={isGuessSelectionMode}
                 />
             )}
         </div>
         
-        <CharacterGrid selectionMode={isSelecting} />
+        {isGuessSelectionMode && (
+            <div className="mb-4 p-4 bg-primary/10 border border-primary rounded-lg text-center animate-pulse">
+                <p className="font-bold text-primary">GUESS MODE ACTIVE: Click on the character you suspect is your opponent's!</p>
+            </div>
+        )}
+        
+        <CharacterGrid 
+            selectionMode={isSelecting} 
+            onCardClick={isGuessSelectionMode ? handleGridCardClick : undefined}
+        />
 
         {/* Modals and Overlays */}
-        {selectedCharacter && (
+        {guessTargetCharacter && (
             <GuessConfirmationModal 
                 isOpen={isGuessModalOpen}
-                character={selectedCharacter}
+                character={guessTargetCharacter}
                 onConfirm={handleConfirmGuess}
-                onCancel={() => setIsGuessModalOpen(false)}
+                onCancel={() => {
+                    setIsGuessModalOpen(false);
+                    setGuessTargetId(null);
+                }}
                 isSubmitting={isGuessing}
             />
         )}

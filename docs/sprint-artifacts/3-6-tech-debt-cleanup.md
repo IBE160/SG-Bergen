@@ -64,6 +64,7 @@ Address critical technical debt and stability issues identified in the Epic 3 Re
 - All ACs satisfied and verified with tests.
 - Critical infinite loop bug in `useGameplaySubscription` fixed.
 - Tech debt items (Race condition, Persistence, Types) addressed and TESTED.
+- **UX Fix:** Implemented "Guess Mode" in `GameClient` to allow selecting characters for guessing (resolving conflict with card elimination mechanics).
 
 **Status:** done
 **Epic:** Epic 3 - Core Gameplay Loop
@@ -111,4 +112,5 @@ The implementation and verification are now complete. All 4 ACs are verified wit
 ### Change Log
 - 2025-12-19: Senior Developer Review notes appended. Status updated to 'review' (Blocked).
 - 2025-12-19: Addressed code review findings - 3 items resolved. Status updated to 'review' (Approve).
+- 2025-12-19: Implemented "Guess Mode" UX fix to resolve character selection conflict. Status: done.
 

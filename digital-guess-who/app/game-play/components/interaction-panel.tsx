@@ -26,6 +26,7 @@ interface InteractionPanelProps {
   onAnswerQuestion: (answer: 'Yes' | 'No') => void
   onGuessClick?: () => void
   isGuessDisabled?: boolean
+  isGuessMode?: boolean
 }
 
 export function InteractionPanel({
@@ -35,7 +36,8 @@ export function InteractionPanel({
   onAskQuestion,
   onAnswerQuestion,
   onGuessClick,
-  isGuessDisabled
+  isGuessDisabled,
+  isGuessMode
 }: InteractionPanelProps) {
   return (
     <Card className="w-full mb-4">
@@ -59,16 +61,13 @@ export function InteractionPanel({
                         <div className="flex-grow border-t border-border/50"></div>
                     </div>
                     <Button 
-                        variant="destructive" 
+                        variant={isGuessMode ? "secondary" : "destructive"}
                         className="w-full" 
                         onClick={onGuessClick}
                         disabled={isGuessDisabled}
                     >
-                        Make a Final Guess
+                        {isGuessMode ? "Cancel Guess" : "Make a Final Guess"}
                     </Button>
-                     {isGuessDisabled && (
-                        <p className="text-xs text-center text-muted-foreground">Select a character on the board to guess.</p>
-                    )}
                 </div>
             )}
             

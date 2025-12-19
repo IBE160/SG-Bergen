@@ -4,13 +4,19 @@ import { CharacterCard } from "./character-card";
 interface CharacterGridProps {
   selectionMode?: boolean;
   readonly?: boolean;
+  onCardClick?: (id: number) => void;
 }
 
-export function CharacterGrid({ selectionMode = false, readonly = false }: CharacterGridProps) {
+export function CharacterGrid({ selectionMode = false, readonly = false, onCardClick }: CharacterGridProps) {
   const { characters, selectedCharacterId, eliminatedCharacterIds, selectCharacter, toggleElimination } = useGameStore();
 
   const handleCardClick = (id: number) => {
     if (readonly) return;
+    
+    if (onCardClick) {
+      onCardClick(id);
+      return;
+    }
     
     if (selectionMode) {
       selectCharacter(id);
