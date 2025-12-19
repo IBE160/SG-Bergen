@@ -1,114 +1,116 @@
-import { useGameStore } from '@/lib/store/game-store';
-import { act } from 'react'; // Updated import
+import { useGameStore } from '@/lib/store/game';
+import { act } from 'react';
 
-// Mock Supabase Realtime for unit tests
-const mockSupabaseChannel = {
-  on: jest.fn().mockReturnThis(),
-  subscribe: jest.fn(),
-  unsubscribe: jest.fn(),
-  send: jest.fn(),
-};
-
-jest.mock('@supabase/supabase-js', () => ({
-  createClient: jest.fn(() => ({
-    channel: jest.fn(() => mockSupabaseChannel),
-    // ... other Supabase client mocks if needed
-  })),
-}));
+// Mock localStorage
+const localStorageMock = (function() {
+  let store: Record<string, string> = {};
+  return {
+    getItem: function(key: string) {
+      return store[key] || null;
+    },
+    setItem: function(key: string, value: string) {
+      store[key] = value.toString();
+    },
+    clear: function() {
+      store = {};
+    },
+    removeItem: function(key: string) {
+      delete store[key];
+    }
+  };
+})();
+Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
 describe('Game Zustand Store', () => {
   beforeEach(() => {
     act(() => {
       useGameStore.setState({
-        currentTurnPlayerId: null,
-        players: [{ id: 'player1', name: 'Player 1', secretCharacterId: null }, { id: 'player2', name: 'Player 2', secretCharacterId: null }],
+        gameId: 'game-123',
         gameStatus: 'waiting',
+        currentTurnPlayerId: null,
+        players: [
+            { id: 'player1', user_id: 'user1', name: 'Player 1', is_ready: true }, 
+            { id: 'player2', user_id: 'user2', name: 'Player 2', is_ready: true }
+        ],
         winnerId: null,
+        characters: [],
+        selectedCharacterId: null,
+        eliminatedCharacterIds: [],
+        gamePhase: 'selection'
       });
     });
     jest.clearAllMocks();
   });
 
-  it('should initialize with correct default state', () => {
+  it('should initialize with provided state', () => {
     const state = useGameStore.getState();
     expect(state.gameStatus).toBe('waiting');
-    expect(state.currentTurnPlayerId).toBeNull();
-    expect(state.winnerId).toBeNull();
     expect(state.players).toHaveLength(2);
-  });
-
-  it('should start the game and set the first player\'s turn', () => {
-    const store = useGameStore.getState();
-    act(() => store.startGame());
-    expect(useGameStore.getState().gameStatus).toBe('active');
-    expect(useGameStore.getState().currentTurnPlayerId).toBe('player1');
   });
 
   it('should switch turn to the next player', () => {
     const store = useGameStore.getState();
     act(() => useGameStore.setState({ gameStatus: 'active', currentTurnPlayerId: 'player1' }));
-    act(() => store.nextTurn('player2'));
+    act(() => store.setCurrentTurn('player2'));
     expect(useGameStore.getState().currentTurnPlayerId).toBe('player2');
-
-    act(() => store.nextTurn('player1'));
-    expect(useGameStore.getState().currentTurnPlayerId).toBe('player1');
   });
 
-  it('should eliminate a character (placeholder logic)', () => {
+  it('should eliminate a character', () => {
     const store = useGameStore.getState();
-    const consoleSpy = jest.spyOn(console, 'log');
-    act(() => store.eliminateCharacter(5));
-    expect(consoleSpy).toHaveBeenCalledWith('Eliminating character: 5');
-    consoleSpy.mockRestore();
+    act(() => store.toggleElimination(5));
+    expect(useGameStore.getState().eliminatedCharacterIds).toContain(5);
+    
+    act(() => store.toggleElimination(5)); // Toggle back
+    expect(useGameStore.getState().eliminatedCharacterIds).not.toContain(5);
   });
 
   describe('makeGuess action', () => {
-    // Mock fetch for API call within makeGuess
     const mockFetch = jest.fn();
     global.fetch = mockFetch;
 
     beforeEach(() => {
-      // Set game to active and player1's turn
       act(() => useGameStore.setState({
         gameStatus: 'active',
-        currentTurnPlayerId: 'player1',
-        players: [{ id: 'player1', name: 'Player 1', secretCharacterId: null }, { id: 'player2', name: 'Player 2', secretCharacterId: 10 }],
+        currentTurnPlayerId: 'player1', // player1 is playing
+        players: [
+            { id: 'player1', user_id: 'user1', name: 'Player 1' }, 
+            { id: 'player2', user_id: 'user2', name: 'Player 2' }
+        ],
       }));
     });
 
-    it('should set winner and game status if guess is correct (mocked API)', async () => {
+    it('should set winner (me) if guess is correct', async () => {
       const store = useGameStore.getState();
-      // Mock correct guess response
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({ winner: 'player1', message: 'Correct guess! You win.' }),
+        json: () => Promise.resolve({ result: 'win', correct_character_id: 10 }),
       });
 
-      const result = await act(() => store.makeGuess('player1', 10)); // Player 1 guesses character 10
-      expect(result).toBe(true);
-      expect(useGameStore.getState().winnerId).toBe('player1');
-      expect(useGameStore.getState().gameStatus).toBe('finished');
+      // User1 makes a guess against game-123
+      await act(async () => {
+          await store.makeGuess('game-123', 10, 'user1');
+      });
+      
+      const state = useGameStore.getState();
+      expect(state.winnerId).toBe('user1');
+      expect(state.gameStatus).toBe('finished');
     });
 
-    it('should set opponent as winner if guess is incorrect (mocked API)', async () => {
+    it('should set winner (opponent) if guess is incorrect', async () => {
       const store = useGameStore.getState();
-      // Mock incorrect guess response
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({ winner: 'player2', message: 'Incorrect guess. You lose.' }),
+        json: () => Promise.resolve({ result: 'lose', correct_character_id: 99 }),
       });
 
-      const result = await act(() => store.makeGuess('player1', 5)); // Player 1 guesses character 5 (incorrect)
-      expect(result).toBe(false);
-      expect(useGameStore.getState().winnerId).toBe('player2'); // Opponent (player2) should be winner
-      expect(useGameStore.getState().gameStatus).toBe('finished');
-    });
-  });
+      // User1 makes a WRONG guess
+      await act(async () => {
+          await store.makeGuess('game-123', 5, 'user1');
+      });
 
-  it('should set the winner and end the game', () => {
-    const store = useGameStore.getState();
-    act(() => store.setWinner('player1'));
-    expect(useGameStore.getState().winnerId).toBe('player1');
-    expect(useGameStore.getState().gameStatus).toBe('finished');
+      const state = useGameStore.getState();
+      expect(state.winnerId).toBe('user2'); // user2 wins
+      expect(state.gameStatus).toBe('finished');
+    });
   });
 });

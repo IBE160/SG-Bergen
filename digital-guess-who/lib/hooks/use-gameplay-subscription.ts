@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useGameStore } from '@/lib/store/game'
 import { toast } from 'sonner'
@@ -13,7 +13,9 @@ export function useGameplaySubscription(gameId: string | null) {
     setLastMove,
     setWinner
   } = useGameStore()
-  const supabase = createClient()
+  
+  // Memoize supabase client to prevent infinite loops when store updates trigger re-renders
+  const [supabase] = useState(() => createClient())
 
   useEffect(() => {
     if (!gameId) return

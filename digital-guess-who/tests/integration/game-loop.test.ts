@@ -1,27 +1,30 @@
 // digital-guess-who/tests/integration/game-loop.test.ts
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, act, waitFor } from '@testing-library/react';
 import { useGameplaySubscription } from '../../lib/hooks/use-gameplay-subscription';
 import { useGameStore } from '../../lib/store/game';
 import { RealtimeTestHarness } from '../helpers/RealtimeTestHarness';
 
 // 1. Setup Harness
-const harness = new RealtimeTestHarness();
+const mockHarness = new RealtimeTestHarness();
 
 // 2. Mock createClient
 jest.mock('@/lib/supabase/client', () => ({
   createClient: () => ({
-    from: () => ({
-      select: () => ({
-        eq: () => ({
-          single: async () => ({ data: { status: 'active', current_turn_player_id: 'p1' }, error: null }),
-          data: [] // for players select
-        })
-      })
-    }),
+    from: () => {
+      const queryBuilder = {
+        select: () => queryBuilder,
+        eq: () => queryBuilder,
+        order: () => queryBuilder,
+        limit: () => queryBuilder,
+        single: async () => ({ data: { status: 'active', current_turn_player_id: 'p1' }, error: null }),
+        then: (resolve) => resolve({ data: [] }) // Make it thenable for await
+      };
+      return queryBuilder;
+    },
     channel: () => {
         const ch = {
-            on: (type: string, filter: any, callback: any) => {
-                harness.subscribe(type, filter, callback);
+            on: (type, filter, callback) => {
+                mockHarness.subscribe(type, filter, callback);
                 return ch; // Return self for chaining
             },
             subscribe: () => {},
@@ -44,7 +47,7 @@ jest.mock('sonner', () => ({
 
 describe('Game Loop Integration - Turn Management', () => {
   beforeEach(() => {
-    harness.clear();
+    mockHarness.clear();
     act(() => {
         useGameStore.getState().reset();
     });
@@ -57,11 +60,16 @@ describe('Game Loop Integration - Turn Management', () => {
     // Render the hook
     const { unmount } = renderHook(() => useGameplaySubscription(gameId));
 
+    // Wait for initial fetch to complete (currentTurnPlayerId becomes 'p1' from mock)
+    await waitFor(() => {
+        expect(useGameStore.getState().currentTurnPlayerId).toBe('p1');
+    });
+
     // 2. Simulate Turn Change Event (Player 1 -> Player 2)
     const newTurnPlayerId = 'player-2-id';
     
     await act(async () => {
-        harness.simulateUpdate(
+        mockHarness.simulateUpdate(
             'game_sessions',
             { 
                 id: gameId, 
@@ -71,7 +79,7 @@ describe('Game Loop Integration - Turn Management', () => {
             {
                 id: gameId,
                 status: 'active',
-                current_turn_player_id: 'player-1-id'
+                current_turn_player_id: 'p1'
             }
         );
     });
