@@ -48,14 +48,14 @@ interface GameState {
   // New Actions
   setInteraction: (interaction: Interaction | null) => void;
   setLastMove: (move: Move | null) => void;
-  makeGuess: (gameId: string, characterId: number) => Promise<void>;
+  makeGuess: (gameId: string, characterId: number, myUserId: string) => Promise<void>;
 
   reset: () => void;
 }
 
 export const useGameStore = create(
   persist<GameState>(
-    (set) => ({
+    (set, get) => ({
       gameId: null,
       characters: [],
       selectedCharacterId: null,
@@ -89,7 +89,7 @@ export const useGameStore = create(
       setInteraction: (interaction) => set({ currentInteraction: interaction }),
       setLastMove: (move) => set({ lastMove: move }),
       
-      makeGuess: async (gameId, characterId) => {
+      makeGuess: async (gameId, characterId, myUserId) => {
         try {
             const response = await fetch(`/api/game/${gameId}/guess`, {
                 method: 'POST',
@@ -104,8 +104,15 @@ export const useGameStore = create(
             
             const data = await response.json();
             
-            if (data.result === 'win' || data.result === 'lose') {
-                 set({ gameStatus: 'finished' });
+            if (data.result === 'win') {
+                 set({ gameStatus: 'finished', winnerId: myUserId });
+            } else if (data.result === 'lose') {
+                 const opponent = get().players.find(p => p.user_id !== myUserId);
+                 if (opponent) {
+                     set({ gameStatus: 'finished', winnerId: opponent.user_id });
+                 } else {
+                     set({ gameStatus: 'finished' }); // Fallback if opponent not found
+                 }
             }
     
         } catch (e) {

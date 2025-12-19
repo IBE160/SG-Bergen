@@ -207,10 +207,10 @@ export function GameClient({ gameCode }: GameClientProps) {
   };
 
   const handleConfirmGuess = async () => {
-      if (!gameId || !selectedCharacterId) return;
+      if (!gameId || !selectedCharacterId || !userId) return;
       setIsGuessing(true);
       try {
-          await makeGuess(gameId, selectedCharacterId);
+          await makeGuess(gameId, selectedCharacterId, userId);
           // Success handled by store update/realtime
           setIsGuessModalOpen(false);
       } catch (error: any) {
