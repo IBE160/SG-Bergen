@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { generateGameCode } from '@/lib/utils';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 
 export async function POST(
   request: NextRequest,
@@ -51,16 +52,29 @@ export async function POST(
     return NextResponse.json({ error: 'You were not a player in this game' }, { status: 403 });
   }
 
-  // 5. Create new game session
+  // 5. Create new game session (Using Admin Client to bypass potential RLS on insertion)
+  // We need to bypass RLS specifically for inserting the OTHER player.
+  const supabaseAdmin = createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    }
+  );
+
   const newGameCode = generateGameCode();
   
-  const { data: newGame, error: createGameError } = await supabase
+  const { data: newGame, error: createGameError } = await supabaseAdmin
     .from('game_sessions')
     .insert({
       code: newGameCode,
       host_id: user.id, // Requester becomes new host
       difficulty: game.difficulty, // Copy difficulty
-      status: 'waiting' // Start as waiting, let lobby/join logic handle progression
+      status: 'waiting', // Start as waiting
+      phase: 'lobby' // Explicitly start in lobby phase
     })
     .select()
     .single();
@@ -79,15 +93,14 @@ export async function POST(
     is_ready: false // Reset readiness
   }));
 
-  const { error: createPlayersError } = await supabase
+  const { error: createPlayersError } = await supabaseAdmin
     .from('players')
     .insert(newPlayersData);
 
   if (createPlayersError) {
     console.error('Error adding players to new game:', createPlayersError);
-    // Cleanup? Ideally yes, but for MVP maybe just error out. 
-    // If we fail here, the game session is orphaned.
-    await supabase.from('game_sessions').delete().eq('id', newGame.id);
+    // Cleanup
+    await supabaseAdmin.from('game_sessions').delete().eq('id', newGame.id);
     return NextResponse.json({ error: 'Failed to add players to new game' }, { status: 500 });
   }
 

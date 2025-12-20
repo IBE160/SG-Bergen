@@ -4,7 +4,7 @@
 import { POST } from '@/app/api/game/[gameId]/play-again/route';
 import { NextRequest } from 'next/server';
 
-// Mock Supabase
+// Mock Supabase User Client (Read/Auth)
 const mockSupabase = {
   auth: {
     getUser: jest.fn()
@@ -12,9 +12,19 @@ const mockSupabase = {
   from: jest.fn()
 };
 
+// Mock Supabase Admin Client (Write)
+const mockSupabaseAdmin = {
+  from: jest.fn()
+};
+
 // Mock @/lib/supabase/server
 jest.mock('@/lib/supabase/server', () => ({
   createClient: () => Promise.resolve(mockSupabase)
+}));
+
+// Mock @supabase/supabase-js
+jest.mock('@supabase/supabase-js', () => ({
+  createClient: () => mockSupabaseAdmin
 }));
 
 // Mock utils
@@ -45,10 +55,7 @@ describe('API Route: POST /api/game/[gameId]/play-again', () => {
             single: jest.fn().mockResolvedValue({ data: { status: 'active', difficulty: 'easy' }, error: null })
         };
 
-        mockSupabase.from.mockImplementation((table) => {
-             if (table === 'game_sessions') return gameChain;
-             return { select: () => ({ eq: () => ({}) }) };
-        });
+        mockSupabase.from.mockReturnValue(gameChain);
 
         const req = new NextRequest('http://localhost/api/game/1/play-again', { method: 'POST' });
         const res = await POST(req, { params: Promise.resolve({ gameId: '1' }) });
@@ -62,108 +69,66 @@ describe('API Route: POST /api/game/[gameId]/play-again', () => {
         const gameId = 'game1';
         const newGameId = 'new-game-id';
 
-        // Auth
+        // 1. Auth & Reads (User Client)
         mockSupabase.auth.getUser.mockResolvedValue({ data: { user: { id: userId } }, error: null });
 
-        // 1. Fetch old game
-        const oldGameChain = {
-            select: jest.fn().mockReturnThis(),
-            eq: jest.fn().mockReturnThis(),
-            single: jest.fn().mockResolvedValue({ 
-                data: { status: 'finished', difficulty: 'hard', host_id: 'old-host' }, 
-                error: null 
-            })
-        };
+        // Setup reads on user client
+        mockSupabase.from.mockImplementation((table) => {
+            if (table === 'game_sessions') {
+                return {
+                    select: jest.fn().mockReturnThis(),
+                    eq: jest.fn().mockReturnThis(),
+                    single: jest.fn().mockResolvedValue({ 
+                        data: { status: 'finished', difficulty: 'hard', host_id: 'old-host' }, 
+                        error: null 
+                    })
+                };
+            }
+            if (table === 'players') {
+                return {
+                    select: jest.fn().mockReturnThis(),
+                    eq: jest.fn().mockResolvedValue({ 
+                        data: [
+                            { id: 'p1', user_id: userId },
+                            { id: 'p2', user_id: opponentId }
+                        ], 
+                        error: null 
+                    })
+                };
+            }
+            return { select: () => ({ eq: () => ({ single: () => ({}) }) }) };
+        });
 
-        // 2. Fetch players
-        const playersChain = {
-            select: jest.fn().mockReturnThis(),
-            eq: jest.fn().mockResolvedValue({ 
-                data: [
-                    { id: 'p1', user_id: userId },
-                    { id: 'p2', user_id: opponentId }
-                ], 
-                error: null 
-            }),
-            insert: jest.fn().mockResolvedValue({ error: null })
-        };
-
-        // 3. Insert new game
+        // 2. Writes (Admin Client)
         const insertGameChain = {
             insert: jest.fn().mockReturnThis(),
             select: jest.fn().mockReturnThis(),
             single: jest.fn().mockResolvedValue({ 
                 data: { id: newGameId, code: 'ABCD' }, 
                 error: null 
-            }),
+            })
+        };
+
+        const insertPlayersChain = {
+            insert: jest.fn().mockResolvedValue({ error: null })
+        };
+        
+        // Mock cleanup delete
+        const deleteGameChain = {
             delete: jest.fn().mockReturnThis(),
             eq: jest.fn().mockReturnThis()
         };
 
-        mockSupabase.from.mockImplementation((table) => {
-            if (table === 'game_sessions') {
-                // Return different mocks based on method calls (simplified by returning merged object or specific logic)
-                // But since we call .from('game_sessions') twice (once for select, once for insert), 
-                // we can just return a mock that handles all chain possibilities or use jest.fn to return specific chains based on call order if needed.
-                // Or simpler: just return an object with all methods mocked.
-                return {
-                    select: jest.fn().mockImplementation((cols) => {
-                        if (cols && cols.includes('status')) return oldGameChain.select(cols); // first call
-                        return insertGameChain.select(cols); // second call after insert
-                    }),
-                    insert: insertGameChain.insert,
-                    delete: insertGameChain.delete
-                };
-            }
-            if (table === 'players') return playersChain;
-            return { select: () => ({ eq: () => ({ single: () => ({}) }) }) };
-        });
-
-        // We need to fine-tune the select mock because checking equality of arguments is hard in simple return
-        // Let's rely on the sequence. 
-        // 1st .from('game_sessions') -> .select(...) -> .eq(id, gameId) -> .single()
-        // 2nd .from('game_sessions') -> .insert(...) -> .select() -> .single()
-        
-        // Let's refine the mock
-        const gameSelectMock = jest.fn();
-        const gameInsertMock = jest.fn();
-
-        gameSelectMock.mockReturnValue({
-             eq: jest.fn().mockReturnValue({
-                 single: jest.fn().mockResolvedValue({ 
-                    data: { status: 'finished', difficulty: 'hard', host_id: 'old-host' }, 
-                    error: null 
-                 })
-             })
-        });
-
-        gameInsertMock.mockReturnValue({
-            select: jest.fn().mockReturnValue({
-                single: jest.fn().mockResolvedValue({ 
-                    data: { id: newGameId, code: 'ABCD' }, 
-                    error: null 
-                })
-            })
-        });
-
-        mockSupabase.from.mockImplementation((table) => {
+        mockSupabaseAdmin.from.mockImplementation((table) => {
             if (table === 'game_sessions') {
                 return {
-                    select: (...args: any[]) => {
-                         // Distinguish between the initial fetch and the insert result fetch
-                         // In implementation: 
-                         // 1. .select('status...').eq...
-                         // 2. .insert(...).select().single()
-                         // So checking args helps.
-                         if (args[0] && args[0].includes('status')) return gameSelectMock(args); // old game
-                         return { single: jest.fn().mockResolvedValue({ data: { id: newGameId, code: 'ABCD' }, error: null }) }; // new game insert return
-                    },
-                    insert: gameInsertMock,
-                    delete: jest.fn().mockReturnThis(),
-                    eq: jest.fn().mockReturnThis()
+                    ...insertGameChain,
+                    ...deleteGameChain
                 };
             }
-            if (table === 'players') return playersChain;
+            if (table === 'players') {
+                return insertPlayersChain;
+            }
         });
 
 
@@ -175,15 +140,17 @@ describe('API Route: POST /api/game/[gameId]/play-again', () => {
         expect(data.new_game_code).toBe('ABCD');
         expect(data.new_game_id).toBe(newGameId);
 
-        // Verify inserts
-        expect(gameInsertMock).toHaveBeenCalledWith({
+        // Verify writes on ADMIN client
+        expect(mockSupabaseAdmin.from).toHaveBeenCalledWith('game_sessions');
+        expect(insertGameChain.insert).toHaveBeenCalledWith({
             code: 'ABCD',
             host_id: userId,
             difficulty: 'hard',
             status: 'waiting'
         });
 
-        expect(playersChain.insert).toHaveBeenCalledWith([
+        expect(mockSupabaseAdmin.from).toHaveBeenCalledWith('players');
+        expect(insertPlayersChain.insert).toHaveBeenCalledWith([
             { game_id: newGameId, user_id: userId, is_ready: false },
             { game_id: newGameId, user_id: opponentId, is_ready: false }
         ]);

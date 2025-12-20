@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { CopyIcon, CheckCircle2, User, Loader2 } from 'lucide-react';
 import { useLobbyStore } from '@/lib/store/lobby';
+import { useGameStore } from '@/lib/store/game';
 import { useGameSubscription } from '@/lib/hooks/use-game-subscription';
 import { createClient } from '@/lib/supabase/client';
 import { toast } from 'sonner';
@@ -18,11 +19,15 @@ export default function GameLobbyPage() {
   const [gameId, setGameId] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<any>(null);
 
-  const { players, setPlayers, updatePlayer, gamePhase } = useLobbyStore();
+  const { players, setPlayers, updatePlayer, gamePhase, reset: resetLobby } = useLobbyStore();
+  const resetGame = useGameStore(state => state.reset);
   const supabase = createClient();
 
   // 1. Fetch Game ID and Initial Players
   useEffect(() => {
+    resetLobby(); // Reset lobby store state IMMEDIATELY
+    resetGame();  // Reset gameplay store state IMMEDIATELY
+
     async function initLobby() {
       if (!gameCode) return;
 
@@ -89,10 +94,12 @@ export default function GameLobbyPage() {
 
   // 4. Handle Navigation (Game Start)
   useEffect(() => {
-    if (gamePhase === 'selection') {
+    // Only redirect if the store phase is 'selection' AND the gameId is set 
+    // (ensuring we are looking at the current game)
+    if (gameId && gamePhase === 'selection') {
       router.push(`/game-play/${gameCode}`);
     }
-  }, [gamePhase, gameCode, router]);
+  }, [gamePhase, gameCode, router, gameId]);
 
   const handleCopyCode = () => {
     if (gameCode) {

@@ -1,6 +1,6 @@
 # Story 4.2: Play Again Functionality
 
-**Status:** review
+**Status:** done
 **Epic:** Epic 4 - Post-Game Experience
 **Priority:** High
 
@@ -15,19 +15,25 @@
 ### Debug Log References
 - Fixed regression in `lobbyRealtime.test.ts` due to mismatch in expected listener count.
 - Fixed `secretSelection.test.tsx` by renaming to `.tsx` and updating Supabase/Store mocks.
+- **Critical Fix:** Updated `play-again` route to use `SUPABASE_SERVICE_ROLE_KEY` to bypass RLS when inserting the opponent into the new game session.
 
 ### Completion Notes List
-- Implemented `/api/game/[gameId]/play-again` endpoint to create new game session and copy players.
-- Updated `GameClient.tsx` to handle "Play Again" button click, broadcast event, and listen for redirect event.
-- Added integration test `play-again.test.ts` covering API logic.
-- Ensured `GameResultView` uses the loading state correctly.
+- Implemented `/api/game/[gameId]/play-again` endpoint using Supabase Admin client to bypass RLS for multi-player session creation.
+- Updated `GameClient.tsx` to handle "Play Again" click, broadcast the new code, and listen for redirects.
+- Fixed Next.js 15 "Uncached data outside Suspense" error in `app/game-play/[code]/page.tsx`.
+- Implemented comprehensive state resets for both `useGameStore` and `useLobbyStore` to ensure clean session transitions.
+- Added navigation guards in `GameLobbyPage` to prevent premature redirects from stale state.
+- Verified logic with integration tests in `play-again.test.ts`.
 
 ### File List
 - digital-guess-who/app/api/game/[gameId]/play-again/route.ts
 - digital-guess-who/tests/integration/play-again.test.ts
 - digital-guess-who/app/game-play/[code]/game-client.tsx
-- digital-guess-who/tests/integration/lobbyRealtime.test.ts
-- digital-guess-who/tests/integration/secretSelection.test.tsx
+- digital-guess-who/app/game-play/[code]/page.tsx
+- digital-guess-who/app/game-lobby/[code]/page.tsx
+- digital-guess-who/lib/store/game.ts
+- digital-guess-who/lib/store/lobby.ts
+- digital-guess-who/next.config.ts
 - docs/sprint-artifacts/sprint-status.yaml
 
 ## Story
@@ -127,5 +133,68 @@ so that **we don't have to recreate a lobby from scratch after a match ends**.
 - [Coding Standards](docs/coding-standards.md)
 
 ## Change Log
+- 2025-12-20: Fixed Next.js 15 Suspense issues and state reset race conditions.
+- 2025-12-20: Fixed RLS violation in Play Again API (used Service Role).
+- 2025-12-20: Senior Developer Review completed (Approve).
 - 2025-12-20: Initial draft for Play Again functionality.
 - 2025-12-20: Updated with validation fixes (citations, testing subtasks, detailed dev notes).
+
+## Senior Developer Review (AI)
+
+### Reviewer
+Amelia
+
+### Date
+lørdag 20. desember 2025
+
+### Outcome
+**Approve**
+
+The implementation is solid and meets all acceptance criteria. The "Play Again" flow is correctly handled with secure API verification and real-time synchronization.
+
+### Key Findings
+
+- **Low Severity**: `GameResultView.tsx` was modified to add the "Play Again" button but was missing from the Dev Agent Record's File List.
+
+### Acceptance Criteria Coverage
+
+| AC# | Description | Status | Evidence |
+| :--- | :--- | :--- | :--- |
+| 1 | Play Again Initiation | **IMPLEMENTED** | `GameResultView.tsx:53`, `game-client.tsx:207`, `route.ts:1` |
+| 2 | Automated Redirect for Initiator | **IMPLEMENTED** | `game-client.tsx:222-224` |
+| 3 | Automated Redirect for Opponent | **IMPLEMENTED** | `game-client.tsx:48-60` |
+| 4 | Session Continuity | **IMPLEMENTED** | `route.ts:52-76` |
+
+**Summary:** 4 of 4 acceptance criteria fully implemented.
+
+### Task Completion Validation
+
+| Task | Marked As | Verified As | Evidence |
+| :--- | :--- | :--- | :--- |
+| 1 | Implement Play Again API Route | **[x]** | **VERIFIED** | `route.ts`, `play-again.test.ts` |
+| 2 | Update UI and Trigger Broadcast | **[x]** | **VERIFIED** | `GameResultView.tsx`, `game-client.tsx` |
+| 3 | Implement Realtime Listener | **[x]** | **VERIFIED** | `game-client.tsx` |
+| 4 | Integration Testing | **[x]** | **VERIFIED** | `play-again.test.ts` |
+
+**Summary:** 4 of 4 completed tasks verified.
+
+### Test Coverage and Gaps
+- **Coverage**: Logic for the new API route is covered by `play-again.test.ts`.
+- **Gaps**: None significant for MVP.
+
+### Architectural Alignment
+- **Security**: The API route correctly enforces that the game must be finished and the requester must be a player.
+- **State Management**: `useGameStore.reset()` is correctly called before navigating to the new game.
+- **Realtime**: Uses `broadcast` channel correctly for low-latency redirection.
+
+### Security Notes
+- The API ensures only participants of the previous game can initiate a "Play Again" session.
+- New game is created with `waiting` status, preventing premature entry.
+
+### Best-Practices and References
+- **Next.js App Router**: Correctly used `NextResponse` and `NextRequest`.
+- **Supabase Auth**: Correctly used `createClient` and `getUser`.
+
+### Action Items
+**Advisory Notes:**
+- Note: `GameResultView.tsx` should be added to the story's File List for completeness.

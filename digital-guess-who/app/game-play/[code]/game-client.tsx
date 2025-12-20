@@ -14,6 +14,7 @@ import { useGameplaySubscription } from "@/lib/hooks/use-gameplay-subscription";
 import { endPlayerTurn, submitQuestion, submitAnswer } from "@/lib/game-logic";
 import { useGameResult } from "@/lib/hooks/use-game-result";
 import { useRouter } from "next/navigation";
+import { useLobbyStore } from "@/lib/store/lobby";
 
 interface GameClientProps {
   gameCode: string;
@@ -62,7 +63,8 @@ export function GameClient({ gameCode }: GameClientProps) {
             if (newCode) {
                 toast.success("Starting new game...");
                 useGameStore.getState().reset();
-                router.push(`/game/${newCode}`);
+                useLobbyStore.getState().reset();
+                router.push(`/game-lobby/${newCode}`);
             }
         })
         .subscribe();
@@ -288,7 +290,8 @@ export function GameClient({ gameCode }: GameClientProps) {
           
           // Redirect self
           useGameStore.getState().reset();
-          router.push(`/game/${new_game_code}`);
+          useLobbyStore.getState().reset();
+          router.push(`/game-lobby/${new_game_code}`);
           
       } catch (e) {
           console.error("Play again error:", e);
