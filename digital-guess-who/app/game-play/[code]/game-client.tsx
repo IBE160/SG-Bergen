@@ -41,6 +41,7 @@ export function GameClient({ gameCode }: GameClientProps) {
   const [isGuessing, setIsGuessing] = useState(false);
   const [isGuessSelectionMode, setIsGuessSelectionMode] = useState(false);
   const [guessTargetId, setGuessTargetId] = useState<number | null>(null);
+  const [isPlayAgainLoading, setIsPlayAgainLoading] = useState(false);
 
   const [playerId, setPlayerId] = useState<string | null>(null);
   const [gameId, setGameId] = useState<string | null>(null);
@@ -50,6 +51,26 @@ export function GameClient({ gameCode }: GameClientProps) {
 
   // Integrate Realtime Subscription
   useGameplaySubscription(gameId);
+
+  // Listen for Play Again Broadcast
+  useEffect(() => {
+    if (!gameId) return;
+
+    const channel = supabase.channel(`game-play:${gameId}`)
+        .on('broadcast', { event: 'play-again' }, (payload) => {
+            const newCode = payload.payload.newCode;
+            if (newCode) {
+                toast.success("Starting new game...");
+                useGameStore.getState().reset();
+                router.push(`/game/${newCode}`);
+            }
+        })
+        .subscribe();
+
+    return () => {
+        supabase.removeChannel(channel);
+    };
+  }, [gameId, supabase, router]);
   
   // Fetch Game Result Details when finished
   const { opponentCharacter, isLoading: isLoadingResult } = useGameResult({ 
@@ -248,10 +269,32 @@ export function GameClient({ gameCode }: GameClientProps) {
       router.push('/');
   };
 
-  const handlePlayAgain = () => {
-      toast.info("Play Again feature coming soon!", {
-          description: "This feature will be implemented in the next update."
-      });
+  const handlePlayAgain = async () => {
+      if (!gameId) return;
+      setIsPlayAgainLoading(true);
+      
+      try {
+          const res = await fetch(`/api/game/${gameId}/play-again`, { method: 'POST' });
+          if (!res.ok) throw new Error('Failed to create new game');
+          
+          const { new_game_code } = await res.json();
+          
+          // Broadcast play-again event
+          await supabase.channel(`game-play:${gameId}`).send({
+              type: 'broadcast',
+              event: 'play-again',
+              payload: { newCode: new_game_code }
+          });
+          
+          // Redirect self
+          useGameStore.getState().reset();
+          router.push(`/game/${new_game_code}`);
+          
+      } catch (e) {
+          console.error("Play again error:", e);
+          toast.error("Failed to start new game");
+          setIsPlayAgainLoading(false);
+      }
   };
 
   // Determine mode based on global phase
@@ -337,6 +380,7 @@ export function GameClient({ gameCode }: GameClientProps) {
                 isLoadingOpponent={isLoadingResult}
                 onPlayAgain={handlePlayAgain}
                 onReturnToMenu={handleReturnToMenu}
+                isPlayAgainLoading={isPlayAgainLoading}
             />
         )}
       </main>

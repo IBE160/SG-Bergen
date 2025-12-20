@@ -39,7 +39,7 @@ describe('useGameSubscription', () => {
         renderHook(() => useGameSubscription('game-123'))
         
         expect(mockChannel).toHaveBeenCalledWith('game:game-123')
-        expect(mockChannelObj.on).toHaveBeenCalledTimes(3) // INSERT, UPDATE, DELETE
+        expect(mockChannelObj.on).toHaveBeenCalledTimes(4) // INSERT(players), UPDATE(players), DELETE(players), UPDATE(game_sessions)
         expect(mockSubscribe).toHaveBeenCalled()
     })
     
