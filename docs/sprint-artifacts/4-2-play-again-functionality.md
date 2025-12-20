@@ -1,13 +1,13 @@
 # Story 4.2: Play Again Functionality
 
-**Status:** drafted
+**Status:** ready-for-dev
 **Epic:** Epic 4 - Post-Game Experience
 **Priority:** High
 
 ## Dev Agent Record
 
 ### Context Reference
-- docs/sprint-artifacts/4-2-play-again-functionality.context.xml (to be generated)
+- docs/sprint-artifacts/4-2-play-again-functionality.context.xml
 
 ### Agent Model Used
 - (To be filled by Dev Agent)

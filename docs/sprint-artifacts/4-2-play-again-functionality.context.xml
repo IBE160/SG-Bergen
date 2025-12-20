@@ -1,0 +1,146 @@
+<context id="4-2-play-again-functionality" created="2025-12-20" format="1.0">
+  <story_definition>
+    <epic_id>4</epic_id>
+    <story_id>4.2</story_id>
+    <title>Play Again Functionality</title>
+    <as_a>Player</as_a>
+    <i_want>be able to play another round with the same friend easily</i_want>
+    <so_that>we don't have to recreate a lobby from scratch after a match ends</so_that>
+    <acceptance_criteria>
+      <criterion id="1">
+        <text>Play Again Initiation: Clicking 'Play Again' on GameResultView shows loading state and requests new session with same settings.</text>
+      </criterion>
+      <criterion id="2">
+        <text>Automated Redirect for Initiator: Initiator is automatically redirected to the new game lobby upon success.</text>
+      </criterion>
+      <criterion id="3">
+        <text>Automated Redirect for Opponent: Opponent receives Realtime broadcast and is automatically redirected to the new game lobby.</text>
+      </criterion>
+      <criterion id="4">
+        <text>Session Continuity: New session has same difficulty, same players, and completely reset game state.</text>
+      </criterion>
+    </acceptance_criteria>
+    <tasks>
+      <task id="1" title="Implement Play Again API Route">
+        <subtask>Create `app/api/game/[gameId]/play-again/route.ts`</subtask>
+        <subtask>Implement POST handler to validate finished game, copy session/players, and return new code</subtask>
+        <subtask>Verify with unit/integration tests</subtask>
+      </task>
+      <task id="2" title="Update UI and Trigger Broadcast">
+        <subtask>Update `GameResultView.tsx` to call API and handle loading state</subtask>
+        <subtask>Broadcast `play-again` event via Realtime channel</subtask>
+      </task>
+      <task id="3" title="Implement Realtime Listener for Redirection">
+        <subtask>Update `GameClient.tsx` to listen for `play-again` event</subtask>
+        <subtask>Trigger `useGameStore.reset()` and router navigation on event</subtask>
+      </task>
+      <task id="4" title="Integration Testing">
+        <subtask>Create `tests/integration/play-again.test.ts`</subtask>
+        <subtask>Verify session creation and data integrity</subtask>
+      </task>
+    </tasks>
+  </story_definition>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-4.md</path>
+        <title>Epic Technical Specification: Post-Game Experience</title>
+        <section>Detailed Design</section>
+        <snippet>
+          Workflows and Sequencing:
+          5. Interaction (Play Again):
+             - Host clicks "Play Again".
+             - `/api/game/[id]/play-again` creates new session.
+             - Host broadcasts `REJOIN_NEW_GAME` event with code via Realtime.
+             - Both clients redirect to the new lobby.
+        </snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Communication Patterns</section>
+        <snippet>
+          Supabase Realtime "Broadcast" mode used for transient game events.
+          Channel Naming: `game:[game-id]`
+        </snippet>
+      </doc>
+    </docs>
+
+    <code>
+      <item>
+        <path>digital-guess-who/app/api/game/[gameId]/result/route.ts</path>
+        <kind>API Route</kind>
+        <reason>Template for auth validation and fetching game/player data. Use similar logic for `play-again` route.</reason>
+      </item>
+      <item>
+        <path>digital-guess-who/app/game-play/components/GameResultView.tsx</path>
+        <kind>Component</kind>
+        <reason>Primary UI where "Play Again" button lives. Needs update to handle click and loading state.</reason>
+      </item>
+      <item>
+        <path>digital-guess-who/app/game-play/[code]/game-client.tsx</path>
+        <kind>Component</kind>
+        <reason>Needs to listen for 'play-again' broadcast event to trigger redirect for the passive player.</reason>
+      </item>
+      <item>
+        <path>digital-guess-who/lib/store/game.ts</path>
+        <kind>Store</kind>
+        <symbol>reset</symbol>
+        <reason>Must call `reset()` before navigating to new game to ensure clean state.</reason>
+      </item>
+    </code>
+
+    <interfaces>
+      <interface>
+        <name>POST /api/game/[gameId]/play-again</name>
+        <kind>REST API</kind>
+        <signature>POST /api/game/:id/play-again -> { new_game_code: string }</signature>
+        <description>Creates a new game session copying host and difficulty from the finished game.</description>
+      </interface>
+      <interface>
+        <name>play-again event</name>
+        <kind>Realtime Event</kind>
+        <signature>channel.send({ type: 'broadcast', event: 'play-again', payload: { newCode: '...' } })</signature>
+        <description>Broadcasts the new game code to all connected clients in the channel.</description>
+      </interface>
+    </interfaces>
+
+    <dependencies>
+      <dep ecosystem="npm">@supabase/supabase-js</dep>
+      <dep ecosystem="npm">zustand</dep>
+      <dep ecosystem="npm">next/navigation (useRouter)</dep>
+    </dependencies>
+
+    <constraints>
+      <constraint>
+        <category>Security</category>
+        <text>Ensure only players from the finished game can initiate a Play Again request for that session.</text>
+      </constraint>
+      <constraint>
+        <category>State Management</category>
+        <text>Store must be completely reset (using `reset()`) before entering the new lobby to prevent state pollution.</text>
+      </constraint>
+      <constraint>
+        <category>Performance</category>
+        <text>Realtime broadcast must happen immediately after API success to minimize wait time.</text>
+      </constraint>
+    </constraints>
+  </artifacts>
+
+  <tests>
+    <standards>
+      Follow existing integration testing patterns in `tests/integration`. Use mocks for Supabase client where appropriate, or use the test helper for real DB interactions if configured.
+    </standards>
+    <locations>
+      <loc>digital-guess-who/tests/integration</loc>
+      <loc>digital-guess-who/tests/ui</loc>
+    </locations>
+    <ideas>
+      <idea id="1">API: Verify 403 if game is not finished.</idea>
+      <idea id="2">API: Verify new session is created with correct `difficulty` and `host_id`.</idea>
+      <idea id="3">UI: Verify button shows "Setting up..." while loading.</idea>
+      <idea id="4">E2E: Simulate two players, finish game, one clicks Play Again, verify both land in new lobby.</idea>
+    </ideas>
+  </tests>
+</context>
