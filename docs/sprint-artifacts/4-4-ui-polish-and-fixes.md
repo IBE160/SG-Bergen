@@ -25,6 +25,8 @@ so that **I don't accidentally quit games and the interface feels more responsiv
 - [x] Task 3: Board UX Enhancements (AC 3, AC 4)
   - [x] Update `CharacterCard.tsx` with `hover:-translate-y-1` and shadow classes.
   - [x] Add an overlay icon/style for eliminated state.
+- [x] Task 4: Turn Enforcement (UX)
+  - [x] Disable "Ask" button after a question has been answered in the current turn.
 
 ## Dev Notes
 - Use `sonner` documentation for programmatic dismissal.
@@ -42,6 +44,7 @@ so that **I don't accidentally quit games and the interface feels more responsiv
 - 2025-12-21: Completed Task 2. Implemented `QuitConfirmationModal` and integrated it into `GameClient` with an "Exit" button in the header.
 - 2025-12-21: Starting Task 3 (Board UX Enhancements).
 - 2025-12-21: Completed Task 3. Enhanced `CharacterCard` with hover lift, shadow, and a distinct X icon overlay for eliminated characters.
+- 2025-12-21: Completed Task 4. Prevented multiple questions per turn by disabling the "Ask" button after an answer is received.
 - 2025-12-21: Installed missing `alert-dialog` component from shadcn/ui.
 - 2025-12-21: All tasks complete. Regression tests passed.
 

@@ -85,9 +85,12 @@ export function GameClient({ gameCode }: GameClientProps) {
   const isMyTurn = playerId === currentTurnPlayerId;
 
   // Derive UI State from Store
+  const hasAsked = lastMove?.action_type === 'answer' && lastMove?.player_id !== playerId && isMyTurn;
+
   const interactionState: InteractionState = {
-    status: currentInteraction ? 'answering' : 'idle',
-    questionText: currentInteraction?.text
+    status: currentInteraction ? 'answering' : (hasAsked ? 'asked' : 'idle'),
+    questionText: currentInteraction?.text,
+    answer: lastMove?.details?.answer
   };
 
   const mappedLastMove = lastMove ? {
@@ -333,7 +336,47 @@ export function GameClient({ gameCode }: GameClientProps) {
       </header>
 
       <main className="flex-1">
-        {/* ... existing code ... */}
+        <div className="mb-4 flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold">
+                    {isSelecting ? "Select Your Secret Character" : "Game Board"}
+                </h2>
+                {isSelecting && (
+                    <Button 
+                        onClick={handleConfirmSelection} 
+                        disabled={!selectedCharacterId || isLoading || !playerId}
+                        size="lg"
+                        className="gap-2"
+                    >
+                        {isLoading ? "Confirming..." : "Confirm Selection"}
+                    </Button>
+                )}
+                {!isSelecting && isGameActive && (
+                    <div className="flex items-center space-x-2">
+                        <Button disabled={!isMyTurn} variant="secondary" onClick={handleEndTurn}>End Turn</Button>
+                    </div>
+                )}
+            </div>
+
+            {!isSelecting && isGameActive && (
+                <InteractionPanel 
+                    isMyTurn={!!isMyTurn}
+                    interactionState={interactionState}
+                    lastMove={mappedLastMove}
+                    onAskQuestion={handleAskQuestion}
+                    onAnswerQuestion={handleAnswerQuestion}
+                    onGuessClick={handleGuessButtonClick}
+                    isGuessDisabled={false} // Always enabled now to trigger selection mode
+                    isGuessMode={isGuessSelectionMode}
+                />
+            )}
+        </div>
+        
+        {isGuessSelectionMode && (
+            <div className="mb-4 p-4 bg-primary/10 border border-primary rounded-lg text-center animate-pulse">
+                <p className="font-bold text-primary">GUESS MODE ACTIVE: Click on the character you suspect is your opponent's!</p>
+            </div>
+        )}
         
         <CharacterGrid 
             selectionMode={isSelecting} 

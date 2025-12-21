@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
 export type InteractionState = {
-  status: 'idle' | 'asking' | 'answering' | 'result'
+  status: 'idle' | 'asking' | 'answering' | 'asked' | 'result'
   questionText?: string
   answer?: 'Yes' | 'No'
 }
@@ -55,6 +55,32 @@ export function InteractionPanel({
             {isMyTurn && interactionState.status === 'idle' && (
                 <div className="flex flex-col gap-4">
                     <QuestionInput onAsk={onAskQuestion} />
+                    <div className="relative flex py-1 items-center">
+                        <div className="flex-grow border-t border-border/50"></div>
+                        <span className="flex-shrink-0 mx-4 text-muted-foreground text-xs uppercase">or</span>
+                        <div className="flex-grow border-t border-border/50"></div>
+                    </div>
+                    <Button 
+                        variant={isGuessMode ? "secondary" : "destructive"}
+                        className="w-full" 
+                        onClick={onGuessClick}
+                        disabled={isGuessDisabled}
+                    >
+                        {isGuessMode ? "Cancel Guess" : "Make a Final Guess"}
+                    </Button>
+                </div>
+            )}
+
+            {isMyTurn && interactionState.status === 'asked' && (
+                <div className="flex flex-col gap-4">
+                    <div className="text-center p-2 bg-background/50 rounded-md border border-dashed border-border">
+                        <p className="text-sm text-muted-foreground">You've asked your question for this turn.</p>
+                        {interactionState.answer && (
+                            <p className="mt-1 font-semibold text-primary">
+                                Answer: {interactionState.answer}
+                            </p>
+                        )}
+                    </div>
                     <div className="relative flex py-1 items-center">
                         <div className="flex-grow border-t border-border/50"></div>
                         <span className="flex-shrink-0 mx-4 text-muted-foreground text-xs uppercase">or</span>
