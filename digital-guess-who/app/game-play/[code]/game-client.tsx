@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useGameStore } from "@/lib/store/game";
 import { ALL_CHARACTERS } from "@/lib/data/characters";
 import { CharacterGrid } from "../components/character-grid";
@@ -48,7 +48,7 @@ export function GameClient({ gameCode }: GameClientProps) {
   const [gameId, setGameId] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   // Integrate Realtime Subscription
   useGameplaySubscription(gameId);
@@ -281,12 +281,7 @@ export function GameClient({ gameCode }: GameClientProps) {
           
           const { new_game_code } = await res.json();
           
-          // Broadcast play-again event
-          await supabase.channel(`game-play:${gameId}`).send({
-              type: 'broadcast',
-              event: 'play-again',
-              payload: { newCode: new_game_code }
-          });
+          // Broadcast is now handled server-side to ensure reliability
           
           // Redirect self
           useGameStore.getState().reset();

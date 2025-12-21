@@ -97,6 +97,11 @@ so that **we don't have to recreate a lobby from scratch after a match ends**.
   - [x] Ensure original game history is preserved (not overwritten)
   - [x] **Verify:** Run full E2E flow with two simulated clients
 
+### Review Follow-ups (AI)
+- [x] [AI-Review][High] Fix `play-again` broadcast by ensuring the channel is subscribed before sending, or move to server-side broadcast. (AC 3)
+- [x] [AI-Review][Med] Memoize Supabase client in `GameClient` using `useMemo` or a custom hook.
+- [x] [AI-Review][Low] Update `play-again.test.ts` to include `phase: 'lobby'` in the insert expectation.
+
 ## Dev Notes
 
 ### Architecture Patterns and Constraints
@@ -133,6 +138,7 @@ so that **we don't have to recreate a lobby from scratch after a match ends**.
 - [Coding Standards](docs/coding-standards.md)
 
 ## Change Log
+- 2025-12-21: Addressed code review findings - 3 items resolved (Date: søndag 21. desember 2025).
 - 2025-12-20: Fixed Next.js 15 Suspense issues and state reset race conditions.
 - 2025-12-20: Fixed RLS violation in Play Again API (used Service Role).
 - 2025-12-20: Senior Developer Review completed (Approve).
@@ -145,56 +151,61 @@ so that **we don't have to recreate a lobby from scratch after a match ends**.
 Amelia
 
 ### Date
-lørdag 20. desember 2025
+søndag 21. desember 2025
 
 ### Outcome
-**Approve**
+**Changes Requested**
 
-The implementation is solid and meets all acceptance criteria. The "Play Again" flow is correctly handled with secure API verification and real-time synchronization.
+The implementation is functionally sound regarding game creation, but the Realtime broadcast mechanism is likely broken, preventing the opponent from being redirected. Additionally, Supabase client management in the UI needs optimization.
 
 ### Key Findings
 
-- **Low Severity**: `GameResultView.tsx` was modified to add the "Play Again" button but was missing from the Dev Agent Record's File List.
+- **High Severity**: The `play-again` broadcast in `GameClient.tsx` is sent on an unsubscribed channel instance, which likely fails to reach the opponent.
+- **Medium Severity**: `createClient()` is called on every render in `GameClient`, causing redundant connections and preventing instance reuse.
+- **Low Severity**: Integration test expectation is out of sync with the API implementation (`phase: 'lobby'` missing in test).
 
 ### Acceptance Criteria Coverage
 
 | AC# | Description | Status | Evidence |
 | :--- | :--- | :--- | :--- |
-| 1 | Play Again Initiation | **IMPLEMENTED** | `GameResultView.tsx:53`, `game-client.tsx:207`, `route.ts:1` |
-| 2 | Automated Redirect for Initiator | **IMPLEMENTED** | `game-client.tsx:222-224` |
-| 3 | Automated Redirect for Opponent | **IMPLEMENTED** | `game-client.tsx:48-60` |
-| 4 | Session Continuity | **IMPLEMENTED** | `route.ts:52-76` |
+| 1 | Play Again Initiation | **IMPLEMENTED** | `GameResultView.tsx`, `GameClient.tsx:210` |
+| 2 | Automated Redirect for Initiator | **IMPLEMENTED** | `GameClient.tsx:223` |
+| 3 | Automated Redirect for Opponent | **PARTIAL** | Listener implemented but Sender likely broken. |
+| 4 | Session Continuity | **IMPLEMENTED** | `route.ts:52-85` |
 
-**Summary:** 4 of 4 acceptance criteria fully implemented.
+**Summary:** 3 of 4 acceptance criteria fully implemented.
 
 ### Task Completion Validation
 
 | Task | Marked As | Verified As | Evidence |
 | :--- | :--- | :--- | :--- |
-| 1 | Implement Play Again API Route | **[x]** | **VERIFIED** | `route.ts`, `play-again.test.ts` |
-| 2 | Update UI and Trigger Broadcast | **[x]** | **VERIFIED** | `GameResultView.tsx`, `game-client.tsx` |
-| 3 | Implement Realtime Listener | **[x]** | **VERIFIED** | `game-client.tsx` |
-| 4 | Integration Testing | **[x]** | **VERIFIED** | `play-again.test.ts` |
+| 1 | Implement Play Again API Route | **[x]** | **VERIFIED** | `route.ts` |
+| 2 | Update UI and Trigger Broadcast | **[x]** | **QUESTIONABLE** | Broadcast sender likely fails. |
+| 3 | Implement Realtime Listener | **[x]** | **VERIFIED** | `GameClient.tsx` |
+| 4 | Integration Testing | **[x]** | **VERIFIED** | `play-again.test.ts` (needs sync) |
 
-**Summary:** 4 of 4 completed tasks verified.
+**Summary:** 2 of 4 completed tasks verified, 2 require minor fixes.
 
 ### Test Coverage and Gaps
-- **Coverage**: Logic for the new API route is covered by `play-again.test.ts`.
-- **Gaps**: None significant for MVP.
+- **Coverage**: API route logic is covered.
+- **Gaps**: Broadcast reliability is not verified by current tests.
 
 ### Architectural Alignment
-- **Security**: The API route correctly enforces that the game must be finished and the requester must be a player.
-- **State Management**: `useGameStore.reset()` is correctly called before navigating to the new game.
-- **Realtime**: Uses `broadcast` channel correctly for low-latency redirection.
+- **Security**: Good use of Service Role for cross-player record creation.
+- **Performance**: High impact due to Supabase client re-instantiation on every render.
 
 ### Security Notes
-- The API ensures only participants of the previous game can initiate a "Play Again" session.
-- New game is created with `waiting` status, preventing premature entry.
+- Secure session creation using Service Role correctly bypasses RLS while maintaining user associations.
 
 ### Best-Practices and References
-- **Next.js App Router**: Correctly used `NextResponse` and `NextRequest`.
-- **Supabase Auth**: Correctly used `createClient` and `getUser`.
+- **Realtime**: [Supabase Broadcast Docs](https://supabase.com/docs/guides/realtime/broadcast) - Requires subscription before sending.
+- **React**: Memoize expensive clients/objects.
 
 ### Action Items
+**Code Changes Required:**
+- [x] [High] Fix `play-again` broadcast by ensuring the channel is subscribed before sending, or move to server-side broadcast. (AC 3) [file: digital-guess-who/app/game-play/[code]/game-client.tsx:215]
+- [x] [Med] Memoize Supabase client in `GameClient` using `useMemo` or a custom hook. [file: digital-guess-who/app/game-play/[code]/game-client.tsx:45]
+- [x] [Low] Update `play-again.test.ts` to include `phase: 'lobby'` in the insert expectation. [file: digital-guess-who/tests/integration/play-again.test.ts:98]
+
 **Advisory Notes:**
-- Note: `GameResultView.tsx` should be added to the story's File List for completeness.
+- Note: Consolidate broadcast listener into `useGameplaySubscription` hook.

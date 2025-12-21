@@ -104,6 +104,23 @@ export async function POST(
     return NextResponse.json({ error: 'Failed to add players to new game' }, { status: 500 });
   }
 
+  // 7. Broadcast 'play-again' event to the original game channel
+  // We use the admin client to send the broadcast securely.
+  const channel = supabaseAdmin.channel(`game-play:${gameId}`);
+  
+  // We need to subscribe before sending, even on the server side with supabase-js
+  await channel.subscribe(async (status) => {
+    if (status === 'SUBSCRIBED') {
+      await channel.send({
+        type: 'broadcast',
+        event: 'play-again',
+        payload: { newCode: newGame.code }
+      });
+      // Clean up the channel after sending
+      supabaseAdmin.removeChannel(channel);
+    }
+  });
+
   return NextResponse.json({ 
     new_game_code: newGame.code,
     new_game_id: newGame.id

@@ -119,6 +119,19 @@ describe('API Route: POST /api/game/[gameId]/play-again', () => {
             eq: jest.fn().mockReturnThis()
         };
 
+        // Mock channel broadcast
+        const channelMock = {
+            subscribe: jest.fn((callback) => {
+                callback('SUBSCRIBED');
+                return Promise.resolve();
+            }),
+            send: jest.fn().mockResolvedValue({}),
+            unsubscribe: jest.fn()
+        };
+
+        mockSupabaseAdmin.channel = jest.fn().mockReturnValue(channelMock);
+        mockSupabaseAdmin.removeChannel = jest.fn();
+
         mockSupabaseAdmin.from.mockImplementation((table) => {
             if (table === 'game_sessions') {
                 return {
@@ -146,7 +159,8 @@ describe('API Route: POST /api/game/[gameId]/play-again', () => {
             code: 'ABCD',
             host_id: userId,
             difficulty: 'hard',
-            status: 'waiting'
+            status: 'waiting',
+            phase: 'lobby'
         });
 
         expect(mockSupabaseAdmin.from).toHaveBeenCalledWith('players');
@@ -154,5 +168,15 @@ describe('API Route: POST /api/game/[gameId]/play-again', () => {
             { game_id: newGameId, user_id: userId, is_ready: false },
             { game_id: newGameId, user_id: opponentId, is_ready: false }
         ]);
+        
+        // Verify broadcast
+        expect(mockSupabaseAdmin.channel).toHaveBeenCalledWith(`game-play:${gameId}`);
+        expect(channelMock.subscribe).toHaveBeenCalled();
+        expect(channelMock.send).toHaveBeenCalledWith({
+            type: 'broadcast',
+            event: 'play-again',
+            payload: { newCode: 'ABCD' }
+        });
+        expect(mockSupabaseAdmin.removeChannel).toHaveBeenCalledWith(channelMock);
     });
 });
