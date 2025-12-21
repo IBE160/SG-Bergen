@@ -6,6 +6,7 @@ import { ALL_CHARACTERS } from "@/lib/data/characters";
 import { CharacterGrid } from "../components/character-grid";
 import { InteractionPanel, InteractionState } from "../components/interaction-panel";
 import { GuessConfirmationModal } from "../components/guess-confirmation-modal";
+import { QuitConfirmationModal } from "../components/quit-confirmation-modal";
 import { GameResultView } from "../components/GameResultView";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
@@ -39,6 +40,7 @@ export function GameClient({ gameCode }: GameClientProps) {
   
   const [isLoading, setIsLoading] = useState(false);
   const [isGuessModalOpen, setIsGuessModalOpen] = useState(false);
+  const [isQuitModalOpen, setIsQuitModalOpen] = useState(false);
   const [isGuessing, setIsGuessing] = useState(false);
   const [isGuessSelectionMode, setIsGuessSelectionMode] = useState(false);
   const [guessTargetId, setGuessTargetId] = useState<number | null>(null);
@@ -100,6 +102,10 @@ export function GameClient({ gameCode }: GameClientProps) {
   const mySecretCharacter = characters.find(c => c.id === selectedCharacterId);
   // For the modal, we use the specific target selected for guessing
   const guessTargetCharacter = characters.find(c => c.id === guessTargetId);
+
+  useEffect(() => {
+    return () => toast.dismiss();
+  }, []);
 
   useEffect(() => {
     if (isMyTurn && lastMove?.action_type === 'answer') {
@@ -267,6 +273,18 @@ export function GameClient({ gameCode }: GameClientProps) {
   };
 
   const handleReturnToMenu = () => {
+    // If game is active, require confirmation
+    if (gameStatus === 'active') {
+        setIsQuitModalOpen(true);
+        return;
+    }
+    
+    // Otherwise proceed directly
+    executeReturnToMenu();
+  };
+
+  const executeReturnToMenu = () => {
+      toast.dismiss();
       useGameStore.getState().reset();
       useLobbyStore.getState().reset();
       router.push('/');
@@ -304,53 +322,18 @@ export function GameClient({ gameCode }: GameClientProps) {
     <div className="container mx-auto flex min-h-screen flex-col p-4">
       <header className="mb-6 flex items-center justify-between">
         <div className="text-2xl font-bold">Guess Who?</div>
-        <div className="rounded-full bg-secondary px-4 py-1 text-sm font-medium">
-          Room: {gameCode}
+        <div className="flex items-center gap-4">
+            <div className="rounded-full bg-secondary px-4 py-1 text-sm font-medium">
+            Room: {gameCode}
+            </div>
+            <Button variant="ghost" size="sm" onClick={handleReturnToMenu}>
+                Exit
+            </Button>
         </div>
       </header>
 
       <main className="flex-1">
-        <div className="mb-4 flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold">
-                    {isSelecting ? "Select Your Secret Character" : "Game Board"}
-                </h2>
-                {isSelecting && (
-                    <Button 
-                        onClick={handleConfirmSelection} 
-                        disabled={!selectedCharacterId || isLoading || !playerId}
-                        size="lg"
-                        className="gap-2"
-                    >
-                        {isLoading ? "Confirming..." : "Confirm Selection"}
-                    </Button>
-                )}
-                {!isSelecting && isGameActive && (
-                    <div className="flex items-center space-x-2">
-                        <Button disabled={!isMyTurn} variant="secondary" onClick={handleEndTurn}>End Turn</Button>
-                    </div>
-                )}
-            </div>
-
-            {!isSelecting && isGameActive && (
-                <InteractionPanel 
-                    isMyTurn={!!isMyTurn}
-                    interactionState={interactionState}
-                    lastMove={mappedLastMove}
-                    onAskQuestion={handleAskQuestion}
-                    onAnswerQuestion={handleAnswerQuestion}
-                    onGuessClick={handleGuessButtonClick}
-                    isGuessDisabled={false} // Always enabled now to trigger selection mode
-                    isGuessMode={isGuessSelectionMode}
-                />
-            )}
-        </div>
-        
-        {isGuessSelectionMode && (
-            <div className="mb-4 p-4 bg-primary/10 border border-primary rounded-lg text-center animate-pulse">
-                <p className="font-bold text-primary">GUESS MODE ACTIVE: Click on the character you suspect is your opponent's!</p>
-            </div>
-        )}
+        {/* ... existing code ... */}
         
         <CharacterGrid 
             selectionMode={isSelecting} 
@@ -358,6 +341,12 @@ export function GameClient({ gameCode }: GameClientProps) {
         />
 
         {/* Modals and Overlays */}
+        <QuitConfirmationModal 
+            isOpen={isQuitModalOpen}
+            onConfirm={executeReturnToMenu}
+            onCancel={() => setIsQuitModalOpen(false)}
+        />
+        
         {guessTargetCharacter && (
             <GuessConfirmationModal 
                 isOpen={isGuessModalOpen}
