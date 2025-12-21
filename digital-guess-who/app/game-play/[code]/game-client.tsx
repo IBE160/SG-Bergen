@@ -268,6 +268,7 @@ export function GameClient({ gameCode }: GameClientProps) {
 
   const handleReturnToMenu = () => {
       useGameStore.getState().reset();
+      useLobbyStore.getState().reset();
       router.push('/');
   };
 

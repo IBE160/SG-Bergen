@@ -1,6 +1,6 @@
 # Story 4.3: Return to Main Menu
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -18,15 +18,15 @@ so that **I can exit the session**.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Enhance Navigation Handler (AC 1, AC 2)
-  - [ ] Update `handleReturnToMenu` in `GameClient.tsx` to call `useLobbyStore.getState().reset()` in addition to `useGameStore.getState().reset()`.
-  - [ ] **Verify:** Unit test or console log confirming both stores are reset on click.
-- [ ] Task 2: UI Verification (AC 3)
-  - [ ] Ensure `GameResultView.tsx` correctly triggers `onReturnToMenu` when the "Return to Menu" button is clicked.
-  - [ ] **Verify:** Manual click test on result screen.
-- [ ] Task 3: Integration Testing (AC 2, AC 4)
-  - [ ] Create `tests/integration/return-to-menu.test.ts` to assert that store states return to initial values after the handler is called.
-  - [ ] **Verify:** Run `npm test tests/integration/return-to-menu.test.ts`.
+- [x] Task 1: Enhance Navigation Handler (AC 1, AC 2)
+  - [x] Update `handleReturnToMenu` in `GameClient.tsx` to call `useLobbyStore.getState().reset()` in addition to `useGameStore.getState().reset()`.
+  - [x] **Verify:** Unit test or console log confirming both stores are reset on click.
+- [x] Task 2: UI Verification (AC 3)
+  - [x] Ensure `GameResultView.tsx` correctly triggers `onReturnToMenu` when the "Return to Menu" button is clicked.
+  - [x] **Verify:** Manual click test on result screen.
+- [x] Task 3: Integration Testing (AC 2, AC 4)
+  - [x] Create `tests/integration/return-to-menu.test.ts` to assert that store states return to initial values after the handler is called.
+  - [x] **Verify:** Run `npm test tests/integration/return-to-menu.test.ts`.
 
 ## Dev Notes
 
@@ -72,5 +72,10 @@ Gemini 2.0 Flash Experimental
 ### Debug Log References
 
 ### Completion Notes List
+- ✅ Implemented `useLobbyStore.reset()` in `handleReturnToMenu` to ensure full state cleanup.
+- ✅ Added `tests/integration/return-to-menu.test.tsx` verifying both stores are reset and router redirects.
+- ✅ Verified `GameResultView` correctly passes the handler.
 
 ### File List
+- digital-guess-who/app/game-play/[code]/game-client.tsx
+- digital-guess-who/tests/integration/return-to-menu.test.tsx
