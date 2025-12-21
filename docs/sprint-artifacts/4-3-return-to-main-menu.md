@@ -45,6 +45,9 @@ so that **I can exit the session**.
 - **New Pattern Established**: `handlePlayAgain` successfully resets both `useGameStore` and `useLobbyStore`. `handleReturnToMenu` should be updated to match this pattern for consistency.
 - **Architectural Deviation**: None.
 - **Service Reuse**: Reuse `router.push('/')` pattern.
+- **New Files Created**:
+  - `digital-guess-who/app/api/game/[gameId]/play-again/route.ts`
+  - `digital-guess-who/tests/integration/play-again.test.ts`
 - **Files to Modify**:
   - `digital-guess-who/app/game-play/[code]/game-client.tsx`: Update `handleReturnToMenu` implementation.
 
