@@ -1,6 +1,6 @@
 # Story 4.3: Return to Main Menu
 
-Status: drafted
+Status: ready-for-dev
 
 ## Story
 
@@ -64,7 +64,7 @@ so that **I can exit the session**.
 ## Dev Agent Record
 
 ### Context Reference
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- docs/sprint-artifacts/4-3-return-to-main-menu.context.xml
 
 ### Agent Model Used
 Gemini 2.0 Flash Experimental

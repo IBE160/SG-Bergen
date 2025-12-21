@@ -1,0 +1,143 @@
+<story-context id=".bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>4</epicId>
+    <storyId>3</storyId>
+    <title>Return to Main Menu</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-21</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/4-3-return-to-main-menu.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>Player</asA>
+    <iWant>leave the game and return to the start screen</iWant>
+    <soThat>I can exit the session</soThat>
+    <tasks>
+- Task 1: Enhance Navigation Handler (AC 1, AC 2)
+  - Update handleReturnToMenu in GameClient.tsx to call useLobbyStore.getState().reset() in addition to useGameStore.getState().reset().
+  - Verify: Unit test or console log confirming both stores are reset on click.
+- Task 2: UI Verification (AC 3)
+  - Ensure GameResultView.tsx correctly triggers onReturnToMenu when the "Return to Menu" button is clicked.
+  - Verify: Manual click test on result screen.
+- Task 3: Integration Testing (AC 2, AC 4)
+  - Create tests/integration/return-to-menu.test.ts to assert that store states return to initial values after the handler is called.
+  - Verify: Run npm test tests/integration/return-to-menu.test.ts.</tasks>
+  </story>
+
+  <acceptanceCriteria>
+1. Redirection: When I click "Return to Main Menu", I am redirected to the home page (/).
+2. State Cleanup: Local state in useGameStore and useLobbyStore is completely cleared to prevent data leaking into the next session.
+3. Availability: The button is visible and active on the Game Result screen (once the game is finished).
+4. Clean Exit: The Zustand stores are reset *before* or *immediately upon* navigation to ensure the next game starts from a blank slate.</acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-4.md</path>
+        <title>Epic Technical Specification: Post-Game Experience</title>
+        <section>Detailed Design / Workflows</section>
+        <snippet>Clicking "Return to Main Menu" must clear the Zustand useGameStore and redirect the player to the root / page.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>System Architecture</title>
+        <section>State Management</section>
+        <snippet>Always use the defined reset() method in Zustand stores to ensure consistency with the initial state.</snippet>
+      </doc>
+      <doc>
+        <path>docs/frontend-architecture.md</path>
+        <title>Frontend Architecture</title>
+        <section>Routing</section>
+        <snippet>Standard Next.js useRouter is used for client-side transitions.</snippet>
+      </doc>
+      <doc>
+        <path>docs/testing-strategy.md</path>
+        <title>Testing Strategy</title>
+        <section>Unit Testing / Integration Testing</section>
+        <snippet>All User Stories must pass manual verification of Acceptance Criteria before completion. Zustand store logic is a priority for unit testing.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <artifact>
+        <path>digital-guess-who/app/game-play/[code]/game-client.tsx</path>
+        <kind>component</kind>
+        <symbol>handleReturnToMenu</symbol>
+        <reason>Primary handler for the return to menu action. Needs update to reset both stores.</reason>
+      </artifact>
+      <artifact>
+        <path>digital-guess-who/app/game-play/components/GameResultView.tsx</path>
+        <kind>component</kind>
+        <symbol>GameResultView</symbol>
+        <reason>UI component rendering the "Return to Menu" button and calling onReturnToMenu.</reason>
+      </artifact>
+      <artifact>
+        <path>digital-guess-who/lib/store/game.ts</path>
+        <kind>store</kind>
+        <symbol>useGameStore.reset</symbol>
+        <reason>Used to clear game-specific state.</reason>
+      </artifact>
+      <artifact>
+        <path>digital-guess-who/lib/store/lobby.ts</path>
+        <kind>store</kind>
+        <symbol>useLobbyStore.reset</symbol>
+        <reason>Used to clear lobby/player state. Currently missing from the handler call.</reason>
+      </artifact>
+    </code>
+    <dependencies>
+      <dependency>
+        <name>next</name>
+        <version>latest</version>
+      </dependency>
+      <dependency>
+        <name>zustand</name>
+        <version>^5.0.9</version>
+      </dependency>
+      <dependency>
+        <name>lucide-react</name>
+        <version>^0.511.0</version>
+      </dependency>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint>State Management: Always use the defined reset() method in Zustand stores to ensure consistency with the initial state.</constraint>
+    <constraint>Navigation: Standard Next.js useRouter is used for client-side transitions (router.push('/')).</constraint>
+    <constraint>Store reset must happen before or immediately upon navigation to prevent state leak.</constraint>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>GameResultViewProps</name>
+      <kind>TypeScript Interface</kind>
+      <signature>interface GameResultViewProps { onReturnToMenu: () => void; ... }</signature>
+      <path>digital-guess-who/app/game-play/components/GameResultView.tsx</path>
+    </interface>
+    <interface>
+      <name>GameState.reset</name>
+      <kind>Function</kind>
+      <signature>reset: () => void</signature>
+      <path>digital-guess-who/lib/store/game.ts</path>
+    </interface>
+    <interface>
+      <name>LobbyState.reset</name>
+      <kind>Function</kind>
+      <signature>reset: () => void</signature>
+      <path>digital-guess-who/lib/store/lobby.ts</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>Layered approach: Unit tests for store logic transitions (Jest), manual verification for UI flows and Next.js routing.</standards>
+    <locations>
+      <location>digital-guess-who/tests/unit/</location>
+      <location>digital-guess-who/tests/integration/</location>
+    </locations>
+    <ideas>
+      <idea id="test-1">Unit test: Verify useGameStore.reset() returns state to initial values. (AC 2, AC 4)</idea>
+      <idea id="test-2">Unit test: Verify useLobbyStore.reset() returns state to initial values. (AC 2, AC 4)</idea>
+      <idea id="test-3">Integration test: Assert that handleReturnToMenu calls both resets and router.push('/'). (AC 1, AC 2)</idea>
+      <idea id="test-4">Manual: Verify result screen displays "Return to Menu" and is functional only when gameStatus is 'finished'. (AC 3)</idea>
+    </ideas>
+  </tests>
+</story-context>
