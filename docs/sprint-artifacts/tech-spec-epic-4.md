@@ -152,3 +152,10 @@ This epic aligns with the established Next.js + Supabase architecture by utilizi
     - Use Playwright/Cypress to simulate two players: Player A guesses correctly -> Both see results -> Host clicks Play Again -> Both land in new lobby.
 - **Manual Verification:**
     - Cross-browser testing (Chrome/Firefox) to ensure real-time sync is within latency targets.
+
+## Post-Review Follow-ups
+
+| Date | Source | Type | Severity | Description | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 2025-12-21 | Story 4.3 | Enhancement | Low | Add confirmation modal for "Return to Menu" during active games to prevent accidental exits. | Open |
+| 2025-12-21 | Story 4.3 | UX | Low | Ensure `sonner` toasts are cleared upon transitioning back to main menu. | Open |

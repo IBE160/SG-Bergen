@@ -20,3 +20,5 @@ Routing guidance:
 | 2025-12-12 | 3.1 | 3 | Bug | High | Amelia | Done | Integrate useGameplaySubscription in GameClient to enable realtime updates (AC #3). |
 | 2025-12-12 | 3.1 | 3 | Bug | High | Amelia | Done | Implement missing UI/Integration tests for Grid and RLS (AC #1, #2). |
 | 2025-12-15 | 3.3 | 3 | Enhancement | Low | Amelia | Done | Add a visual toast/banner prompt "Eliminate Characters" after receiving an answer (AC #5 enhancement). (file: digital-guess-who/app/game-play/[code]/game-client.tsx) |
+| 2025-12-21 | 4.3 | 4 | Enhancement | Low | TBD | Open | Add confirmation modal for "Return to Menu" during active games to prevent accidental exits. |
+| 2025-12-21 | 4.3 | 4 | UX | Low | TBD | Open | Ensure `sonner` toasts are cleared upon transitioning back to main menu. |

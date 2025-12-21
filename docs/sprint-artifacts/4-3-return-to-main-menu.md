@@ -1,6 +1,6 @@
 # Story 4.3: Return to Main Menu
 
-Status: review
+Status: done
 
 ## Story
 
@@ -79,3 +79,50 @@ Gemini 2.0 Flash Experimental
 ### File List
 - digital-guess-who/app/game-play/[code]/game-client.tsx
 - digital-guess-who/tests/integration/return-to-menu.test.tsx
+
+## Senior Developer Review (AI)
+
+Reviewer: Amelia (AI Senior Developer)
+Date: søndag 21. desember 2025
+Outcome: **Approve**
+
+### Summary
+The implementation of the "Return to Main Menu" functionality is robust and follows the project's architectural standards. State cleanup is handled correctly for both game and lobby stores, ensuring no data leaks between sessions. The integration tests confirm the redirection and store reset logic.
+
+### Acceptance Criteria Coverage
+
+| AC# | Description | Status | Evidence |
+| :--- | :--- | :--- | :--- |
+| AC1 | Redirection: Redirect to home page (/) on click | IMPLEMENTED | `game-client.tsx:327` |
+| AC2 | State Cleanup: Clear `useGameStore` and `useLobbyStore` | IMPLEMENTED | `game-client.tsx:325-326` |
+| AC3 | Availability: Button visible on Game Result screen | IMPLEMENTED | `GameResultView.tsx:81`, `game-client.tsx:438` |
+| AC4 | Clean Exit: Stores reset before/upon navigation | IMPLEMENTED | `game-client.tsx:325-327` |
+
+Summary: 4 of 4 acceptance criteria fully implemented.
+
+### Task Completion Validation
+
+| Task | Marked As | Verified As | Evidence |
+| :--- | :--- | :--- | :--- |
+| Task 1: Update `handleReturnToMenu` in `GameClient.tsx` | [x] | VERIFIED | `game-client.tsx:326` |
+| Task 2: UI Verification in `GameResultView.tsx` | [x] | VERIFIED | `GameResultView.tsx:85` |
+| Task 3: Integration Testing | [x] | VERIFIED | `return-to-menu.test.tsx` |
+
+Summary: 3 of 3 completed tasks verified.
+
+### Test Coverage and Gaps
+- **Integration Tests:** `return-to-menu.test.tsx` verifies the core logic of store resets and navigation.
+- **Manual Verification:** Recommended to verify the visual state of the button on the finished screen across different browsers.
+
+### Architectural Alignment
+- **State Management:** Correct use of `.getState().reset()` for immediate store cleanup.
+- **Routing:** Correct use of `next/navigation` `useRouter`.
+
+### Security Notes
+- No security concerns identified. Cleanup of local state prevents sensitive game data (like secret character IDs) from persisting in the client state across sessions.
+
+### Action Items
+**Advisory Notes:**
+- Note: Consider adding a confirmation modal if the player clicks "Return to Menu" *during* an active game to prevent accidental exits. (Future Enhancement)
+- Note: Ensure `sonner` toasts are cleared if they were active during transition. (Minor UX)
+
